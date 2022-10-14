@@ -1,24 +1,28 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Text } from "react-native";
 import QuickSandText from "../styles/styledText";
-
+import Home from "../components/Home/index.jsx"
 const HomeScreen = (props) => {
   const navigation = useNavigation();
   return (
-    <View style={styles.homeScreen}>
-      <Text style={styles.textStyle}>this is Home screen  </Text>
+      <View style={styles.container}>
+       <Home/>
     </View>
   );
 };
 const styles = StyleSheet.create({
-  homeScreen: {
+  container: {
     flex: 1,
+    paddingTop: 40,
+    paddingRight: 16,
+    paddingLeft: 16,
     backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
   },
 textStyle:{
-  fontFamily :"Quicksand-Bold",
+  fontFamily :"Quicksand-Regular",
+},
+textHeader:{
+  fontSize: 30
 }
 });
 export default HomeScreen;

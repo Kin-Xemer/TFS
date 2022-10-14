@@ -4,6 +4,7 @@ import {
   createStackNavigator,
   TransitionPresets,
 } from "@react-navigation/stack";
+import{Home2, NotificationBing, Note, User} from "iconsax-react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import {
   MaterialCommunityIcons,
@@ -54,28 +55,30 @@ const TabNavigator = () => {
       initialRouteName="HomeScreen"
       barStyle={{ backgroundColor: "white", paddingTop: 0 }}
       tabBarOptions={{ color: "white"}}
-      screenOptions={{
+      tabBarLabelStyle={{ fontFamily: "Quicksand-Bold" }}
+      screenOptions={({     
         headerShown: false,
-      }}
+      })}
+      
       
     >
       <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Trang Chủ",
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Trang chủ</Text>,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" color={color} size={25} />
+            <Home2 size={26}  color={color}/>
           ),
         }}
       />
       <Tab.Screen
-        name="RequestScreen"
+        name="OrderScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Lịch Hẹn",
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Đơn hàng</Text>,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="alarm-outline" color={color} size={26} />
+          <Note size={26}  color={color}/>
           ),
         }}
       />
@@ -83,9 +86,9 @@ const TabNavigator = () => {
         name="NotiScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Thông Báo",
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Thông báo</Text>,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="notifications-outline" color={color} size={24} />
+            <NotificationBing size={26}  color={color}/>
           ),
         }}
       />
@@ -93,9 +96,9 @@ const TabNavigator = () => {
         name="MoreScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Thêm",
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Thông tin</Text>,
           tabBarIcon: ({ color }) => (
-            <Feather name="more-horizontal" size={26} color={color} />
+            <User size={26}  color={color}/>
           ),
         }}
       />
