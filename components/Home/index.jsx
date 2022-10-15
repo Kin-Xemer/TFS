@@ -1,4 +1,4 @@
-import { Flex, Spacer } from "native-base";
+import { Flex, Spacer,Divider } from "native-base";
 import { View, StyleSheet, Text } from "react-native";
 import { Location, ArrowDown2 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
@@ -36,6 +36,7 @@ const Home = (props) => {
       <View style={{marginLeft:-16, justifyContent: 'center'}}>
         <ImageTitle />
       </View>
+      <Divider/>
     </Flex>
   );
 };
