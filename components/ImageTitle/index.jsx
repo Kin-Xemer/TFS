@@ -8,19 +8,19 @@ const ImageTitle = (props) => {
   const [listImage, setListImage] = useState([
     {
       id: 0,
-      url: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
     },
     {
       id: 1,
-      url: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
     },
     {
       id: 2,
-      url: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
     },
     {
       id: 3,
-      url: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
     },
   ]);
   const carousel = useRef();
@@ -42,7 +42,7 @@ const ImageTitle = (props) => {
                   uri: item.url,
                 }}
                 alt="Alternate Text"
-                width={screenWidth - 32}
+                width="100%"
                 height={139}
                 borderRadius={10}
               />
@@ -63,7 +63,7 @@ const ImageTitle = (props) => {
         renderItem={_renderItem}
         sliderWidth={screenWidth}
         sliderHeight={screenHeight}
-        itemWidth={screenWidth - 64}
+        itemWidth={screenWidth - 32}
         inactiveSlideScale={1}
         inactiveSlideOpacity={0.5}
         loop={true}

@@ -26,8 +26,7 @@ const AppNavigator = () => {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="TabNaviHome" component={TabNavigator} />
-      
+      <Stack.Screen name="TabNaviHome" component={TabNavigator} />  
     </Stack.Navigator>
   );
 };
@@ -66,7 +65,7 @@ const TabNavigator = () => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Trang chủ</Text>,
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Trang chủ</Text>,
           tabBarIcon: ({ color }) => (
             <Home2 size={26}  color={color}/>
           ),
@@ -76,7 +75,7 @@ const TabNavigator = () => {
         name="OrderScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Đơn hàng</Text>,
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Đơn hàng</Text>,
           tabBarIcon: ({ color }) => (
           <Note size={26}  color={color}/>
           ),
@@ -96,7 +95,7 @@ const TabNavigator = () => {
         name="MoreScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Thông tin</Text>,
+          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Thông tin</Text>,
           tabBarIcon: ({ color }) => (
             <User size={26}  color={color}/>
           ),
