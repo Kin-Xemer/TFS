@@ -33,7 +33,7 @@ const CardFood = (props) => {
         </Flex>
         <Flex style={styles.contentBox}>
           <Flex direction="row" style={{ alignItems: "center" }}>
-            <AntDesign name="star" size={15} color="#F6CA2B" />
+            <AntDesign name="star" size={15} color="#gold" />
             <Text pl={1} style={styles.textFoodContent}>
               {food.rating}(120 đánh giá)
             </Text>
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 1,
-
     elevation: 4,
   },
   textStyle: {

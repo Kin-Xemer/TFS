@@ -13,6 +13,7 @@ import {
   Feather,
 } from "@expo/vector-icons";
 import Home from "./screens/HomeScreen";
+import FoodInformationScreen from "./screens/FoodInformationScreen";
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -41,6 +42,7 @@ const HomeScreen = () => {
       }}
     >
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
     </Stack.Navigator>
   );
 };

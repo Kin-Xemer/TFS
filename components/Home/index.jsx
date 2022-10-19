@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Flex, Spacer, Divider } from "native-base";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { Location, ArrowDown2 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import ImageTitle from "../ImageTitle/index";
@@ -10,6 +17,7 @@ import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
 const Home = (props) => {
+  const navigation = useNavigation();
   const [listFood, setListFood] = useState([
     {
       id: 1,
@@ -57,9 +65,9 @@ const Home = (props) => {
   ]);
   return (
     <Flex style={styles.container}>
-      <Flex direction="row" style={{paddingHorizontal:16}}>
-        <View>
-          <Flex direction="row">
+      <Flex direction="row" style={{ paddingHorizontal: 16 }}>
+        <View style={styles.locationHeader}>
+          <Flex direction="row" style={{marginBottom: 4}}>
             <View style={{ paddingLeft: 3 }}>
               <Text style={styles.textStyle}>Vị trí của bạn</Text>
             </View>
@@ -79,29 +87,42 @@ const Home = (props) => {
         </View>
       </Flex>
       <View>
-        <SearchBar/>
+        <SearchBar />
       </View>
-      <View style={{ marginLeft: -16, justifyContent: "center", paddingHorizontal:16 }}>
+      <View
+        style={{
+          marginLeft: -16,
+          justifyContent: "center",
+          paddingHorizontal: 16,
+        }}
+      >
         <ImageTitle />
       </View>
       <Divider />
       <Categories />
       <Title textTitle="Món chính" />
       <FlatList
-      contentContainerStyle={{marginLeft: 17}}
+        contentContainerStyle={{ marginLeft: 17 }}
         showsHorizontalScrollIndicator={false}
         horizontal
         data={listFood}
         renderItem={({ item }) => (
           <Flex direction="row" style={styles.cardFoodView}>
-            <CardFood food={item} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() =>
+                navigation.navigate("FoodInformationScreen", { food: item })
+              }
+            >
+              <CardFood food={item} />
+            </TouchableOpacity>
           </Flex>
         )}
         keyExtractor={(item) => `${item.id}`}
       />
       <Title textTitle="Bán chạy" />
       <FlatList
-      contentContainerStyle={{marginLeft: 17}}
+        contentContainerStyle={{ marginLeft: 17 }}
         showsHorizontalScrollIndicator={false}
         horizontal
         data={listFood}
@@ -139,5 +160,8 @@ const styles = StyleSheet.create({
   cardFoodView: {
     marginBottom: 4,
   },
+  locationHeader:{
+    marginVertical: 4
+  }
 });
 export default Home;
