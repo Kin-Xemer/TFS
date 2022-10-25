@@ -71,6 +71,7 @@ const ImageTitle = (props) => {
           setActiveSlide(index);
         }}
         //autoplay={true}
+        autoplayDelay={500}
         autoplayInterval={4500}
       />
       <View>

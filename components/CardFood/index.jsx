@@ -1,11 +1,28 @@
 import { Box, Image, Text, Flex, Spacer } from "native-base";
-import { View, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
+import { connect, useSelector, useDispatch } from "react-redux";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { convertPrice } from "../../Utils/convertPrice";
+import { useEffect } from "react";
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
+  let { setCart } = props;
+  
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const { food, amountRating } = props;
+  const setCartNumber = (food, quantity) => {
+    dispatch({ type: "ADD_CART", payload: food });
+  };
   return (
     <Box
       w={170}
@@ -25,7 +42,7 @@ const CardFood = (props) => {
         }}
         alt="image"
       />
-      <Flex p={1} w="100%">
+      <Flex p={2} w="100%">
         <Flex style={styles.titleBox}>
           <Text pl={1} style={styles.textStyle}>
             {food.foodName}
@@ -33,7 +50,7 @@ const CardFood = (props) => {
         </Flex>
         <Flex style={styles.contentBox}>
           <Flex direction="row" style={{ alignItems: "center" }}>
-            <AntDesign name="star" size={15} color="#gold" />
+            <AntDesign name="star" size={15} color="gold" />
             <Text pl={1} style={styles.textFoodContent}>
               {food.rating}(120 đánh giá)
             </Text>
@@ -44,12 +61,19 @@ const CardFood = (props) => {
               {food.orderedAmount} lượt đặt
             </Text>
           </Flex>
-          <Flex direction="row" style={{ alignItems: "center"}}>
+          <Flex direction="row" style={{ alignItems: "center" }}>
             <Text style={[styles.textFoodContent, styles.priceText]}>
-              {food.price} đ
+              {convertPrice(food.price)} đ
             </Text>
             <Spacer />
-            <AddCircle size="25" color="#d83a3a" variant="Bold" />
+            <TouchableWithoutFeedback
+              onPress={() => {
+                //navigation.navigate("CartScreen");
+                setCartNumber(food, 1);
+              }}
+            >
+              <AddCircle size="30" color="#d83a3a" variant="Bold" />
+            </TouchableWithoutFeedback>
           </Flex>
         </Flex>
       </Flex>
@@ -84,6 +108,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     height: 42,
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 17, color: "#d83a3a" },
+  priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: "#d83a3a" },
 });
 export default CardFood;

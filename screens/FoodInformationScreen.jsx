@@ -10,7 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
@@ -124,6 +124,7 @@ const FoodInformationScreen = (props) => {
       </Animated.View>
 
       <Animated.ScrollView
+      showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
         }}
@@ -239,15 +240,115 @@ const FoodInformationScreen = (props) => {
                   <RatingBar progress={0.23} number="4"/>               
                   <RatingBar progress={0.12} number="3"/>               
                   <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>               
-                                
+                  <RatingBar progress={0.06} number="1"/>                            
                 </View>
               </Flex>
             </View>
           </Flex>
+          <Flex p={2} direction="row" style={styles.ratingContainer}>
+            <View style={styles.ratingPointField}>
+              <Flex>
+                <Flex direction="row">
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                </Flex>
+              </Flex>
+            </View>
+            <Spacer />
+            <View style={styles.ratingPointField}>
+              <Flex direction="row">
+                <View>
+                  <RatingBar progress={0.76} number="5"/>               
+                  <RatingBar progress={0.23} number="4"/>               
+                  <RatingBar progress={0.12} number="3"/>               
+                  <RatingBar progress={0.1} number="2"/>               
+                  <RatingBar progress={0.06} number="1"/>                            
+                </View>
+              </Flex>
+            </View>
+          </Flex>
+          <Flex p={2} direction="row" style={styles.ratingContainer}>
+            <View style={styles.ratingPointField}>
+              <Flex>
+                <Flex direction="row">
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                </Flex>
+              </Flex>
+            </View>
+            <Spacer />
+            <View style={styles.ratingPointField}>
+              <Flex direction="row">
+                <View>
+                  <RatingBar progress={0.76} number="5"/>               
+                  <RatingBar progress={0.23} number="4"/>               
+                  <RatingBar progress={0.12} number="3"/>               
+                  <RatingBar progress={0.1} number="2"/>               
+                  <RatingBar progress={0.06} number="1"/>                            
+                </View>
+              </Flex>
+            </View>
+          </Flex>
+          <Flex p={2} direction="row" style={styles.ratingContainer}>
+            <View style={styles.ratingPointField}>
+              <Flex>
+                <Flex direction="row">
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                </Flex>
+              </Flex>
+            </View>
+            <Spacer />
+            <View style={styles.ratingPointField}>
+              <Flex direction="row">
+                <View>
+                  <RatingBar progress={0.76} number="5"/>               
+                  <RatingBar progress={0.23} number="4"/>               
+                  <RatingBar progress={0.12} number="3"/>               
+                  <RatingBar progress={0.1} number="2"/>               
+                  <RatingBar progress={0.06} number="1"/>                            
+                </View>
+              </Flex>
+            </View>
+          </Flex>
+          <Flex p={2} direction="row" style={styles.ratingContainer}>
+            <View style={styles.ratingPointField}>
+              <Flex>
+                <Flex direction="row">
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                  <AntDesign name="star" size={24} color="gold" />
+                </Flex>
+              </Flex>
+            </View>
+            <Spacer />
+            <View style={styles.ratingPointField}>
+              <Flex direction="row">
+                <View>
+                  <RatingBar progress={0.76} number="5"/>               
+                  <RatingBar progress={0.23} number="4"/>               
+                  <RatingBar progress={0.12} number="3"/>               
+                  <RatingBar progress={0.1} number="2"/>               
+                  <RatingBar progress={0.06} number="1"/>                            
+                </View>
+              </Flex>
+            </View>
+          </Flex>
+
         </View>
       </Animated.ScrollView>
-      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
+      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>   
         <Button style={styles.buttonStyle}>
           <Text style={styles.buttonText}>
             Thêm - {convertPrice(totalPrice)} đ

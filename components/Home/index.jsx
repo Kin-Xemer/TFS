@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Flex, Spacer, Divider } from "native-base";
+import { useEffect, useState } from "react";
+import { Flex, Spacer, Divider, VStack, Box, Badge, Button } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { connect, useSelector, useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
   Text,
   FlatList,
   TouchableOpacity,
+  TouchableWithoutFeedback
 } from "react-native";
 import { Location, ArrowDown2 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
@@ -17,6 +19,7 @@ import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
 const Home = (props) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [listFood, setListFood] = useState([
     {
@@ -63,11 +66,20 @@ const Home = (props) => {
         "https://img.tastykitchen.vn/crop/820x642/2021/01/25/hu-tieu-bo-ap-chao-1280x1000-17b4.jpg",
     },
   ]);
+  const numberCart = useSelector((state) => state.cart.numberCart);
+const getNumberCart = (state) =>{
+  console.log("check in home")
+  dispatch({ type: "GET_NUMBER_CART" });
+}
+useEffect(() => {
+  console.log("numbercar at homt: " + numberCart);
+});
+
   return (
     <Flex style={styles.container}>
       <Flex direction="row" style={{ paddingHorizontal: 16 }}>
         <View style={styles.locationHeader}>
-          <Flex direction="row" style={{marginBottom: 4}}>
+          <Flex direction="row" style={{ marginBottom: 4 }}>
             <View style={{ paddingLeft: 3 }}>
               <Text style={styles.textStyle}>Vị trí của bạn</Text>
             </View>
@@ -83,7 +95,35 @@ const Home = (props) => {
         </View>
         <Spacer />
         <View style={styles.cartView}>
-          <Feather name="shopping-cart" size={24} color="#d83a3a" />
+          <VStack>
+            <Badge // bg="red.400"
+              colorScheme="danger"
+              rounded="xl"
+              mb={-3}
+              mr={-2}
+              zIndex={1}
+              variant="solid"
+              alignSelf="flex-end"
+              style={{ paddingRight: 5, paddingLeft:5, paddingTop:1, paddingBottom:1}}
+              _text={{
+                fontFamily:"Quicksand-Bold",
+                fontSize: 8,
+              }}
+            >
+              {numberCart}
+            </Badge>
+            <TouchableWithoutFeedback
+            style={{
+              marginVertical:"auto",
+              padding:4
+            }}
+            onPress={() => {
+              navigation.navigate("CartScreen")
+            }}
+            >
+              <Feather name="shopping-cart" size={27} color="#d83a3a" />
+            </TouchableWithoutFeedback>
+          </VStack>
         </View>
       </Flex>
       <View>
@@ -114,7 +154,7 @@ const Home = (props) => {
                 navigation.navigate("FoodInformationScreen", { food: item })
               }
             >
-              <CardFood food={item} />
+              <CardFood setCart={getNumberCart} food={item} />
             </TouchableOpacity>
           </Flex>
         )}
@@ -155,13 +195,14 @@ const styles = StyleSheet.create({
   cartView: {
     alignItems: "center",
     justifyContent: "center",
-    width: "10%",
+    width: 40,
+    height: 40,
   },
   cardFoodView: {
     marginBottom: 4,
   },
-  locationHeader:{
-    marginVertical: 4
-  }
+  locationHeader: {
+    marginVertical: 4,
+  },
 });
 export default Home;
