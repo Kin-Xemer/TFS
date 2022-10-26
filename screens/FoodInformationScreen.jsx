@@ -9,7 +9,7 @@ import {
   Animated,
   SafeAreaView,
 } from "react-native";
-
+import {useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
@@ -24,10 +24,18 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const FoodInformationScreen = (props) => {
   const route = useRoute();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [food, setFood] = useState(route.params.food);
   const [quantity, setQuantity] = useState(1);
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
+  
+
+
+  const addToCart = (food, quantity) => {
+    dispatch({ type: "ADD_CART", payload: food , quantity});
+  };
+
   const addQuantity = () => {
     setQuantity(quantity + 1);
   };
@@ -349,7 +357,9 @@ const FoodInformationScreen = (props) => {
         </View>
       </Animated.ScrollView>
       <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>   
-        <Button style={styles.buttonStyle}>
+        <Button style={styles.buttonStyle}
+        onPress={() =>{addToCart(food, quantity)}}
+        >
           <Text style={styles.buttonText}>
             Thêm - {convertPrice(totalPrice)} đ
           </Text>

@@ -15,13 +15,12 @@ import { useEffect } from "react";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  let { setCart } = props;
+  let { setCart, food } = props;
   
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { food, amountRating } = props;
-  const setCartNumber = (food, quantity) => {
-    dispatch({ type: "ADD_CART", payload: food });
+  const addToCart = (food, quantity) => {
+    dispatch({ type: "ADD_CART", payload: food , quantity});
   };
   return (
     <Box
@@ -69,7 +68,7 @@ const CardFood = (props) => {
             <TouchableWithoutFeedback
               onPress={() => {
                 //navigation.navigate("CartScreen");
-                setCartNumber(food, 1);
+                addToCart(food, 1);
               }}
             >
               <AddCircle size="30" color="#d83a3a" variant="Bold" />

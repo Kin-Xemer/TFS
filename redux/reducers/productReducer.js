@@ -7,13 +7,13 @@ import {
   DELETE_CART,
 } from "../actions/productAction";
 
-const initProduct = {
+const initCart = {
   numberCart: 0,
   cartsItem: [],
   _products: [],
 };
 
-function todoProduct(state = initProduct, action) {
+function todoProduct(state = initCart, action) {
   switch (action.type) {
     case GET_ALL_PRODUCT:
       return {
@@ -28,7 +28,7 @@ function todoProduct(state = initProduct, action) {
       if (state.numberCart == 0) {
         let cart = {
           id: action.payload.id,
-          quantity: 1,
+          quantity: action.quantity,
           name: action.payload.foodName,
           image: action.payload.imgURL,
           price: action.payload.price,
@@ -38,14 +38,14 @@ function todoProduct(state = initProduct, action) {
         let check = false;
         state.cartsItem.map((item, key) => {
           if (item.id == action.payload.id) {
-            state.cartsItem[key].quantity++;
+            state.cartsItem[key].quantity = state.cartsItem[key].quantity + action.quantity;
             check = true;
           }
         });
         if (!check) {
           let _cart = {
             id: action.payload.id,
-            quantity: 1,
+            quantity: action.quantity,
             name: action.payload.foodName,
             image: action.payload.imgURL,
             price: action.payload.price,
@@ -55,7 +55,7 @@ function todoProduct(state = initProduct, action) {
       }
       return {
         ...state,
-        numberCart: state.numberCart + 1,
+        numberCart: state.numberCart + action.quantity,
       };
     case INCREASE_QUANTITY:
       state.numberCart++;

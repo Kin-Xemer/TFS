@@ -42,9 +42,11 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-sticky-parallax-header": "^1.0.0-rc.9",
     "react-native-svg": "^12.3.0",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-vector-icons": "^9.2.0",
     "react-navigation": "^4.4.4",
     "react-redux": "^8.0.4",
+    "react-swipeable-list": "^1.6.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.6"

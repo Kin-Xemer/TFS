@@ -8,13 +8,12 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Location, ArrowDown2 } from "iconsax-react-native";
-import { Entypo } from "@expo/vector-icons";
 import ImageTitle from "../ImageTitle/index";
 import SearchBar from "../SearchBar/index";
-import { Feather } from "@expo/vector-icons";
+import { Feather,Entypo } from "@expo/vector-icons";
 import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
@@ -67,13 +66,13 @@ const Home = (props) => {
     },
   ]);
   const numberCart = useSelector((state) => state.cart.numberCart);
-const getNumberCart = (state) =>{
-  console.log("check in home")
-  dispatch({ type: "GET_NUMBER_CART" });
-}
-useEffect(() => {
-  console.log("numbercar at homt: " + numberCart);
-});
+  const getNumberCart = (state) => {
+    console.log("check in home");
+    dispatch({ type: "GET_NUMBER_CART" });
+  };
+  useEffect(() => {
+    console.log("numbercar at homt: " + numberCart);
+  });
 
   return (
     <Flex style={styles.container}>
@@ -85,7 +84,7 @@ useEffect(() => {
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
-
+          
           <Flex direction="row">
             <Location size="14" color="#d83a3a" />
             <Text style={[styles.textStyle, styles.addressText]}>
@@ -95,35 +94,41 @@ useEffect(() => {
         </View>
         <Spacer />
         <View style={styles.cartView}>
-          <VStack>
-            <Badge // bg="red.400"
-              colorScheme="danger"
-              rounded="xl"
-              mb={-3}
-              mr={-2}
-              zIndex={1}
-              variant="solid"
-              alignSelf="flex-end"
-              style={{ paddingRight: 5, paddingLeft:5, paddingTop:1, paddingBottom:1}}
-              _text={{
-                fontFamily:"Quicksand-Bold",
-                fontSize: 8,
-              }}
-            >
-              {numberCart}
-            </Badge>
-            <TouchableWithoutFeedback
+          <Badge // bg="red.400"
+            colorScheme="danger"
+            rounded="xl"
+            mb={-3}
+            mr={-2}
+            zIndex={1}
+            variant="solid"
+            alignSelf="flex-end"
             style={{
-              marginVertical:"auto",
-              padding:4
+              paddingRight: 5,
+              paddingLeft: 5,
+              paddingTop: 1,
+              paddingBottom: 1,
+            }}
+            _text={{
+              fontFamily: "Quicksand-Bold",
+              fontSize: 8,
+            }}
+          >
+            {numberCart}
+          </Badge>
+
+          <TouchableWithoutFeedback
+            style={{
+              marginVertical: "auto",
+              padding: 4,
             }}
             onPress={() => {
-              navigation.navigate("CartScreen")
+              navigation.navigate("CartScreen");
             }}
-            >
+          >
+            <View>
               <Feather name="shopping-cart" size={27} color="#d83a3a" />
-            </TouchableWithoutFeedback>
-          </VStack>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </Flex>
       <View>

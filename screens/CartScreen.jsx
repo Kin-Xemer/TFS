@@ -1,13 +1,9 @@
-import { Flex } from "native-base";
+
 import { useEffect } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { connect, useSelector, useDispatch } from "react-redux";
-import { Button } from "native-base";
-import ListCart from "../components/testComponent/ListCart";
-import { faker } from "@faker-js/faker";
-import { addNewHobby } from "../redux/actions/hobby";
-import { actFetchProductsRequest } from "../redux/actions/productAction";
+import {useSelector, useDispatch } from "react-redux";
+import { Button,Flex } from "native-base";
+import ListCart from "../components/ListCartItem/ListCart"
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CartScreen = (props) => {
@@ -36,9 +32,10 @@ const CartScreen = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingHorizontal: 16,
+    backgroundColor:"white"
   },
   textStyle: {
     fontFamily: "Quicksand-Bold",
