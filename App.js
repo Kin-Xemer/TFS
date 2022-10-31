@@ -9,6 +9,7 @@ import { NativeBaseProvider } from "native-base";
 import stores from "./redux/stores"
 import {Provider} from "react-redux"
 import AppNavigator from "./AppNavigator";
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 LogBox.ignoreLogs([
   "expo-app-loading is deprecated in favor of expo-splash-screen:",
 ]);
@@ -22,6 +23,26 @@ export default function App() {
     await useFonts();
   };
 
+  const toastConfig = {
+    /*
+      Overwrite 'success' type,
+      by modifying the existing `BaseToast` component
+    */
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: '#d83a3a'}}
+        contentContainerStyle={{ alignItems: "center",justifyContent: "center", paddingLeft: 60 }}
+        text2Style={{
+          fontSize: 15,
+          color:"#666",
+          fontFamily: 'Quicksand-Regular',
+        }}
+      />
+    ),
+  };
+  
+  
   if (!IsReady) {
     return (
       <AppLoading
@@ -37,6 +58,7 @@ export default function App() {
         <StatusBar animated={true} backgroundColor="white" barStyle="default" />
         <NativeBaseProvider>
           <AppNavigator />
+          <Toast config={toastConfig} />
         </NativeBaseProvider>
       </NavigationContainer>
       </Provider>

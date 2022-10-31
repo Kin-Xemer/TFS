@@ -60,7 +60,6 @@ function todoProduct(state = initCart, action) {
     case INCREASE_QUANTITY:
       state.numberCart++;
       state.cartsItem[action.payload].quantity++;
-
       return {
         ...state,
       };

@@ -15,6 +15,7 @@ import {
 import Home from "./screens/HomeScreen";
 import FoodInformationScreen from "./screens/FoodInformationScreen";
 import CartScreen from "./screens/CartScreen";
+import LoginScreenn from "./screens/LoginScreenn";
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -45,6 +46,7 @@ const HomeScreen = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
+      <Stack.Screen name="LoginScreenn" component={LoginScreenn} />
     </Stack.Navigator>
   );
 };

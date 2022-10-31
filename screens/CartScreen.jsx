@@ -1,9 +1,8 @@
-
 import { useEffect } from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
-import {useSelector, useDispatch } from "react-redux";
-import { Button,Flex } from "native-base";
-import ListCart from "../components/ListCartItem/ListCart"
+import { Text, View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { Button, Flex } from "native-base";
+import ListCart from "../components/ListCartItem/ListCart";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CartScreen = (props) => {
@@ -11,22 +10,22 @@ const CartScreen = (props) => {
   //   actFetchProductsRequest();
   // });
   //const { product } = actFetchProductsRequest();
-  const { food, } = props;
+  const { food } = props;
   // lay hobby list tu trong redux store
   const dispatch = useDispatch();
   const cartItem = useSelector((state) => state.cart.cartsItem);
+  const deleteItem = (typeAction, id) => {
+    dispatch({ type:typeAction, payload:id})
+  };
   useEffect(() => {
-    console.log("cartitem: " + cartItem.length)
+    console.log("cartitem: " + cartItem.length);
   });
 
   return (
     <View style={styles.container}>
-      <View style={{ marginLeft: 4 }}>
-        <Text>List Cart</Text>
-        <View>
-          <ListCart list={cartItem} />
-        </View>
-      </View>
+
+        <ListCart  deleteItem={deleteItem}/>
+   
     </View>
   );
 };
@@ -34,8 +33,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor:"white"
+    backgroundColor: "white",
   },
   textStyle: {
     fontFamily: "Quicksand-Bold",

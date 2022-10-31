@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Flex, Spacer, Divider, VStack, Box, Badge, Button } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { connect, useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
   View,
   StyleSheet,
@@ -13,13 +14,34 @@ import {
 import { Location, ArrowDown2 } from "iconsax-react-native";
 import ImageTitle from "../ImageTitle/index";
 import SearchBar from "../SearchBar/index";
-import { Feather,Entypo } from "@expo/vector-icons";
+import { Feather, Entypo } from "@expo/vector-icons";
 import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
+import getAllFood from "../../services/getAllFood";
 const Home = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [foods, setFood] = useState([]);
+
+  const getAllFood = () => {
+    axios
+      .get(
+        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/foods",
+        { param: { id: 1 } }
+      )
+      .then((response) => {
+        setFood(response.data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  useEffect(() => {
+    getAllFood();
+    console.log(foods.length);
+  }, []);
   const [listFood, setListFood] = useState([
     {
       id: 1,
@@ -67,14 +89,9 @@ const Home = (props) => {
   ]);
   const numberCart = useSelector((state) => state.cart.numberCart);
   const getNumberCart = (state) => {
-    console.log("check in home");
     dispatch({ type: "GET_NUMBER_CART" });
   };
-  useEffect(() => {
-    console.log("numbercar at homt: " + numberCart);
-  });
-
-  return (
+  return foods.length > 0 ? (
     <Flex style={styles.container}>
       <Flex direction="row" style={{ paddingHorizontal: 16 }}>
         <View style={styles.locationHeader}>
@@ -84,7 +101,7 @@ const Home = (props) => {
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
-          
+
           <Flex direction="row">
             <Location size="14" color="#d83a3a" />
             <Text style={[styles.textStyle, styles.addressText]}>
@@ -150,11 +167,11 @@ const Home = (props) => {
         contentContainerStyle={{ marginLeft: 17 }}
         showsHorizontalScrollIndicator={false}
         horizontal
-        data={listFood}
+        data={foods}
         renderItem={({ item }) => (
           <Flex direction="row" style={styles.cardFoodView}>
             <TouchableOpacity
-              activeOpacity={0.7}
+              activeOpacity={0.8}
               onPress={() =>
                 navigation.navigate("FoodInformationScreen", { food: item })
               }
@@ -178,7 +195,24 @@ const Home = (props) => {
         )}
         keyExtractor={(item) => `${item.id}`}
       />
+      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate("LoginScreenn");
+          }}
+        >
+          <Text style={styles.buttonText}>
+            dang nhap
+          </Text>
+        </TouchableOpacity>
+      </View>
     </Flex>
+  ) : (
+    <View style={[styles.container,{backgroundColor: "red"}]}>
+      <Text>doi xiu</Text>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -208,6 +242,13 @@ const styles = StyleSheet.create({
   },
   locationHeader: {
     marginVertical: 4,
+  },
+  buttonStyle: {
+    borderRadius: 15,
+    backgroundColor: "#d83a3a",
+    height: 47,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 export default Home;

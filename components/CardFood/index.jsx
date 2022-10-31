@@ -4,7 +4,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
+import Toast from 'react-native-toast-message';
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
 import { connect, useSelector, useDispatch } from "react-redux";
@@ -12,15 +14,15 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
 import { useEffect } from "react";
 
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
   let { setCart, food } = props;
-  
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const addToCart = (food, quantity) => {
-    dispatch({ type: "ADD_CART", payload: food , quantity});
+    dispatch({ type: "ADD_CART", payload: food, quantity });
   };
   return (
     <Box
@@ -37,13 +39,13 @@ const CardFood = (props) => {
         h={132}
         borderRadius={10}
         source={{
-          uri: food.imgURL,
+          uri: food.imgUrl,
         }}
         alt="image"
       />
       <Flex p={2} w="100%">
         <Flex style={styles.titleBox}>
-          <Text pl={1} style={styles.textStyle}>
+          <Text pl={1} style={[styles.textStyle, { fontSize:16}]}>
             {food.foodName}
           </Text>
         </Flex>
@@ -65,14 +67,22 @@ const CardFood = (props) => {
               {convertPrice(food.price)} đ
             </Text>
             <Spacer />
-            <TouchableWithoutFeedback
+            <TouchableOpacity
+            activeOpacity={0.8}
               onPress={() => {
-                //navigation.navigate("CartScreen");
                 addToCart(food, 1);
+                Toast.show({
+                  type: "success",
+                  text2:"Đã thêm vào giỏ hàng",
+                  autoHide:true,
+                  visibilityTime:1500,
+                  position:"top",
+                  topOffset:50
+                });
               }}
             >
               <AddCircle size="30" color="#d83a3a" variant="Bold" />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           </Flex>
         </Flex>
       </Flex>
@@ -83,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     marginRight: 16,
-    shadowColor: "#000",
+    shadowColor: "silver",
     shadowOffset: {
       width: 0,
       height: 1,

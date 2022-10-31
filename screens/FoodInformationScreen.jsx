@@ -7,16 +7,16 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Animated,
-  SafeAreaView,
+  SafeAreaView,TouchableOpacity
 } from "react-native";
 import {useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather,Entypo } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
-import { Entypo } from "@expo/vector-icons";
 import { Flex, Spacer, Text, Heading, Button, Square } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
+import Toast from 'react-native-toast-message';
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -93,7 +93,7 @@ const FoodInformationScreen = (props) => {
             },
           ]}
           source={{
-            uri: food.imgURL,
+            uri: food.imgUrl,
           }}
         />
       </Animated.View>
@@ -357,13 +357,25 @@ const FoodInformationScreen = (props) => {
         </View>
       </Animated.ScrollView>
       <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>   
-        <Button style={styles.buttonStyle}
-        onPress={() =>{addToCart(food, quantity)}}
+        <TouchableOpacity style={styles.buttonStyle}
+        activeOpacity={0.8}
+        onPress={() =>{
+          addToCart(food, quantity);
+          Toast.show({
+            type: "success",
+            text2:"Đã thêm vào giỏ hàng",
+            autoHide:true,
+            visibilityTime:1500,
+            position:"top",
+            topOffset:50
+          });
+          navigation.goBack();
+        }}
         >
           <Text style={styles.buttonText}>
             Thêm - {convertPrice(totalPrice)} đ
           </Text>
-        </Button>
+        </TouchableOpacity>
       </View>
     </Flex>
   );
@@ -413,6 +425,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#d83a3a",
     height: 47,
+    alignItems: "center",justifyContent: "center",
   },
   buttonText: {
     fontFamily: "Quicksand-Bold",
