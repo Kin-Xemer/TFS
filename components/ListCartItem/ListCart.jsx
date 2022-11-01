@@ -11,11 +11,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, Badge, Spacer, Divider } from "native-base";
+import { Flex, Badge, Spacer, Divider, Image } from "native-base";
 import { Location, ArrowDown2 } from "iconsax-react-native";
 import VisibleItem from "../VisibleItem";
 import HiddenItemWithActions from "../HiddenItemWithActions";
-import { THEME_COLOR } from '../../Utils/themeColor';
+import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 15;
 const ITEM_MARGIN_BOTTOM = 10;
@@ -54,20 +54,21 @@ const ListCart = (props) => {
   };
   const footerComponent = () => {
     return (
-      <View>
+      <View style={{ marginBottom: 20 }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
         <Flex direction="row" style={{ paddingHorizontal: 16 }}>
           <View style={styles.locationHeader}>
             <Flex direction="row" style={{ marginBottom: 4 }}>
               <View>
-                <Text style={[styles.textStyle, styles.addressText]}>Bạn cần thêm gì nữa không ?</Text>
+                <Text style={[styles.textStyle, styles.addressText]}>
+                  Bạn cần thêm gì nữa không ?
+                </Text>
               </View>
             </Flex>
-           
-              <Text style={[styles.textStyle]}>
-                Chọn thêm món khác nếu bạn muốn
-              </Text>
-           
+
+            <Text style={[styles.textStyle]}>
+              Chọn thêm món khác nếu bạn muốn
+            </Text>
           </View>
           <Spacer />
           <TouchableWithoutFeedback
@@ -89,6 +90,16 @@ const ListCart = (props) => {
           </TouchableWithoutFeedback>
         </Flex>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
+        <Flex direction="row" style={styles.voucherView}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/3258/3258499.png",
+            }}
+            alt="imahe"
+            style={{ width: 45, height: 35 }}
+          />
+          <Text>voucher</Text>
+        </Flex>
       </View>
     );
   };
@@ -166,12 +177,16 @@ const ListCart = (props) => {
               marginTop: 10,
             }}
           />
+          <View style={styles.paymentView}>
+            <Image
+              source={require("../../assets/Icon-app_blue-bg.png")}
+              alt="imahe"
+              style={{ width: 30, height: 30 }}
+            />
+          </View>
           <View
             style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}
           >
-            <View >
-
-            </View>
             <TouchableOpacity
               style={styles.buttonStyle}
               activeOpacity={0.8}
@@ -190,7 +205,7 @@ const ListCart = (props) => {
             { flex: 1, justifyContent: "center", alignItems: "center" },
           ]}
         >
-          <Text>khong co cc gi het mua di</Text>
+          <Text>khong co gi het mua di</Text>
         </View>
       )}
       <TouchableOpacity
@@ -238,7 +253,6 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontFamily: "Quicksand-Bold",
-
   },
   changeButton: {
     alignItems: "center",
@@ -254,6 +268,21 @@ const styles = StyleSheet.create({
   },
   locationHeader: {
     marginVertical: 4,
+  },
+  voucherView: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 53,
+    borderWidth: 0.5,
+    borderColor: "silver",
+    borderRadius: 15,
+    marginHorizontal: 16,
+  },
+  paymentView: {
+    height: 45,
+    backgroundColor: "white",
+    justifyContent: "center",
+    paddingHorizontal:16
   },
 });
 export default ListCart;
