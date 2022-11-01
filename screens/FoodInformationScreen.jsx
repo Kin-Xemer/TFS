@@ -17,6 +17,7 @@ import { Flex, Spacer, Text, Heading, Button, Square } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
 import Toast from 'react-native-toast-message';
+import { THEME_COLOR } from "../Utils/themeColor";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -189,7 +190,7 @@ const FoodInformationScreen = (props) => {
                     <View>
                       <MinusCirlce
                         size="25"
-                        color="#d83a3a"
+                        color={THEME_COLOR}
                         variant="Outline"
                       />
                     </View>
@@ -199,7 +200,7 @@ const FoodInformationScreen = (props) => {
                     <View>
                       <MinusCirlce
                         size="25"
-                        color="#d83a3a"
+                        color={THEME_COLOR}
                         variant="Outline"
                       />
                     </View>
@@ -214,7 +215,7 @@ const FoodInformationScreen = (props) => {
                   }}
                 >
                   <View>
-                    <AddCircle size="25" color="#d83a3a" variant="Outline" />
+                    <AddCircle size="25" color={THEME_COLOR} variant="Outline" />
                   </View>
                 </TouchableWithoutFeedback>
               </Flex>
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     height: 42,
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 25, color: "#d83a3a" },
+  priceText: { fontFamily: "Quicksand-Bold", fontSize: 25, color: THEME_COLOR },
   textDescription: {
     fontFamily: "Quicksand-Bold",
     fontSize: 15,
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     borderRadius: 15,
-    backgroundColor: "#d83a3a",
+    backgroundColor: THEME_COLOR,
     height: 47,
     alignItems: "center",justifyContent: "center",
   },

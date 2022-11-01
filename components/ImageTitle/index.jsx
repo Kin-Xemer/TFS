@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { View, Dimensions, StyleSheet, Text } from "react-native";
 import { Image } from "native-base";
+import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ImageTitle = (props) => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -79,7 +80,7 @@ const ImageTitle = (props) => {
       containerStyle={styles.paginContainer}
         dotsLength={slides.length}
         activeDotIndex={activeSlide}
-        dotColor={"#d83a3a"}
+        dotColor={THEME_COLOR}
         dotStyle={styles.paginationDot}
         inactiveDotColor={"black"}
         inactiveDotOpacity={0.4}

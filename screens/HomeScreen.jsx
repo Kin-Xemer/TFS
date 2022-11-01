@@ -3,21 +3,16 @@ import {
   View,
   StyleSheet,
 
-  ScrollView,
-
 } from "react-native";
 import Home from "../components/Home/index.jsx";
 const HomeScreen = (props) => {
   const navigation = useNavigation();
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-    >
+
       <View style={styles.container}>
         <Home />
       </View>
-    </ScrollView>
+
   );
 };
 const styles = StyleSheet.create({

@@ -16,6 +16,7 @@ import Home from "./screens/HomeScreen";
 import FoodInformationScreen from "./screens/FoodInformationScreen";
 import CartScreen from "./screens/CartScreen";
 import LoginScreenn from "./screens/LoginScreenn";
+import { THEME_COLOR } from "./Utils/themeColor";
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -55,7 +56,7 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       labled={true}
-      activeColor={"#d83a3a"}
+      activeColor={THEME_COLOR}
       shifting={true}
       initialRouteName="HomeScreen"
       barStyle={{ backgroundColor: "white", paddingTop: 0 }}

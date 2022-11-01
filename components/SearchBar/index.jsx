@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { SearchNormal1, ArrowDown2 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import { Input, Icon } from "native-base";
+import { THEME_COLOR } from "../../Utils/themeColor";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SearchBar = (props) => {
@@ -21,7 +22,7 @@ const SearchBar = (props) => {
             //setSearchResult(text);
           }}
           InputLeftElement={
-            <SearchNormal1 size="14" color="#d83a3a" variant="Outline" />
+            <SearchNormal1 size="14" color={THEME_COLOR} variant="Outline" />
           }
           placeholder="Bạn muốn tìm gì ? "
         />

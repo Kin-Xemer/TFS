@@ -13,6 +13,7 @@ import { connect, useSelector, useDispatch } from "react-redux";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
 import { useEffect } from "react";
+import { THEME_COLOR } from '../../Utils/themeColor';
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -81,7 +82,7 @@ const CardFood = (props) => {
                 });
               }}
             >
-              <AddCircle size="30" color="#d83a3a" variant="Bold" />
+              <AddCircle size="30" color={THEME_COLOR} variant="Bold" />
             </TouchableOpacity>
           </Flex>
         </Flex>
@@ -117,6 +118,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     height: 42,
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: "#d83a3a" },
+  priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
 });
 export default CardFood;

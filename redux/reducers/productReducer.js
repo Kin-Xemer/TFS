@@ -30,7 +30,7 @@ function todoProduct(state = initCart, action) {
           id: action.payload.id,
           quantity: action.quantity,
           name: action.payload.foodName,
-          image: action.payload.imgURL,
+          image: action.payload.imgUrl,
           price: action.payload.price,
         };
         state.cartsItem.push(cart);
@@ -47,7 +47,7 @@ function todoProduct(state = initCart, action) {
             id: action.payload.id,
             quantity: action.quantity,
             name: action.payload.foodName,
-            image: action.payload.imgURL,
+            image: action.payload.imgUrl,
             price: action.payload.price,
           };
           state.cartsItem.push(_cart);

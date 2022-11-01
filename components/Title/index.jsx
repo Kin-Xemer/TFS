@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { ArrowRight2 } from "iconsax-react-native";
 import Icon from 'react-native-vector-icons/Entypo';
+import { THEME_COLOR } from '../../Utils/themeColor';
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const Title = (props) => {
@@ -20,7 +21,7 @@ const Title = (props) => {
             marginLeft: -2,
           }}
         >
-          <Icon name="chevron-right" size={16} color="#d83a3a" />
+          <Icon name="chevron-right" size={16} color={THEME_COLOR} />
         </View>
       </Flex>
     </Flex>
@@ -52,8 +53,8 @@ const styles = StyleSheet.create({
   },
   moreText: {
     fontSize: 12,
-    color: "#d83a3a",
-    //textDecorationLine: true,
+    color: THEME_COLOR,
+    // textDecorationLine: true,
   },
 });
 export default Title;

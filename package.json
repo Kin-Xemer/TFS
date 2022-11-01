@@ -28,6 +28,7 @@
     "expo-status-bar": "~1.4.0",
     "iconsax-react-native": "^0.0.8",
     "intl": "^1.2.5",
+    "ios": "^0.0.1",
     "lodash.remove": "^4.7.0",
     "native-base": "^3.4.18",
     "react": "18.0.0",
