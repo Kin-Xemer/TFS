@@ -6,9 +6,10 @@ export const getAllFood = () => {
       "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/foods"
     )
     .then((response) => {
-      console.log(response.data);
+      return(response.data);
     })
     .catch((err) => {
-      console.log(err);
+      console.log("err", err);
     });
 };
+

@@ -21,7 +21,7 @@ const ITEM_MARGIN_HORIZONTAL = 16;
 const VisibleItem = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { data } = props;
+  const { data,onDelete } = props;
   const increaseQuantity = () =>
     dispatch({ type: "INCREASE_QUANTITY", payload: data.item.id });
   const decreaseQuantity = () =>
@@ -36,8 +36,8 @@ const VisibleItem = (props) => {
         <Flex direction="row" style={{ height: "100%" }}>
           <Flex style={{ alignItems: "center", justifyContent: "center" }}>
             <Image
-              w={105}
-              h={105}
+              w={90}
+              h={90}
               m={2}
               borderRadius={10}
               source={{
@@ -94,7 +94,9 @@ const VisibleItem = (props) => {
                     </View>
                   </TouchableWithoutFeedback>
                 ) : (
-                  <TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                  onPress={onDelete}
+                  >
                     <View>
                       <MinusCirlce
                         size="25"
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderRadius: BORDER_RADIUS,
     width: screenWidth - 32,
-    height: 135,
+    height: 115,
     marginBottom: ITEM_MARGIN_BOTTOM,
     shadowColor: "#999",
     shadowOffset: { width: 0, height: 1 },

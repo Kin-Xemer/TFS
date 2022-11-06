@@ -2,34 +2,58 @@ import { useState, useEffect, useRef } from "react";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { View, Dimensions, StyleSheet, Text } from "react-native";
 import { Image } from "native-base";
+import tetbanner from "../../assets/food/tet_banner.jpg"
 import { THEME_COLOR } from "../../Utils/themeColor";
+import axios from "axios";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ImageTitle = (props) => {
+  const IMAGE_HEIGHT = (9*screenWidth)/21
+  const IMAGE_WIDTH = (21*screenHeight)/9
   const [activeSlide, setActiveSlide] = useState(0);
-  const [listImage, setListImage] = useState([
-    {
-      id: 0,
-      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
-    },
-    {
-      id: 1,
-      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
-    },
-    {
-      id: 2,
-      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
-    },
-    {
-      id: 3,
-      url: "https://img.tastykitchen.vn/crop/1620x800/banner-desktop/2022/04/20/group-863-97d5.png",
-    },
-  ]);
+  const [listEvent,setListEvent] = useState([]);
+  // const [listImage, setListImage] = useState([
+  //   {
+  //     id: 0,
+  //     url: "https://live.staticflickr.com/65535/52481862060_6ee6633a16_b.jpg",
+  //   },
+  //   {
+  //     id: 1,
+  //     url: "https://live.staticflickr.com/65535/52480805917_6eed6d9010_b.jpg",
+  //   },
+  //   {
+  //     id: 2,
+  //     url: "https://live.staticflickr.com/65535/52481848958_4e6c4e755e_b.jpg",
+  //   },
+  //   {
+  //     id: 3,
+  //     url: "https://live.staticflickr.com/65535/52481307696_338f81e657_b.jpg",
+  //   },
+  // ]);
   const carousel = useRef();
   const [slides,setSlides] = useState([]);
+
+  const getAllEvent = () => {
+    axios
+      .get(
+        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/events"
+      )
+      .then((response) => {
+        setListEvent(response.data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  useEffect(() => {
+    getAllEvent();
+  }, []);
+  
+
   const entriesSplitter = () => {
     let size = 1;
-    while (listImage.length > 0) {
-      slides.push(listImage.splice(0, size));
+    while (listEvent.length > 0) {
+      slides.push(listEvent.splice(0, size));
     }
   };
   const _renderItem = ({ item, index }) => {
@@ -37,14 +61,14 @@ const ImageTitle = (props) => {
       <View style={{ flexDirection: "row" }}>
         {item.map((item) => {
           return (
-            <View key={item.id} style={styles.container}>
+            <View key={item.eventId} style={styles.container}>
               <Image
                 source={{
-                  uri: item.url,
-                }}
-                alt="Alternate Text"
-                width="100%"
-                height={139}
+                  uri: item.image_url,
+                }}           
+                alt="Alternate Text"           
+                height={IMAGE_HEIGHT}
+                width={IMAGE_WIDTH}
                 borderRadius={10}
               />
             </View>
@@ -95,7 +119,6 @@ const ImageTitle = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    maxWidth: "100%",
     paddingHorizontal: 8,
   },
   paginContainer: {

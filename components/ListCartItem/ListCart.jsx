@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,32 +6,73 @@ import {
   TouchableOpacity,
   Dimensions,
   TouchableWithoutFeedback,
+  ImageBackground,
+  Button,
 } from "react-native";
+import { Modal } from "native-base";
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, Badge, Spacer, Divider, Image } from "native-base";
+import { Flex, TextArea, Spacer, Divider, Image } from "native-base";
 import { Location, ArrowDown2 } from "iconsax-react-native";
+import Dash from "react-native-dash";
+import RBSheet from "react-native-raw-bottom-sheet";
 import VisibleItem from "../VisibleItem";
 import HiddenItemWithActions from "../HiddenItemWithActions";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import FooterComponent from "./FooterComponent";
+import HeaderComponent from "./HeaderConponent";
+import { convertPrice } from "../../Utils/convertPrice";
+import { Keyboard } from "react-native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-const BORDER_RADIUS = 15;
-const ITEM_MARGIN_BOTTOM = 10;
-const ITEM_MARGIN_HORIZONTAL = 16;
 const ListCart = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const items = useSelector((state) => state.cart);
+  const [discount, setDiscount] = useState(30);
+  const [deliveryFee, seyDeliveryFee] = useState(0);
+  const [servicesFee, setServicesFee] = useState(2);
+  const [note, setNote] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [textAreaCount, setTextAreaCount] = useState(0);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [paddingEle, setPaddingEle] = useState(10);
+  const refRBSheet = useRef();
   let { deleteItem } = props;
   let list = [];
-  let TotalCart = 0;
+  let totalCart = 0;
 
   Object.keys(items.cartsItem).forEach(function (item) {
-    TotalCart += items.cartsItem[item].quantity * items.cartsItem[item].price;
+    totalCart += items.cartsItem[item].quantity * items.cartsItem[item].price;
     list.push(items.cartsItem[item]);
   });
+
+
+ useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (e) => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(e.endCoordinates.height);
+        setPaddingEle(e.endCoordinates.height-100);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+        setPaddingEle(10); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const listData = list.map((item, index) => ({
     id: `${index}`,
@@ -40,8 +81,21 @@ const ListCart = (props) => {
     imgUrl: item.image,
     price: item.price,
   }));
+  let handleOnChangeText = (value) => {
+    setTextAreaCount(value.length);
+    setNote(value)
+  };
   const renderItem = (data, rowMap) => {
-    return <VisibleItem data={data} />;
+    return (
+      <VisibleItem
+        data={data}
+        onDelete={() => deleteItem("DELETE_CART", data.item.id)}
+      />
+    );
+  };
+
+  const showModal = () => {
+    setVisible(!visible);
   };
 
   const renderHiddenItem = (data, rowMap) => {
@@ -52,98 +106,7 @@ const ListCart = (props) => {
       />
     );
   };
-  const footerComponent = () => {
-    return (
-      <View style={{ marginBottom: 20 }}>
-        <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-        <Flex direction="row" style={{ paddingHorizontal: 16 }}>
-          <View style={styles.locationHeader}>
-            <Flex direction="row" style={{ marginBottom: 4 }}>
-              <View>
-                <Text style={[styles.textStyle, styles.addressText]}>
-                  Bạn cần thêm gì nữa không ?
-                </Text>
-              </View>
-            </Flex>
 
-            <Text style={[styles.textStyle]}>
-              Chọn thêm món khác nếu bạn muốn
-            </Text>
-          </View>
-          <Spacer />
-          <TouchableWithoutFeedback
-            onPress={() => {
-              console.log("click");
-            }}
-          >
-            <View style={styles.changeButton}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  color: THEME_COLOR,
-                  fontFamily: "Quicksand-Bold",
-                }}
-              >
-                Thêm món
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        </Flex>
-        <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-        <Flex direction="row" style={styles.voucherView}>
-          <Image
-            source={{
-              uri: "https://cdn-icons-png.flaticon.com/512/3258/3258499.png",
-            }}
-            alt="imahe"
-            style={{ width: 45, height: 35 }}
-          />
-          <Text>voucher</Text>
-        </Flex>
-      </View>
-    );
-  };
-  const headerComponent = () => {
-    return (
-      <View>
-        <Flex direction="row" style={{ paddingHorizontal: 16 }}>
-          <View style={styles.locationHeader}>
-            <Flex direction="row" style={{ marginBottom: 4 }}>
-              <View style={{ paddingLeft: 3 }}>
-                <Text style={styles.textStyle}>Vị trí của bạn</Text>
-              </View>
-              <Entypo name="chevron-down" size={14} color="black" />
-            </Flex>
-            <Flex direction="row">
-              <Location size="14" color={THEME_COLOR} />
-              <Text style={[styles.textStyle, styles.addressText]}>
-                Đại học FPT, Quận 9, Thành Phố Hồ Chí Minh
-              </Text>
-            </Flex>
-          </View>
-          <Spacer />
-          <TouchableWithoutFeedback
-            onPress={() => {
-              console.log("click");
-            }}
-          >
-            <View style={styles.changeButton}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  color: THEME_COLOR,
-                  fontFamily: "Quicksand-Bold",
-                }}
-              >
-                Thay đổi địa điểm
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        </Flex>
-        <Divider style={{ marginVertical: 16 }} thickness={5} bg="#e4e2e2" />
-      </View>
-    );
-  };
   return (
     <Flex style={styles.container}>
       <Flex style={styles.topBar} direction="row">
@@ -171,22 +134,45 @@ const ListCart = (props) => {
             rightOpenValue={-screenWidth * 0.25 + 12}
             disableRightSwipe
             showsVerticalScrollIndicator={false}
-            ListFooterComponent={footerComponent}
-            ListHeaderComponent={headerComponent}
+            ListFooterComponent={
+              <FooterComponent
+                discount={discount}
+                totalCart={totalCart}
+                deliveryFee={deliveryFee}
+                servicesFee={servicesFee}
+              />
+            }
+            ListHeaderComponent={
+              <HeaderComponent
+                setVisible={() => refRBSheet.current.open()}
+                note={note}
+              />
+            }
             contentContainerStyle={{
-              marginTop: 10,
+              backgroundColor: "white",
             }}
           />
           <View style={styles.paymentView}>
-            <Image
-              source={require("../../assets/Icon-app_blue-bg.png")}
-              alt="imahe"
-              style={{ width: 30, height: 30 }}
-            />
+            <Flex direction="row" style={styles.paymentContentView}>
+              <Image
+                source={require("../../assets/Icon-app_blue-bg.png")}
+                alt="imahe"
+                style={{ width: 30, height: 30 }}
+              />
+              <Flex style={{ marginLeft: 8 }}>
+                <Text style={{ fontSize: 12, fontFamily: "Quicksand-Regular" }}>
+                  ZaloPay
+                </Text>
+                <Text style={{ fontSize: 15, fontFamily: "Quicksand-Bold" }}>
+                  {convertPrice(
+                    totalCart + servicesFee + deliveryFee - discount
+                  )}{" "}
+                  đ
+                </Text>
+              </Flex>
+            </Flex>
           </View>
-          <View
-            style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}
-          >
+          <View style={{ paddingHorizontal: 16, backgroundColor: "white" }}>
             <TouchableOpacity
               style={styles.buttonStyle}
               activeOpacity={0.8}
@@ -194,7 +180,7 @@ const ListCart = (props) => {
                 navigation.goBack();
               }}
             >
-              <Text style={styles.buttonText}> Thanh toán {TotalCart} đ</Text>
+              <Text style={styles.buttonText}> Thanh toán</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -208,6 +194,92 @@ const ListCart = (props) => {
           <Text>khong co gi het mua di</Text>
         </View>
       )}
+
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        openDuration={400}
+        height={screenHeight * 0.9}
+        customStyles={{
+          container: {
+            borderRadius: 20,
+          },
+          draggableIcon: {
+            backgroundColor: "silver",
+          },
+        }}
+      >
+        <View style={styles.note}>
+          <Text style={[styles.title, { fontSize: 20 }]}>
+            Ghi chú giao hàng
+          </Text>
+        </View>
+        <Dash
+          style={{ marginHorizontal: 16, height: 1 }}
+          dashThickness={1}
+          dashGap={2}
+          dashColor="silver"
+        />
+        <View>
+          <TextArea
+          style={{ fontFamily: "Quicksand-Regular" }}
+            placeholder="Viết vài ghi chú cho tài xế nhé"
+            size="md"
+            paddingLeft="4"
+            borderWidth={0}
+            value={note}
+            _light={{
+              placeholderTextColor: "trueGray.400",
+              bg: "white",
+              _hover: {
+                bg: "white",
+              },
+              _focus: {
+                bg: "white",
+              },
+            }}
+            onChangeText={(value) => {
+              handleOnChangeText(value);
+            }}
+          />
+        </View>
+        <Spacer />
+        <Dash
+          style={{ marginHorizontal: 16, height: 1 }}
+          dashGap={2}
+          dashColor="silver"
+          dashThickness={1}
+        />
+        <Flex
+          direction="row"
+          style={{ paddingBottom: paddingEle, margin: 16, alignItems: "center" }}
+        >
+          <View>
+            <Text
+              style={{
+                fontFamily: "Quicksand-Regular",
+                fontSize: 14,
+                color: "#666",
+              }}
+            >
+              {textAreaCount}/250
+            </Text>
+          </View>
+          <Spacer />
+          <TouchableOpacity
+            onPress={() => {
+              refRBSheet.current.close();
+            }}
+            style={{ alignItems: "flex-end" }}
+          >
+            <View style={styles.noteButton}>
+              <Text style={[styles.title, { color: "white" }]}>Hoàn tất</Text>
+            </View>
+          </TouchableOpacity>
+        </Flex>
+      </RBSheet>
+
       <TouchableOpacity
         style={{ position: "absolute" }}
         onPress={() => {
@@ -223,7 +295,7 @@ const ListCart = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    marginTop: 50,
     flex: 1,
   },
   title: {
@@ -233,7 +305,8 @@ const styles = StyleSheet.create({
   topBar: {
     width: "100%",
     alignItems: "center",
-    height: 36,
+    height: 40,
+    backgroundColor: "white",
   },
   buttonStyle: {
     borderRadius: 15,
@@ -247,42 +320,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#fff",
   },
-  textStyle: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 10,
-  },
-  addressText: {
-    fontFamily: "Quicksand-Bold",
-  },
-  changeButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: THEME_COLOR,
-    borderRadius: 50,
-    width: 100,
-    height: 28,
-  },
-  cardFoodView: {
-    marginBottom: 4,
-  },
-  locationHeader: {
-    marginVertical: 4,
-  },
-  voucherView: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 53,
-    borderWidth: 0.5,
-    borderColor: "silver",
-    borderRadius: 15,
-    marginHorizontal: 16,
-  },
   paymentView: {
-    height: 45,
     backgroundColor: "white",
     justifyContent: "center",
-    paddingHorizontal:16
+    paddingHorizontal: 16,
+    borderTopWidth: 0.5,
+    borderTopColor: "silver",
+  },
+  paymentContentView: {
+    paddingVertical: 10,
+  },
+  note: {
+    padding: 16,
+  },
+  noteButton: {
+    backgroundColor: THEME_COLOR,
+    padding: 10,
+    borderRadius: 20,
+    alignItems: "center",
   },
 });
 export default ListCart;

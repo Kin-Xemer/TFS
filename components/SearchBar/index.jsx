@@ -37,14 +37,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:16,
     backgroundColor: "white",
   },
-  textStyle: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 12,
-  },
-  addressText: {
-    fontFamily: "Quicksand-Bold",
-    marginLeft: 2,
-  },
+
   textInputContainer: {
     paddingLeft: 16,
     borderWidth: 0.5,

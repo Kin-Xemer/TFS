@@ -43,6 +43,7 @@ const Home = (props) => {
     getAllFood();
     console.log(foods.length);
   }, []);
+  
   const numberCart = useSelector((state) => state.cart.numberCart);
   const getNumberCart = (state) => {
     dispatch({ type: "GET_NUMBER_CART" });
@@ -125,7 +126,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 17 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods}
+          data={foods.slice(0, 10)}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity

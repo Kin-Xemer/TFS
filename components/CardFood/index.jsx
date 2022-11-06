@@ -1,4 +1,4 @@
-import { Box, Image, Text, Flex, Spacer } from "native-base";
+import { Box, Image, Text, Flex, Spacer, useToast } from "native-base";
 import {
   View,
   StyleSheet,
@@ -6,47 +6,79 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
 import { connect, useSelector, useDispatch } from "react-redux";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
+import axios from "axios";
 import { useEffect } from "react";
-import { THEME_COLOR } from '../../Utils/themeColor';
-
+import { THEME_COLOR } from "../../Utils/themeColor";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
+  const getAllFood = () => {
+    axios
+      .get(
+        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/foods"
+      )
+      .then((response) => {
+        setFood(response.data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
   let { setCart, food } = props;
+  const toast = useToast();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const addToCart = (food, quantity) => {
     dispatch({ type: "ADD_CART", payload: food, quantity });
   };
+  const id = "test-toast";
   return (
     <Box
-      w={170}
       rounded="lg"
-      borderColor="coolGray.200"
-      borderWidth="1"
-      borderRadius="10"
+      borderColor="coolGray.300"
+      borderWidth="0.5"
+      borderRadius="15"
       alignItems="flex-start"
       style={styles.container}
     >
-      <Image
-        w="100%"
-        h={132}
-        borderRadius={10}
-        source={{
-          uri: food.imgUrl,
+      <View
+        style={{
+          width:"100%",
+          height:110,
+          shadowColor: "silver",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 1,
+          shadowRadius: 1.2,
+        
         }}
-        alt="image"
-      />
-      <Flex p={2} w="100%">
+      >
+        <Image
+         
+          h={110}
+          borderRadius={15}
+          source={{
+            uri: food.imgUrl,
+          }}
+          alt="image"
+        />
+      </View>
+      <Flex p={1} pl={2} pb={2} w="100%">
         <Flex style={styles.titleBox}>
-          <Text pl={1} style={[styles.textStyle, { fontSize:16}]}>
+          <Text
+            numberOfLines={2}
+            pl={1}
+            style={[styles.textStyle, { fontSize: 16 }]}
+          >
             {food.foodName}
           </Text>
         </Flex>
@@ -69,20 +101,26 @@ const CardFood = (props) => {
             </Text>
             <Spacer />
             <TouchableOpacity
-            activeOpacity={0.8}
+              activeOpacity={0.8}
               onPress={() => {
                 addToCart(food, 1);
-                Toast.show({
-                  type: "success",
-                  text2:"Đã thêm vào giỏ hàng",
-                  autoHide:true,
-                  visibilityTime:1500,
-                  position:"top",
-                  topOffset:50
-                });
+                if (!toast.isActive(id)) {
+                  toast.show({
+                    id,
+                    duration: 2000,
+                    placement: "top",
+                    render: () => {
+                      return (
+                        <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
+                          Đã thêm vào giỏ hàng
+                        </Box>
+                      );
+                    },
+                  });
+                }
               }}
             >
-              <AddCircle size="30" color={THEME_COLOR} variant="Bold" />
+              <AddCircle size="28" color={THEME_COLOR} variant="Bold" />
             </TouchableOpacity>
           </Flex>
         </Flex>
@@ -92,16 +130,16 @@ const CardFood = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    width: 145,
+    backgroundColor: "white",
     marginRight: 16,
     shadowColor: "silver",
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 4,
+    shadowOpacity: 0.5,
+    shadowRadius: 1.2,
   },
   textStyle: {
     fontFamily: "Quicksand-Bold",
@@ -114,9 +152,8 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     width: "100%",
-    //backgroundColor: "red",
     alignItems: "flex-start",
-    height: 42,
+    height: 38,
   },
   priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
 });

@@ -4,6 +4,7 @@ import { Entypo } from "@expo/vector-icons";
 import { ArrowRight2 } from "iconsax-react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import { THEME_COLOR } from '../../Utils/themeColor';
+import { useRoute, useNavigation } from "@react-navigation/native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const Title = (props) => {
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   moreText: {
     fontSize: 12,
     color: THEME_COLOR,
-    // textDecorationLine: true,
+    textDecorationLine:"underline"
   },
 });
 export default Title;

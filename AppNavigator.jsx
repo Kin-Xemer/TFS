@@ -16,6 +16,7 @@ import Home from "./screens/HomeScreen";
 import FoodInformationScreen from "./screens/FoodInformationScreen";
 import CartScreen from "./screens/CartScreen";
 import LoginScreenn from "./screens/LoginScreenn";
+import MoreScreen from "./screens/MoreScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 
 const Stack = createStackNavigator();
@@ -48,6 +49,7 @@ const HomeScreen = () => {
       <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="LoginScreenn" component={LoginScreenn} />
+      <Stack.Screen name="MoreScreen" component={MoreScreen} />
     </Stack.Navigator>
   );
 };
