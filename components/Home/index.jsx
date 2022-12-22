@@ -12,19 +12,29 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import { Location, ArrowDown2 } from "iconsax-react-native";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ArrowDown2 } from "iconsax-react-native";
 import ImageTitle from "../ImageTitle/index";
 import SearchBar from "../SearchBar/index";
 import { Feather, Entypo } from "@expo/vector-icons";
 import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
-import getAllFood from "../../services/getAllFood";
+import getAllFoodAPI from "../../services/getAllFood";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 const Home = (props) => {
+  const { isFocused } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [foods, setFood] = useState([]);
+  const [isLogin, setIsLogin] = useState(false);
+  const [cusName, setCusName] = useState("");
+  const [location, setLocation] = useState(null);
+  const [address, setAddress] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const getAllFood = () => {
     axios
@@ -38,13 +48,62 @@ const Home = (props) => {
         console.log("err", err);
       });
   };
+  const checkLogin = async () => {
+    try {
+      const cusName = await AsyncStorage.getItem("accountId");
+      if (cusName !== null) {
+        setIsLogin(true);
+        setCusName(cusName);
+        dispatch({ type: "GET_ACCOUNT", cusName });
+      }
+    } catch (e) {
+      console.log(e);
+      console.log("Failed to fetch the data from storage");
+    }
+  };
 
+  const clearStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      setIsLogin(false);
+      navigation.navigate("LoginScreenn");
+    } catch (e) {
+      alert("Failed to clear the async storage.");
+    }
+  };
   useEffect(() => {
-    getAllFood();
-    console.log(foods.length);
-  }, []);
-  
+    if (isFocused) {
+      getAllFood();
+      checkLogin();
+      getLocation();
+    }
+  }, [isFocused]);
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    axios
+      .get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          location.coords.latitude +
+          "," +
+          location.coords.longitude +
+          "&key=" +
+          GOOGLE_MAPS_APIKEY
+      )
+      .then((response) => {
+        setAddress(response.data.results[0].formatted_address);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
   const numberCart = useSelector((state) => state.cart.numberCart);
+
   const getNumberCart = (state) => {
     dispatch({ type: "GET_NUMBER_CART" });
   };
@@ -54,16 +113,27 @@ const Home = (props) => {
         <View style={styles.locationHeader}>
           <Flex direction="row" style={{ marginBottom: 4 }}>
             <View style={{ paddingLeft: 3 }}>
-              <Text style={styles.textStyle}>Vị trí của bạn</Text>
+              <Text style={styles.textStyle}>Vị trí của {cusName}</Text>
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
-          <Flex direction="row">
-            <Location size="14" color={THEME_COLOR} />
-            <Text style={[styles.textStyle, styles.addressText]}>
-              Đại học FPT, Quận 9, Thành Phố Hồ Chí Minh
-            </Text>
-          </Flex>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("MapScreen", {
+                location: location,
+              });
+            }}
+          >
+            <Flex direction="row">
+              {/* <Location size="14" color={THEME_COLOR} /> */}
+              <Text
+                numberOfLines={1}
+                style={[styles.textStyle, styles.addressText]}
+              >
+                {address}
+              </Text>
+            </Flex>
+          </TouchableOpacity>
         </View>
         <Spacer />
         <View style={styles.cartView}>
@@ -123,7 +193,7 @@ const Home = (props) => {
         <Categories />
         <Title textTitle="Món chính" />
         <FlatList
-          contentContainerStyle={{ marginLeft: 17 }}
+          contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
           data={foods.slice(0, 10)}
@@ -135,34 +205,38 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood setCart={getNumberCart} food={item} />
+                <CardFood
+                  setCart={getNumberCart}
+                  isLogin={isLogin}
+                  food={item}
+                />
               </TouchableOpacity>
             </Flex>
           )}
           keyExtractor={(item) => `${item.id}`}
         />
         <Title textTitle="Bán chạy" />
-        <FlatList
+        {/* <FlatList
           contentContainerStyle={{ marginLeft: 17 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods}
+          data={foods.slice(0, 10)}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <CardFood food={item} />
             </Flex>
           )}
           keyExtractor={(item) => `${item.id}`}
-        />
+        /> */}
         <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
           <TouchableOpacity
             style={styles.buttonStyle}
             activeOpacity={0.8}
             onPress={() => {
-              navigation.navigate("LoginScreenn");
+              clearStorage();
             }}
           >
-            <Text style={styles.buttonText}>dang nhap</Text>
+            <Text style={styles.buttonText}>dang xuat</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

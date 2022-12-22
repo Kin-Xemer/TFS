@@ -13,7 +13,7 @@ import {useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather,Entypo } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
-import { Flex, Spacer, Text, Heading, Button, useToast } from "native-base";
+import { Flex, Spacer, Text, Heading, Button, useToast, Box } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
 import Toast from 'react-native-toast-message';
@@ -44,6 +44,7 @@ const FoodInformationScreen = (props) => {
   const minusQuantity = () => {
     setQuantity(quantity - 1);
   };
+
   useEffect(() => {
     setTotalPrice(food.price * quantity);
   }, [quantity]);

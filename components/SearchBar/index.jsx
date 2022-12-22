@@ -27,14 +27,13 @@ const SearchBar = (props) => {
           placeholder="Bạn muốn tìm gì ? "
         />
       </View>
-     
     </Flex>
   );
 };
 const styles = StyleSheet.create({
   container: {
     marginTop: 4,
-    paddingHorizontal:16,
+    paddingHorizontal: 16,
     backgroundColor: "white",
   },
 
@@ -46,6 +45,5 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: "100%",
   },
-  
 });
 export default SearchBar;

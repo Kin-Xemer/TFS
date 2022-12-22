@@ -5,12 +5,12 @@ import {
   DECREASE_QUANTITY,
   INCREASE_QUANTITY,
   DELETE_CART,
+  CHECK_LOGIN
 } from "../actions/productAction";
 
 const initCart = {
   numberCart: 0,
   cartsItem: [],
-  _products: [],
 };
 
 function todoProduct(state = initCart, action) {

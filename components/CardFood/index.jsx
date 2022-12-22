@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
-import Toast from "react-native-toast-message";
+import { Toast } from "@ant-design/react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
 import { connect, useSelector, useDispatch } from "react-redux";
@@ -19,26 +19,12 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  const getAllFood = () => {
-    axios
-      .get(
-        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/foods"
-      )
-      .then((response) => {
-        setFood(response.data);
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
-  };
-  let { setCart, food } = props;
-  const toast = useToast();
+  let { setCart, food, isLogin } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const addToCart = (food, quantity) => {
     dispatch({ type: "ADD_CART", payload: food, quantity });
   };
-  const id = "test-toast";
   return (
     <Box
       rounded="lg"
@@ -50,8 +36,8 @@ const CardFood = (props) => {
     >
       <View
         style={{
-          width:"100%",
-          height:110,
+          width: "100%",
+          height: 110,
           shadowColor: "silver",
           shadowOffset: {
             width: 0,
@@ -59,11 +45,9 @@ const CardFood = (props) => {
           },
           shadowOpacity: 1,
           shadowRadius: 1.2,
-        
         }}
       >
         <Image
-         
           h={110}
           borderRadius={15}
           source={{
@@ -103,20 +87,11 @@ const CardFood = (props) => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                addToCart(food, 1);
-                if (!toast.isActive(id)) {
-                  toast.show({
-                    id,
-                    duration: 2000,
-                    placement: "top",
-                    render: () => {
-                      return (
-                        <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
-                          Đã thêm vào giỏ hàng
-                        </Box>
-                      );
-                    },
-                  });
+                if (isLogin === true) {
+                  addToCart(food, 1);
+                  Toast.success("Đã thêm vào giỏ hàng", 1);
+                } else {
+                  navigation.navigate("LoginScreenn");
                 }
               }}
             >

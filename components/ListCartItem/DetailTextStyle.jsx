@@ -1,6 +1,7 @@
 
 import {Text, StyleSheet} from "react-native";
 import {Flex, Spacer} from "native-base"
+import { convertPrice } from "../../Utils/convertPrice";
 const DetailTextStyle = (props) => {
     const {textName, price} = props;
     return (
@@ -22,7 +23,7 @@ const DetailTextStyle = (props) => {
               color: "#898989",
             }}
           >
-            {price} đ
+            {convertPrice(price)} đ
           </Text>
         </Flex>
     );

@@ -8,75 +8,111 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
-import LoginScreen from "react-native-login-screen";
-import axios from "axios"
+import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button, Input } from "native-base";
+import axios from "axios";
+import { Provider, Toast } from "@ant-design/react-native";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const LoginScreenn = (props) => {
   const navigation = useNavigation();
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [msgError, setMsgErr] = useState("");
+  const dispatch = useDispatch();
+  const handleChangeUsername = (e) => {
+    setUserName(e);
+  };
+  const handleChangePassword = (e) => {
+    setPassword(e);
+  };
+  let url =
+    "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/accountsByUsername/" +
+    username +
+    "&" +
+    password;
+  const handleLogin = (username, password) => {
+    axios({
+      method: "post",
+      url: url,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    })
+      .then(function (response) {
+        const saveData = async () => {
+          try {
+            await AsyncStorage.setItem(
+              "accountId",
+              response.data.theAccount.accountId
+            );
+            await AsyncStorage.setItem(
+              "password",
+              response.data.theAccount.password
+            );
+            await AsyncStorage.setItem(
+              "customerName",
+              response.data.customerName
+            );
+            console.log("Data saved", response.data.theAccount.accountId);
+          } catch (e) {
+            console.log(e);
+          }
+        };
+
+        if (response.data.status === "400") {
+          setMsgErr(response.data.message);
+        } else {
+          navigation.navigate("HomeScreen");
+          saveData();
+         //dispatch({ type: "SET_LOGIN_STATUS", payload: true });
+        }
+      })
+      .catch(function (error) {
+        Toast.fail(
+          "Tài khoản hoặc mật khẩu không đúng, xin vui lòng thử lại",
+          1
+        );
+      });
+    // dispatch({ type: "HANDLE_LOGIN", username, password });
+  };
+  
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingLeft: 16,
-        paddingRight: 16,
-        backgroundColor: "white",
-      }}
-    >
-      <LoginScreen
-        haveAccountText="Quên mật khẩu?"
-        loginButtonStyle={{ backgroundColor: "#02b2b9" }}
-        style={{ marginTop: 100, backgroundColor: "white" }}
-        logoImageStyle={{
-          height: 65,
-          width: 65,
-          marginBottom: 50,
-          marginLeft: 4,
-        }}
-        //logoImageSource={require("../assets/logoshadow.png")}
-        onLoginPress={() => {
-          navigation.navigate("MoreScreen", { isLogin: true });
-        }}
-        onHaveAccountPress={() => {}}
-        onEmailChange={(email) => {}}
-        onPasswordChange={(password) => {}}
-      />
-      <TouchableWithoutFeedback
-        onPress={() => {
-          navigation.navigate("MoreScreen", { isLogin: false });
-        }}
-      >
-        <View style={styles.loginButtonStyle}>
-          <Text style={styles.loginTextStyle}>Bỏ qua đăng nhập</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
+    <Provider>
+      <View style={styles.container}>
+        <Text>{msgError}</Text>
+        <Input
+          variant="rounded"
+          placeholder="Round"
+          onChangeText={(e) => {
+            handleChangeUsername(e);
+          }}
+        />
+        <Input
+          variant="rounded"
+          placeholder="Round"
+          onChangeText={(e) => {
+            handleChangePassword(e);
+          }}
+          type="password"
+        />
+        <Button
+          onPress={() => {
+            handleLogin(username, password);
+           
+          }}
+        >
+          Login
+        </Button>
+      </View>
+    </Provider>
   );
 };
 
 const styles = StyleSheet.create({
-  loginButtonStyle: {
-    marginBottom: 20,
-    height: 40,
-    width: ScreenWidth * 0.6,
-    backgroundColor: "#e9eef4",
-    borderRadius: 8,
+  container: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    alignSelf: "center",
-    marginTop: 32,
-    elevation: 5,
-    shadowRadius: 8,
-    shadowOpacity: 0.3,
-    shadowColor: "#166080",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-  },
-  loginTextStyle: {
-    color: "#02b2b9",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 export default LoginScreenn;

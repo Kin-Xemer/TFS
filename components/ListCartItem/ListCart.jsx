@@ -30,9 +30,9 @@ const ListCart = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const items = useSelector((state) => state.cart);
-  const [discount, setDiscount] = useState(30);
+  const [discount, setDiscount] = useState(30000);
   const [deliveryFee, seyDeliveryFee] = useState(0);
-  const [servicesFee, setServicesFee] = useState(2);
+  const [servicesFee, setServicesFee] = useState(2000);
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
@@ -74,6 +74,7 @@ const ListCart = (props) => {
     };
   }, []);
 
+
   const listData = list.map((item, index) => ({
     id: `${index}`,
     name: item.name,
@@ -82,6 +83,7 @@ const ListCart = (props) => {
     price: item.price,
   }));
   let handleOnChangeText = (value) => {
+    console.log(value);
     setTextAreaCount(value.length);
     setNote(value)
   };
@@ -199,7 +201,7 @@ const ListCart = (props) => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        openDuration={400}
+        openDuration={450}
         height={screenHeight * 0.9}
         customStyles={{
           container: {
@@ -253,7 +255,7 @@ const ListCart = (props) => {
         />
         <Flex
           direction="row"
-          style={{ paddingBottom: paddingEle, margin: 16, alignItems: "center" }}
+          style={{ paddingBottom: 10, margin: 16, alignItems: "center" }}
         >
           <View>
             <Text
@@ -284,7 +286,6 @@ const ListCart = (props) => {
         style={{ position: "absolute" }}
         onPress={() => {
           navigation.goBack();
-          console.log("preded");
         }}
         activeOpacity={1}
       >

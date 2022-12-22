@@ -17,8 +17,9 @@ import FoodInformationScreen from "./screens/FoodInformationScreen";
 import CartScreen from "./screens/CartScreen";
 import LoginScreenn from "./screens/LoginScreenn";
 import MoreScreen from "./screens/MoreScreen";
+import MapScreen from "./screens/MapScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
-
+import { Provider } from "@ant-design/react-native";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const AppNavigator = () => {
@@ -32,6 +33,8 @@ const AppNavigator = () => {
       }}
     >
       <Stack.Screen name="TabNaviHome" component={TabNavigator} />  
+      <Stack.Screen name="MapScreen" component={MapScreen} />  
+      <Stack.Screen name="LoginScreenn" component={LoginScreenn} options={{gestureEnabled: false}}/>
     </Stack.Navigator>
   );
 };
@@ -48,7 +51,6 @@ const HomeScreen = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
-      <Stack.Screen name="LoginScreenn" component={LoginScreenn} />
       <Stack.Screen name="MoreScreen" component={MoreScreen} />
     </Stack.Navigator>
   );

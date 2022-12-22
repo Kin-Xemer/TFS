@@ -6,6 +6,9 @@ export const GET_NUMBER_CART = "GET_NUMBER_CART";
 export const ADD_CART = "ADD_CART";
 export const UPDATE_CART = "UPDATE_CART";
 export const DELETE_CART = "DELETE_CART";
+export const CHECK_LOGIN = "CHECK_LOGIN";
+export const SET_LOGIN_STATUS = "SET_LOGIN_STATUS";
+export const HANDLE_LOGIN = "HANDLE_LOGIN";
 
 export const actFetchProductsRequest = () => {
   return (dispatch) => {
@@ -62,5 +65,24 @@ export const DecreaseQuantity = (payload) => {
   return {
     type: "DECREASE_QUANTITY",
     payload,
+  };
+  
+};
+export const CheckLogin = () => {
+  return {
+    type: "CHECK_LOGIN",
+  };
+};
+export const SetLoginStatus = (payload) => {
+  return {
+    type: "SET_LOGIN_STATUS",
+    payload,
+  };
+};
+export const HandleLogin = (username, password) => {
+  return {
+    type: "HANDLE_LOGIN",
+    username,
+    password
   };
 };
