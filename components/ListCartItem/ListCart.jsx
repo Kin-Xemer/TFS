@@ -50,29 +50,29 @@ const ListCart = (props) => {
   });
 
 
- useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      (e) => {
-        setKeyboardVisible(true);
-        setKeyboardHeight(e.endCoordinates.height);
-        setPaddingEle(e.endCoordinates.height-100);
-      }
-    );
+//  useEffect(() => {
+//     const keyboardDidShowListener = Keyboard.addListener(
+//       'keyboardDidShow',
+//       (e) => {
+//         setKeyboardVisible(true);
+//         setKeyboardHeight(e.endCoordinates.height);
+//         setPaddingEle(e.endCoordinates.height-100);
+//       }
+//     );
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-        setPaddingEle(10); // or some other action
-      }
-    );
+//     const keyboardDidHideListener = Keyboard.addListener(
+//       'keyboardDidHide',
+//       () => {
+//         setKeyboardVisible(false);
+//         setPaddingEle(10); // or some other action
+//       }
+//     );
 
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+//     return () => {
+//       keyboardDidHideListener.remove();
+//       keyboardDidShowListener.remove();
+//     };
+//   }, []);
 
 
   const listData = list.map((item, index) => ({

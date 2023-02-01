@@ -19,6 +19,7 @@ const LoginScreenn = (props) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [msgError, setMsgErr] = useState("");
+  const [cart, setCart] = useState({});
   const dispatch = useDispatch();
   const handleChangeUsername = (e) => {
     setUserName(e);
@@ -31,7 +32,10 @@ const LoginScreenn = (props) => {
     username +
     "&" +
     password;
-  const handleLogin = (username, password) => {
+
+
+
+  const handleLogin = () => {
     axios({
       method: "post",
       url: url,
@@ -42,29 +46,19 @@ const LoginScreenn = (props) => {
         const saveData = async () => {
           try {
             await AsyncStorage.setItem(
-              "accountId",
-              response.data.theAccount.accountId
+              "customer",
+              JSON.stringify(response.data)
             );
-            await AsyncStorage.setItem(
-              "password",
-              response.data.theAccount.password
-            );
-            await AsyncStorage.setItem(
-              "customerName",
-              response.data.customerName
-            );
-            console.log("Data saved", response.data.theAccount.accountId);
           } catch (e) {
             console.log(e);
           }
         };
-
         if (response.data.status === "400") {
           setMsgErr(response.data.message);
         } else {
           navigation.navigate("HomeScreen");
           saveData();
-         //dispatch({ type: "SET_LOGIN_STATUS", payload: true });
+          //dispatch({ type: "SET_LOGIN_STATUS", payload: true });
         }
       })
       .catch(function (error) {
@@ -75,7 +69,7 @@ const LoginScreenn = (props) => {
       });
     // dispatch({ type: "HANDLE_LOGIN", username, password });
   };
-  
+
   return (
     <Provider>
       <View style={styles.container}>
@@ -98,10 +92,16 @@ const LoginScreenn = (props) => {
         <Button
           onPress={() => {
             handleLogin(username, password);
-           
           }}
         >
           Login
+        </Button>
+        <Button
+          onPress={() => {
+            navigation.navigate("HomeScreen")
+          }}
+        >
+          Go home
         </Button>
       </View>
     </Provider>

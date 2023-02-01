@@ -18,6 +18,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.belleandstone.foundz",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Xin quyền vị trí của bạn",
@@ -36,5 +37,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+   
   }
 }

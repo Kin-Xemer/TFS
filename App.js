@@ -6,11 +6,12 @@ import AppLoading from "expo-app-loading";
 import useFonts from "./Utils/useFonts";
 import { NavigationContainer } from "@react-navigation/native";
 import { NativeBaseProvider } from "native-base";
-import stores from "./redux/stores"
-import {Provider} from "react-redux"
+import stores from "./redux/stores";
+import { Provider } from "react-redux";
 import AppNavigator from "./AppNavigator";
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { THEME_COLOR } from './Utils/themeColor';
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import { THEME_COLOR } from "./Utils/themeColor";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs([
   "expo-app-loading is deprecated in favor of expo-splash-screen:",
 ]);
@@ -24,8 +25,8 @@ export default function App() {
     await useFonts();
   };
 
-  
-  
+
+
   if (!IsReady) {
     return (
       <AppLoading
@@ -38,11 +39,15 @@ export default function App() {
     return (
       <Provider store={stores}>
         <NavigationContainer>
-        <StatusBar animated={true} backgroundColor="white" barStyle="default" />
-        <NativeBaseProvider>
-          <AppNavigator />
-        </NativeBaseProvider>
-      </NavigationContainer>
+          <StatusBar
+            animated={true}
+            backgroundColor="white"
+            barStyle="default"
+          />
+          <NativeBaseProvider>
+            <AppNavigator />
+          </NativeBaseProvider>
+        </NavigationContainer>
       </Provider>
       // <View style={styles.container}>
       //   <Text>

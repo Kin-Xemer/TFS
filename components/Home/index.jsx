@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
-import { Flex, Spacer, Divider, VStack, Box, Badge, Button } from "native-base";
+import {
+  Flex,
+  Spacer,
+  Divider,
+  VStack,
+  Box,
+  Badge,
+  Button,
+  Spinner,
+} from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { connect, useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import {
   View,
@@ -25,37 +34,44 @@ import CardFood from "../CardFood";
 import getAllFoodAPI from "../../services/getAllFood";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
+import { fetchData } from "../../Utils/getFoodAPI";
+// import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [foods, setFood] = useState([]);
+  // const [foods, setFood] = useState([]);
   const [isLogin, setIsLogin] = useState(false);
   const [cusName, setCusName] = useState("");
-  const [location, setLocation] = useState(null);
-  const [address, setAddress] = useState("");
+  const [locateCoord, setLocateCoord] = useState(null);
+  const [myLocation, setMyLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
+  const [cart,setCart] = useState("")
+  const numberCart = useSelector((state) => state.cart.numberCart);
+  const address = useSelector(
+    (state) => state.address.address.formatted_address
+  );
+  const foods = useSelector((state) => state.food.food);
 
-  const getAllFood = () => {
-    axios
-      .get(
-        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/foods"
-      )
-      .then((response) => {
-        setFood(response.data);
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
-  };
   const checkLogin = async () => {
     try {
-      const cusName = await AsyncStorage.getItem("accountId");
-      if (cusName !== null) {
+      
+      const cus = await AsyncStorage.getItem("customer");
+      if (cus !== null) {
+        const customerParsed = JSON.parse(cus);
+        let cusName = customerParsed.theAccount.accountId;
+        console.log(cusName)
         setIsLogin(true);
         setCusName(cusName);
-        dispatch({ type: "GET_ACCOUNT", cusName });
+        
+      }else{
+        setCusName("")
       }
+      // if (cusName !== null) {
+      //   setIsLogin(true);
+      //   setCusName(cusName);
+      //   dispatch({ type: "GET_ACCOUNT", cusName });
+      // }
     } catch (e) {
       console.log(e);
       console.log("Failed to fetch the data from storage");
@@ -64,28 +80,48 @@ const Home = (props) => {
 
   const clearStorage = async () => {
     try {
-      await AsyncStorage.clear();
+      await AsyncStorage.removeItem("customer");
       setIsLogin(false);
       navigation.navigate("LoginScreenn");
     } catch (e) {
       alert("Failed to clear the async storage.");
     }
   };
+
+  // const geocodeAsync = () => {
+  //   console.log("dia chi", address);
+  //   axios
+  //     .get("https://maps.googleapis.com/maps/api/geocode/json", {
+  //       params: {
+  //         address: address,
+  //         key: GOOGLE_MAPS_APIKEY,
+  //       },
+  //     })
+  //     .then(function (res) {
+  //       setLocateCoord(res.data.results[0].geometry.location);
+  //     })
+  //     .catch((e) => {
+  //       console.log("error from homeIndex", e);
+  //     });
+  // };
+  useEffect(() => {
+    getLocation();
+  }, []);
   useEffect(() => {
     if (isFocused) {
-      getAllFood();
+      fetchData()(dispatch);
       checkLogin();
-      getLocation();
     }
   }, [isFocused]);
+
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
+      alert("Permission to access location was denied");
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    setMyLocation(location);
     axios
       .get(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -96,16 +132,14 @@ const Home = (props) => {
           GOOGLE_MAPS_APIKEY
       )
       .then((response) => {
-        setAddress(response.data.results[0].formatted_address);
+        dispatch({
+          type: "SET_ADDRESS",
+          payload: response.data.results[0],
+        });
       })
       .catch((err) => {
         console.log("err", err);
       });
-  };
-  const numberCart = useSelector((state) => state.cart.numberCart);
-
-  const getNumberCart = (state) => {
-    dispatch({ type: "GET_NUMBER_CART" });
   };
   return foods.length > 0 ? (
     <Flex style={styles.container}>
@@ -120,7 +154,8 @@ const Home = (props) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("MapScreen", {
-                location: location,
+                addresses: address,
+                locateCoord: myLocation,
               });
             }}
           >
@@ -205,11 +240,7 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood
-                  setCart={getNumberCart}
-                  isLogin={isLogin}
-                  food={item}
-                />
+                <CardFood isLogin={isLogin} food={item} />
               </TouchableOpacity>
             </Flex>
           )}
@@ -242,8 +273,13 @@ const Home = (props) => {
       </ScrollView>
     </Flex>
   ) : (
-    <View style={[styles.container, { backgroundColor: "red" }]}>
-      <Text>doi xiu</Text>
+    <View
+      style={[
+        styles.container,
+        { alignItems: "center", justifyContent: "center" },
+      ]}
+    >
+      <Spinner displayName="Loading posts" />
     </View>
   );
 };

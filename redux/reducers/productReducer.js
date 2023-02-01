@@ -5,24 +5,43 @@ import {
   DECREASE_QUANTITY,
   INCREASE_QUANTITY,
   DELETE_CART,
-  CHECK_LOGIN
 } from "../actions/productAction";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const initCart = {
   numberCart: 0,
   cartsItem: [],
 };
+
+
+// const saveCart = async (state) => {
+//   console.log("saved")
+//   try {
+//     const cus = await AsyncStorage.getItem("customer");
+//     if (cus !== null) {
+//       const customerParsed = JSON.parse(cus);
+//       let cusName = customerParsed.theAccount.accountId;
+//       await AsyncStorage.setItem(cusName, JSON.stringify(state));
+//     }
+//   } catch (e) {
+//     console.log(e);
+//     console.log("Failed to fetch the data from storage");
+//   }
+// };
 
 function todoProduct(state = initCart, action) {
   switch (action.type) {
     case GET_ALL_PRODUCT:
       return {
         ...state,
-        _products: action.payload,
       };
     case GET_NUMBER_CART:
       return {
         ...state,
+      };
+    case "APPLY_ITEM":
+      return {
+        ...state,
+        numberCart: action.payload.numberCart,
       };
     case ADD_CART:
       if (state.numberCart == 0) {
@@ -38,7 +57,8 @@ function todoProduct(state = initCart, action) {
         let check = false;
         state.cartsItem.map((item, key) => {
           if (item.id == action.payload.id) {
-            state.cartsItem[key].quantity = state.cartsItem[key].quantity + action.quantity;
+            state.cartsItem[key].quantity =
+              state.cartsItem[key].quantity + action.quantity;
             check = true;
           }
         });
@@ -53,6 +73,7 @@ function todoProduct(state = initCart, action) {
           state.cartsItem.push(_cart);
         }
       }
+    
       return {
         ...state,
         numberCart: state.numberCart + action.quantity,
@@ -69,7 +90,6 @@ function todoProduct(state = initCart, action) {
         state.numberCart--;
         state.cartsItem[action.payload].quantity--;
       }
-
       return {
         ...state,
       };

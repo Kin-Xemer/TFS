@@ -19,7 +19,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  let { setCart, food, isLogin } = props;
+  let { food, isLogin } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const addToCart = (food, quantity) => {

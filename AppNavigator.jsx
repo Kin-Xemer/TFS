@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text } from "react-native";
 import {
   createStackNavigator,
@@ -12,17 +12,23 @@ import {
   FontAwesome5,
   Feather,
 } from "@expo/vector-icons";
+import axios from "axios";
+import * as Location from "expo-location";
+import { useSelector, useDispatch } from "react-redux";
 import Home from "./screens/HomeScreen";
 import FoodInformationScreen from "./screens/FoodInformationScreen";
 import CartScreen from "./screens/CartScreen";
 import LoginScreenn from "./screens/LoginScreenn";
 import MoreScreen from "./screens/MoreScreen";
 import MapScreen from "./screens/MapScreen";
+import SelectStore from "./screens/SelectStore";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
+import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
-const AppNavigator = () => {
+const AppNavigator = () => {  
+  
   return (
     <Stack.Navigator
       screenOptions={{
@@ -34,6 +40,7 @@ const AppNavigator = () => {
     >
       <Stack.Screen name="TabNaviHome" component={TabNavigator} />  
       <Stack.Screen name="MapScreen" component={MapScreen} />  
+      <Stack.Screen name="SelectStore" component={SelectStore} />  
       <Stack.Screen name="LoginScreenn" component={LoginScreenn} options={{gestureEnabled: false}}/>
     </Stack.Navigator>
   );
@@ -48,7 +55,7 @@ const HomeScreen = () => {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Home" component={Home} options={{gestureEnabled: false}} />
       <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="MoreScreen" component={MoreScreen} />

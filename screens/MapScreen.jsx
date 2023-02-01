@@ -10,17 +10,21 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Provider } from "@ant-design/react-native";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import { useSelector, useDispatch } from "react-redux";
+import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useMemo, useRef, useCallback } from "react";
-import RBSheet from "react-native-raw-bottom-sheet";
-import { Entypo } from "@expo/vector-icons";
+import axios from "axios";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { Location } from "iconsax-react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
+import { useEffect } from "react";
+import { Button, Flex, Image, Spacer, Spinner } from "native-base";
+import { GOOGLE_STYLE } from "../services/ggMapStyle";
+import { convertLatLng } from "../Utils/convertLatLng";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -28,77 +32,223 @@ const LATITUDE_DELTA = 0.01;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const MapScreen = (props) => {
+  const dispatch = useDispatch();
+  const placeRef = useRef();
   const bottomSheetRef = useRef(null);
-  const snapPoints = useMemo(() => ["20%", "50%"], []);
-  const handleSheetChanges = useCallback((index) => {
-    setIndex(index)
-  }, []);
-  const refRBSheet = useRef();
+  const mapRef = useRef();
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const address = useSelector(
+    (state) => state.address.address
+  ).formatted_address;
+  const addressCoord = useSelector((state) => state.address.address);
+  const coordSelected = useSelector((state) => state.address.coord);
+  const [isSelectedAddress, setIsSelectedAddress] = useState(false);
   const [index, setIndex] = useState(0);
-  const [region, setRegion] = useState({
-    latitude: 10.884513464178374,
-    longitude: 106.6474637288397,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
-  });
-  const [pickupCords, setPickupCords] = useState({
-    latitude: 10.8845,
-    longitude: 106.6474,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
-  });
+  const [stringAddress, setStringAddress] = useState("");
+  const [resultAddress, setResultAddress] = useState();
+  const [myLocation, setMyLocation] = useState(route.params.locateCoord);
+  const [pickupCords, setPickupCords] = useState();
   const [droplocationCors, setDroplocationCors] = useState();
-  useMemo(() => {
-    setDroplocationCors({
-      latitude: 10.8448,
-      longitude: 106.67087,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    });
+  const [marginMylocation, setMarginMylocation] = useState(height * 0.2);
+  const [isDone, setIsDone] = useState(true);
+  const [selectedCoord, setSeletedCoord] = useState(null);
+  const [arraymarker, setArrayMarker] = useState([
+    {
+      latitude: 10.886084,
+      longitude: 106.649844,
+    },
+    {
+      latitude: 10.883429,
+      longitude: 106.648599,
+    },
+    {
+      latitude: 10.883058,
+      longitude: 106.64344,
+    },
+    {
+      latitude: 10.876694,
+      longitude: 106.644985,
+    },
+  ]);
+  const snapPoints = useMemo(() => ["23%", "43%"], []);
+  const placeIsFocus = placeRef.current?.isFocused();
+  const handleSheetChanges = useCallback((index) => {
+    setIndex(index);
   }, []);
-  // const [droplocationCors, setDroplocationCors] = useState({
-  //   latitude: 10.8448,
-  //   longitude: 106.67087,
-  //   latitudeDelta: LATITUDE_DELTA,
-  //   longitudeDelta: LONGITUDE_DELTA,
-  // });
-  const mapRef = useRef();
-  const onPressAddress = (data, details) => {
-    const lat = details.geometry.location.lat;
-    const lng = details.geometry.location.lng;
-    const destitation = {
+  useEffect(() => {
+    if (index === 0) {
+      setMarginMylocation(height * 0.2);
+    } else {
+      setMarginMylocation(height * 0.4);
+    }
+  }, [index]);
+  useEffect(() => {
+    if (isFocused) {
+      onLoadAddress();
+    }
+  }, []);
+
+  const handleOnPressMarker = (e) => {
+    // const lat = e.nativeEvent.coordinate.latitude;
+    // const lng = e.nativeEvent.coordinate.longitude;
+    const destination = convertLatLng(
+      e.nativeEvent.coordinate.latitude,
+      e.nativeEvent.coordinate.longitude
+    );
+    console.log(destination);
+    
+    mapRef.current.animateToRegion(destination);
+  };
+  const onLoadAddress = () => {
+    const lat = addressCoord.geometry.location.lat;
+    const lng = addressCoord.geometry.location.lng;
+    const destination = {
       latitude: lat,
       longitude: lng,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     };
-    setDroplocationCors(destitation);
-    setIndex(0)
-    mapRef.current.animateToRegion(destitation)
+    mapRef.current.animateToRegion(destination);
   };
+
+  const onHandleMyLocation = () => {
+    const lat = myLocation.coords.latitude;
+    const lng = myLocation.coords.longitude;
+    const destination = convertLatLng(lat, lng);
+    mapRef.current.animateToRegion(destination);
+  };
+
+  const onRegionChange = (result) => {
+    const lat = result.latitude;
+    const lng = result.longitude;
+    setIsDone(false);
+    axios
+      .get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          lat +
+          "," +
+          lng +
+          "&key=" +
+          GOOGLE_MAPS_APIKEY
+      )
+      .then((response) => {
+        setIsDone(true);
+        setResultAddress(response.data.results[0]);
+        setStringAddress(response.data.results[0].formatted_address);
+        placeRef.current?.setAddressText(response.data.results[0].formatted_address);
+      })
+      .catch((err) => {
+        console.log("err Mapscreen", err);
+      });
+  };
+
+  const handleSelectedAddress = () => {
+    setIsSelectedAddress(true);
+    const lat = resultAddress.geometry.location.lat;
+    const lng = resultAddress.geometry.location.lng;
+    const destination = convertLatLng(lat, lng);
+    // dispatch({
+    //   type: "SET_ADDRESS",
+    //   payload: resultAddress,
+    //   destination,
+    // });
+    setSeletedCoord(destination);
+    placeRef.current?.blur();
+    console.log(stringAddress);
+  };
+
+  const onPressAddress = (data, details) => {
+    const lat = details.geometry.location.lat;
+    const lng = details.geometry.location.lng;
+    const destination = convertLatLng(lat, lng);
+    // axios
+    //   .get(
+    //     "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+    //       lat +
+    //       "," +
+    //       lng +
+    //       "&key=" +
+    //       GOOGLE_MAPS_APIKEY
+    //   )
+    //   .then((response) => {
+    //     dispatch({
+    //       type: "SET_ADDRESS",
+    //       payload: response.data.results[0],
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log("err", err);
+    //   });
+    setDroplocationCors(destination);
+    setIndex(0);
+    mapRef.current.animateToRegion(destination);
+  };
+
+  // const onPressAddressStore = (data, details) => {
+  //   const lat = details.geometry.location.lat;
+  //   const lng = details.geometry.location.lng;
+  //   const destination = {
+  //     latitude: lat,
+  //     longitude: lng,
+  //     latitudeDelta: LATITUDE_DELTA,
+  //     longitudeDelta: LONGITUDE_DELTA,
+  //   };
+  //   setDroplocationCors(destination);
+  //   setIndex(0);
+  //   mapRef.current.animateToRegion(destination);
+  // };
+
   return (
     <View style={styles.container}>
       <MapView
         style={StyleSheet.absoluteFill}
         initialRegion={pickupCords}
         showsUserLocation={true}
+        onRegionChangeComplete={(result) => {
+          if (!isSelectedAddress) {
+            onRegionChange(result);
+          }
+        }}
         ref={mapRef}
+        mapType="mutedStandard"
+        userLocationCalloutEnabled={true}
+        onPress={() => {
+          placeRef.current?.blur();
+          setIndex(0);
+        }}
       >
-        {/* <Marker coordinate={pickupCords} /> */}
-        <Marker
-          coordinate={droplocationCors}
-          image={require("../assets/icons/Location-Bold-80px.png")}
-        />
-        <MapViewDirections
+        {selectedCoord ? (
+          <Marker
+            coordinate={selectedCoord}
+            image={require("../assets/icons/restaurant.png")}
+          />
+        ) : (
+          ""
+        )}
+
+        {arraymarker.map((item, index) => {
+          return (
+            <Marker
+              onPress={(e) => {
+                handleOnPressMarker(e);
+              }}
+              title="oke"
+              key={index}
+              coordinate={item}
+              image={require("../assets/icons/store_1.png")}
+            />
+          );
+        })}
+        {/* <MapViewDirections
           origin={pickupCords}
           destination={droplocationCors}
           apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={8}
-          strokeColor="#02b2b9"
+          strokeWidth={5}
+          strokeColor="#d83a3a"
           optimizeWaypoints={true}
+          
           onReady={(result) => {
             console.log(
               result.duration.toFixed(0) +
@@ -116,8 +266,41 @@ const MapScreen = (props) => {
               },
             });
           }}
-        />
+        /> */}
       </MapView>
+      <Flex
+        direction="row"
+        style={{
+          position: "absolute",
+          marginTop: height - marginMylocation - 90,
+          margin: 16,
+        }}
+      >
+        <Spacer />
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#f0f0f0",
+            width: 60,
+            height: 60,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 100,
+            shadowColor: "silver",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 1,
+            shadowRadius: 1.2,
+          }}
+          onPress={() => {
+            onHandleMyLocation();
+          }}
+          activeOpacity={1}
+        >
+          <MaterialIcons name="my-location" size={32} color="#494949" />
+        </TouchableOpacity>
+      </Flex>
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -125,14 +308,28 @@ const MapScreen = (props) => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
       >
-        <View style={styles.container}>
+        <View>
+          <Text>Chọn địa chỉ giao hàng</Text>
+        </View>
+        <View style={{backgroundColor:"white"}}>
+          {/* {isDone === true ? (
+            <Text>{stringAddress}</Text>
+          ) : (
+            <Spinner accessibilityLabel="Loading posts" />
+          )} */}
           <GooglePlacesAutocomplete
+            textInputProps={{
+              onFocus: () => {
+                setIndex(1);
+              },
+            }}
             placeholder="Nhập địa chỉ của bạn "
             fetchDetails={true}
             onPress={(data, details) => {
               // 'details' is provided when fetchDetails = true
               onPressAddress(data, details);
             }}
+            ref={placeRef}
             query={{
               key: GOOGLE_MAPS_APIKEY,
               language: "vi",
@@ -140,6 +337,7 @@ const MapScreen = (props) => {
             }}
           />
         </View>
+
       </BottomSheet>
 
       <TouchableOpacity
@@ -151,9 +349,67 @@ const MapScreen = (props) => {
       >
         <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
       </TouchableOpacity>
+
+      {!isSelectedAddress ? (
+        <View
+          style={{
+            position: "absolute",
+            marginTop: height / 2,
+            marginLeft: width / 2 - 8,
+          }}
+        >
+          {/* <FontAwesome5 name="map-pin" size={30} color={THEME_COLOR} /> */}
+          <Image
+            alt="check"
+            h={8}
+            w={8}
+            source={require("../assets/icons/restaurant.png")}
+          />
+        </View>
+      ) : (
+        ""
+      )}
+      <View
+        style={{
+          position: "absolute",
+          backgroundColor:"white",
+          bottom: 0,
+          alignSelf: "center",
+          width: width,
+          paddingBottom:44,
+          paddingHorizontal: 16,
+        }}
+      >
+        {!isSelectedAddress ? (
+          <Button
+            style={{
+              borderRadius: 10,
+              height: 44,
+              backgroundColor: THEME_COLOR,
+            }}
+            onPress={() => {
+              handleSelectedAddress();
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 17,
+                color: "white",
+                fontFamily: "Quicksand-Bold",
+              }}
+            >
+              Chọn địa điểm giao hàng
+            </Text>
+          </Button>
+        ) : (
+          ""
+        )}
+        <Spacer/>
+      </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
