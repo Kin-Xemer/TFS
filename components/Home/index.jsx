@@ -35,6 +35,7 @@ import getAllFoodAPI from "../../services/getAllFood";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 import { fetchData } from "../../Utils/getFoodAPI";
+import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -50,6 +51,9 @@ const Home = (props) => {
   const numberCart = useSelector((state) => state.cart.numberCart);
   const address = useSelector(
     (state) => state.address.address.formatted_address
+  );
+  const stringAddress = useSelector(
+    (state) => state.address.stringAddress
   );
   const foods = useSelector((state) => state.food.food);
 
@@ -106,6 +110,7 @@ const Home = (props) => {
   // };
   useEffect(() => {
     getLocation();
+    getRestaurant()(dispatch);
   }, []);
   useEffect(() => {
     if (isFocused) {
@@ -165,7 +170,7 @@ const Home = (props) => {
                 numberOfLines={1}
                 style={[styles.textStyle, styles.addressText]}
               >
-                {address}
+                {stringAddress === "" ? address : stringAddress}
               </Text>
             </Flex>
           </TouchableOpacity>

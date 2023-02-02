@@ -3,9 +3,9 @@ import {
   } from "../actions/productAction";
   
 const initState = {
-  address: "aa",
+  address: "",
   location: null,
-  coord:{}
+  stringAddress:""
 };
 
 function addressReducer(state = initState, action) {
@@ -15,8 +15,13 @@ function addressReducer(state = initState, action) {
         ...state,
         address: action.payload,
         location: action.location,
-        coord: action.destination
       };
+      case "SET_STRING_ADDRESS":
+        console.log("asasd", action.payload)
+        return {
+          ...state,
+          stringAddress: action.payload
+        }
     default:
       return state;
   }

@@ -1,14 +1,14 @@
 const initState = {
-    isLogin: false,
-    user: null,
+    order: false,
+    stringAddress: "aa",
   };
   
   function orderReducer(state = initState, action) {
     switch (action.type) {
-      case "GET_ORDER":
+      case "SET_ORDER":
         return {
           ...state,
-         food: action.payload
+          stringAddress: action.payload
         };
   
       default:

@@ -22,6 +22,8 @@ const ITEM_MARGIN_BOTTOM = 10;
 const ITEM_MARGIN_HORIZONTAL = 16;
 const HeaderComponent = (props) => {
   let { note, setVisible } = props;
+  const navigation = useNavigation();
+  const route = useRoute();
   return (
     <View style={{ backgroundColor: "white" }}>
       <Flex direction="row" style={{ paddingHorizontal: 16, paddingTop: 8 }}>
@@ -47,7 +49,7 @@ const HeaderComponent = (props) => {
         <Spacer />
         <TouchableWithoutFeedback
           onPress={() => {
-            console.log("click");
+            navigation.navigate("SelectStore");
           }}
         >
           <View style={styles.changeButton}>
