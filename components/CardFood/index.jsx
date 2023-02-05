@@ -15,15 +15,18 @@ import { convertPrice } from "../../Utils/convertPrice";
 import axios from "axios";
 import { useEffect } from "react";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import { getCartById } from '../../Utils/api/getCart';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
   let { food, isLogin } = props;
   const dispatch = useDispatch();
+  const account = useSelector((state) => state.account.account.accountId);
   const navigation = useNavigation();
   const addToCart = (food, quantity) => {
-    dispatch({ type: "ADD_CART", payload: food, quantity });
+   dispatch({ type: "ADD_CART", payload: food, quantity });
+  //  getCartById()(account);
   };
   return (
     <Box

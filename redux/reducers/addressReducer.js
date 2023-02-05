@@ -17,7 +17,6 @@ function addressReducer(state = initState, action) {
         location: action.location,
       };
       case "SET_STRING_ADDRESS":
-        console.log("asasd", action.payload)
         return {
           ...state,
           stringAddress: action.payload

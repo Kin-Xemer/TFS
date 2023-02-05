@@ -18,7 +18,7 @@ function loginReducer(state = initState, action) {
       console.log(action.type);
       return {
         ...state,
-        isLogin: payload,
+        user: payload,
       };
     default:
       return state;

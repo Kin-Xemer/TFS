@@ -49,6 +49,7 @@ const MapScreen = (props) => {
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
+  
   useEffect(() => {
     if (isFocused) {
       onLoadAddress();

@@ -7,41 +7,36 @@ import {
   DELETE_CART,
 } from "../actions/productAction";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { getCartById } from "../../Utils/api/getCart";
 const initCart = {
   numberCart: 0,
   cartsItem: [],
+  updateCart: null,
+  cart: {},
+  account: {},
 };
 
-
-// const saveCart = async (state) => {
-//   console.log("saved")
-//   try {
-//     const cus = await AsyncStorage.getItem("customer");
-//     if (cus !== null) {
-//       const customerParsed = JSON.parse(cus);
-//       let cusName = customerParsed.theAccount.accountId;
-//       await AsyncStorage.setItem(cusName, JSON.stringify(state));
-//     }
-//   } catch (e) {
-//     console.log(e);
-//     console.log("Failed to fetch the data from storage");
-//   }
-// };
+const saveCart = (state) => {
+  const newCart = { ...state.cart, cartItems: state.cartsItem };
+  axios
+    .put(
+      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
+      newCart
+    )
+    .then((res) => {
+      console.log("done save cart in productReducer");
+      //  getCartById()(res.data.id)
+    });
+};
 
 function todoProduct(state = initCart, action) {
   switch (action.type) {
-    case GET_ALL_PRODUCT:
-      return {
-        ...state,
-      };
     case GET_NUMBER_CART:
       return {
         ...state,
-      };
-    case "APPLY_ITEM":
-      return {
-        ...state,
-        numberCart: action.payload.numberCart,
+        updateCart: saveCart(state),
       };
     case ADD_CART:
       if (state.numberCart == 0) {
@@ -51,6 +46,7 @@ function todoProduct(state = initCart, action) {
           name: action.payload.foodName,
           image: action.payload.imgUrl,
           price: action.payload.price,
+          subTotal: action.payload.price * action.quantity,
         };
         state.cartsItem.push(cart);
       } else {
@@ -69,20 +65,22 @@ function todoProduct(state = initCart, action) {
             name: action.payload.foodName,
             image: action.payload.imgUrl,
             price: action.payload.price,
+            subTotal: action.payload.price * action.quantity,
           };
           state.cartsItem.push(_cart);
         }
       }
-    
       return {
         ...state,
         numberCart: state.numberCart + action.quantity,
+        updateCart: saveCart(state),
       };
     case INCREASE_QUANTITY:
       state.numberCart++;
       state.cartsItem[action.payload].quantity++;
       return {
         ...state,
+        updateCart: saveCart(state),
       };
     case DECREASE_QUANTITY:
       let quantity = state.cartsItem[action.payload].quantity;
@@ -92,6 +90,7 @@ function todoProduct(state = initCart, action) {
       }
       return {
         ...state,
+        updateCart: saveCart(state),
       };
     case DELETE_CART:
       let quantity_ = state.cartsItem[action.payload].quantity;
@@ -101,6 +100,27 @@ function todoProduct(state = initCart, action) {
         cartsItem: state.cartsItem.filter((item) => {
           return item.id != state.cartsItem[action.payload].id;
         }),
+        // updateCart: saveCart(state)
+      };
+    case "SET_CART":
+      return {
+        ...state,
+        cartsItem: action.payload,
+        cart: action.cart,
+      };
+    case "SET_CARTITEM":
+      return {
+        ...state,
+        cartsItem: action.payload,
+      };
+    case "LOGOUT":
+      return {
+        ...state,
+        numberCart: 0,
+        cartsItem: [],
+        updateCart: null,
+        cart: {},
+        account: {},
       };
     default:
       return state;

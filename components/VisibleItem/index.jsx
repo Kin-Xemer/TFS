@@ -21,7 +21,7 @@ const ITEM_MARGIN_HORIZONTAL = 16;
 const VisibleItem = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { data,onDelete } = props;
+  const { data, onDelete } = props;
   const increaseQuantity = () =>
     dispatch({ type: "INCREASE_QUANTITY", payload: data.item.id });
   const decreaseQuantity = () =>
@@ -55,6 +55,20 @@ const VisibleItem = (props) => {
             >
               {data.item.name}
             </Text>
+            <View>
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: "#999",
+                    fontSize: 12,
+                    fontFamily: "Quicksand-SemiBold",
+                  },
+                ]}
+              >
+                Ghi chu
+              </Text>
+            </View>
             <View style={{ marginBottom: 8 }}>
               <Text
                 style={[
@@ -94,9 +108,7 @@ const VisibleItem = (props) => {
                     </View>
                   </TouchableWithoutFeedback>
                 ) : (
-                  <TouchableWithoutFeedback
-                  onPress={onDelete}
-                  >
+                  <TouchableWithoutFeedback onPress={onDelete}>
                     <View>
                       <MinusCirlce
                         size="25"
@@ -115,7 +127,11 @@ const VisibleItem = (props) => {
                   }}
                 >
                   <View>
-                    <AddCircle size="25" color={THEME_COLOR} variant="Outline" />
+                    <AddCircle
+                      size="25"
+                      color={THEME_COLOR}
+                      variant="Outline"
+                    />
                   </View>
                 </TouchableWithoutFeedback>
               </Flex>

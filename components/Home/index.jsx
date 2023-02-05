@@ -36,6 +36,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 import { fetchData } from "../../Utils/getFoodAPI";
 import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
+import { getCartById } from '../../Utils/api/getCart';
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -47,29 +48,33 @@ const Home = (props) => {
   const [locateCoord, setLocateCoord] = useState(null);
   const [myLocation, setMyLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
-  const [cart,setCart] = useState("")
+  const [isFindDone, setIsFindDone] = useState(false);
+  const [counter, setCounter] = useState(0);
   const numberCart = useSelector((state) => state.cart.numberCart);
+  const cart = useSelector((state) => state.cart.cartsItem);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
-  const stringAddress = useSelector(
-    (state) => state.address.stringAddress
-  );
+  const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
-
+const handleLogout = () =>{
+  clearStorage();
+}
   const checkLogin = async () => {
     try {
-      
       const cus = await AsyncStorage.getItem("customer");
       if (cus !== null) {
         const customerParsed = JSON.parse(cus);
         let cusName = customerParsed.theAccount.accountId;
-        console.log(cusName)
+        getCartById()(dispatch,cusName);
+        dispatch({
+          type: "SET_ACCOUNT",
+          payload: customerParsed.theAccount,
+        });
         setIsLogin(true);
         setCusName(cusName);
-        
-      }else{
-        setCusName("")
+      } else {
+        setCusName("");
       }
       // if (cusName !== null) {
       //   setIsLogin(true);
@@ -82,10 +87,16 @@ const Home = (props) => {
     }
   };
 
+
+const applyCart = () => {
+
+}
+
   const clearStorage = async () => {
     try {
       await AsyncStorage.removeItem("customer");
       setIsLogin(false);
+      dispatch({ type:"LOGOUT"})
       navigation.navigate("LoginScreenn");
     } catch (e) {
       alert("Failed to clear the async storage.");
@@ -118,8 +129,16 @@ const Home = (props) => {
       checkLogin();
     }
   }, [isFocused]);
+  //setinterval
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     fetchData()(dispatch);
+  //   }, 500);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const getLocation = async () => {
+    setIsFindDone(false);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       alert("Permission to access location was denied");
@@ -137,6 +156,7 @@ const Home = (props) => {
           GOOGLE_MAPS_APIKEY
       )
       .then((response) => {
+        setIsFindDone(true);
         dispatch({
           type: "SET_ADDRESS",
           payload: response.data.results[0],
@@ -170,7 +190,11 @@ const Home = (props) => {
                 numberOfLines={1}
                 style={[styles.textStyle, styles.addressText]}
               >
-                {stringAddress === "" ? address : stringAddress}
+                {isFindDone === true
+                  ? stringAddress === ""
+                    ? address
+                    : stringAddress
+                  : "Đang tìm vị trí của bạn .."}
               </Text>
             </Flex>
           </TouchableOpacity>
@@ -269,7 +293,7 @@ const Home = (props) => {
             style={styles.buttonStyle}
             activeOpacity={0.8}
             onPress={() => {
-              clearStorage();
+              handleLogout();
             }}
           >
             <Text style={styles.buttonText}>dang xuat</Text>

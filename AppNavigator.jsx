@@ -22,6 +22,7 @@ import LoginScreenn from "./screens/LoginScreenn";
 import MoreScreen from "./screens/MoreScreen";
 import MapScreen from "./screens/MapScreen";
 import SelectStore from "./screens/SelectStore";
+import RegisterScreen from "./screens/RegisterScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
@@ -42,6 +43,7 @@ const AppNavigator = () => {
       <Stack.Screen name="MapScreen" component={MapScreen} />  
       <Stack.Screen name="SelectStore" component={SelectStore} />  
       <Stack.Screen name="LoginScreenn" component={LoginScreenn} options={{gestureEnabled: false}}/>
+      <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
     </Stack.Navigator>
   );
 };
