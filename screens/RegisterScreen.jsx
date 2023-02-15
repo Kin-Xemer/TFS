@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     paddingTop: 50,
-    backgroundColor:"white",
+    backgroundColor: "white",
     flex: 1,
     paddingHorizontal: 16,
   },

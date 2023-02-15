@@ -14,16 +14,26 @@ import { Flex, Image, Spacer } from "native-base";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
 import { convertPrice } from "../../Utils/convertPrice";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import { getCartById } from "../../Utils/api/getCart";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 15;
 const ITEM_MARGIN_BOTTOM = 10;
 const ITEM_MARGIN_HORIZONTAL = 16;
 const VisibleItem = (props) => {
+  const username = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
+  const cart = useSelector(
+    (state) => state.cart.cartsItems
+  );
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [check, setCheck] = useState(false);
   const { data, onDelete } = props;
-  const increaseQuantity = () =>
+  const increaseQuantity = () => {
+    
     dispatch({ type: "INCREASE_QUANTITY", payload: data.item.id });
+  };
   const decreaseQuantity = () =>
     dispatch({ type: "DECREASE_QUANTITY", payload: data.item.id });
   return (

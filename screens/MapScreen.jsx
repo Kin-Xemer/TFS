@@ -25,6 +25,7 @@ import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
 import { useEffect } from "react";
 import { Button, Flex, Image, Spacer } from "native-base";
 import { convertLatLng } from "../Utils/convertLatLng";
+import {getNearlyRestaurant} from '../Utils/api/getNearlyRestaurant';
 
 const { width, height } = Dimensions.get("window");
 const MapScreen = (props) => {
@@ -49,21 +50,12 @@ const MapScreen = (props) => {
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
-  
+
   useEffect(() => {
     if (isFocused) {
       onLoadAddress();
     }
   }, []);
-
-  const handleSelectedStore = (item) => {
-    setSelectedStore(item.restaurantLocation);
-    setIndex(1);
-    mapRef.current.animateToRegion(
-      convertLatLng(item.latitude, item.longitude)
-    );
-    placeRef.current.blur();
-  };
 
   const handleFocusText = (text) => {
     if (text.length === 0) {
@@ -136,6 +128,8 @@ const MapScreen = (props) => {
     const lng = resultAddress.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
+
+    getNearlyRestaurant(stringAddress, restaurant, dispatch);
     placeRef.current?.setAddressText(stringAddress);
     placeRef.current?.blur();
   };

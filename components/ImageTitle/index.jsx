@@ -41,7 +41,7 @@ const ImageTitle = (props) => {
         setListEvent(response.data);
       })
       .catch((err) => {
-        console.log("err", err);
+        console.log("ImageTitle", err);
       });
   };
 

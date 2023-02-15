@@ -118,6 +118,7 @@ const LoginForm = () => {
         </Flex>
         <Stack space={4} w="100%" alignItems="center">
           <Input
+           keyboardType="numeric"
             type=""
             fontFamily={FONT.MEDIUM}
             fontSize={15}

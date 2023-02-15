@@ -5,17 +5,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  TouchableWithoutFeedback,
-  ImageBackground,
-  Button,
 } from "react-native";
-import { Modal } from "native-base";
+import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Flex, TextArea, Spacer, Divider, Image } from "native-base";
-import { Location, ArrowDown2 } from "iconsax-react-native";
 import Dash from "react-native-dash";
 import RBSheet from "react-native-raw-bottom-sheet";
 import VisibleItem from "../VisibleItem";
@@ -24,23 +20,30 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import FooterComponent from "./FooterComponent";
 import HeaderComponent from "./HeaderConponent";
 import { convertPrice } from "../../Utils/convertPrice";
-import { Keyboard } from "react-native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const items = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart.cart);
+  const username = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
+  const customerId = useSelector((state) => state.account.account.customerId);
+  const nearlyRestaurant = useSelector((state) => state.restaurant.nearRestaurant);
+  const stringAddress = useSelector((state) => state.address.stringAddress);
+  const address = useSelector(
+    (state) => state.address.address.formatted_address
+  );
   const [discount, setDiscount] = useState(30000);
   const [deliveryFee, seyDeliveryFee] = useState(0);
   const [servicesFee, setServicesFee] = useState(2000);
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [paddingEle, setPaddingEle] = useState(10);
+  const [, setKeyboardVisible] = useState(false);
   const refRBSheet = useRef();
-  let { deleteItem } = props;
+  let { deleteItem, isFocused } = props;
   let list = [];
   let totalCart = 0;
 
@@ -49,31 +52,34 @@ const ListCart = (props) => {
     list.push(items.cartsItem[item]);
   });
 
+  useEffect(() => {
+    if (isFocused) {
+    }
+  }, [isFocused]);
 
-//  useEffect(() => {
-//     const keyboardDidShowListener = Keyboard.addListener(
-//       'keyboardDidShow',
-//       (e) => {
-//         setKeyboardVisible(true);
-//         setKeyboardHeight(e.endCoordinates.height);
-//         setPaddingEle(e.endCoordinates.height-100);
-//       }
-//     );
+  //  useEffect(() => {
+  //     const keyboardDidShowListener = Keyboard.addListener(
+  //       'keyboardDidShow',
+  //       (e) => {
+  //         setKeyboardVisible(true);
+  //         setKeyboardHeight(e.endCoordinates.height);
+  //         setPaddingEle(e.endCoordinates.height-100);
+  //       }
+  //     );
 
-//     const keyboardDidHideListener = Keyboard.addListener(
-//       'keyboardDidHide',
-//       () => {
-//         setKeyboardVisible(false);
-//         setPaddingEle(10); // or some other action
-//       }
-//     );
+  //     const keyboardDidHideListener = Keyboard.addListener(
+  //       'keyboardDidHide',
+  //       () => {
+  //         setKeyboardVisible(false);
+  //         setPaddingEle(10); // or some other action
+  //       }
+  //     );
 
-//     return () => {
-//       keyboardDidHideListener.remove();
-//       keyboardDidShowListener.remove();
-//     };
-//   }, []);
-
+  //     return () => {
+  //       keyboardDidHideListener.remove();
+  //       keyboardDidShowListener.remove();
+  //     };
+  //   }, []);
 
   const listData = list.map((item, index) => ({
     id: `${index}`,
@@ -85,7 +91,77 @@ const ListCart = (props) => {
   let handleOnChangeText = (value) => {
     console.log(value);
     setTextAreaCount(value.length);
-    setNote(value)
+    setNote(value);
+  };
+
+  function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(
+      date.getTime() + date.getTimezoneOffset() * 60 * 1000
+    );
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+    newDate.setHours(hours - offset);
+    return newDate;
+  }
+
+  const convertDateTime = () => {
+    let dt = new Date();
+    let date = convertUTCDateToLocalDate(dt).toISOString();
+    let day = date.slice(0, 10);
+    let time = date.slice(11, 22);
+    return time + " " + day;
+  };
+
+  const createOrder = (orders) => {
+    axios
+      .post(
+        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders",
+        orders
+      )
+      .then((res) => {
+        const newCart = {
+          ...cart,
+          cartItems: [],
+          numberCart: 0,
+          totalPrice: 0,
+        };
+        axios
+          .put(
+            "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
+            newCart
+          )
+          .then((res) => {
+            navigation.navigate("Home");
+          })
+          .catch((err) => {
+            console.log("Update Cart: ", err);
+          });
+      })
+      .catch((err) => {
+        console.log("Create Order: ", err);
+      });
+  };
+
+  const handleCheckout = () => {
+    let url =
+      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/customers/cart/" +
+      username;
+    axios.get(url).then((response) => {
+      const cartData = response.data;
+      let order = {
+        totalPrice: cartData.totalPrice,
+        totalQuantity: cartData.numberCart,
+        paymentMethod: "ZaloPay",
+        deliveryAddress: stringAddress === "" ? address : stringAddress,
+        customerId: customerId,
+        itemList: cartData.cartItems,
+        restaurantId: nearlyRestaurant.restaurantId,
+        status: "pending",
+      };
+      console.log(order);
+      createOrder(order);
+    });
+    // navigation.goBack();
   };
   const renderItem = (data, rowMap) => {
     return (
@@ -179,7 +255,7 @@ const ListCart = (props) => {
               style={styles.buttonStyle}
               activeOpacity={0.8}
               onPress={() => {
-                navigation.goBack();
+                handleCheckout();
               }}
             >
               <Text style={styles.buttonText}> Thanh toán</Text>
@@ -225,7 +301,7 @@ const ListCart = (props) => {
         />
         <View>
           <TextArea
-          style={{ fontFamily: "Quicksand-Regular" }}
+            style={{ fontFamily: "Quicksand-Regular" }}
             placeholder="Viết vài ghi chú cho tài xế nhé"
             size="md"
             paddingLeft="4"

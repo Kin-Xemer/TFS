@@ -22,11 +22,13 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CardFood = (props) => {
   let { food, isLogin } = props;
   const dispatch = useDispatch();
-  const account = useSelector((state) => state.account.account.accountId);
+  const username = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
   const navigation = useNavigation();
-  const addToCart = (food, quantity) => {
-   dispatch({ type: "ADD_CART", payload: food, quantity });
-  //  getCartById()(account);
+  const addToCart = async (food, quantity) => {
+   await dispatch({ type: "ADD_CART", payload: food, quantity });
+   await getCartById()(dispatch,username);
   };
   return (
     <Box
@@ -52,7 +54,8 @@ const CardFood = (props) => {
       >
         <Image
           h={110}
-          borderRadius={15}
+          borderTopRightRadius={15}
+          borderTopLeftRadius={15}
           source={{
             uri: food.imgUrl,
           }}
@@ -108,7 +111,7 @@ const CardFood = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    width: 145,
+    width: 155,
     backgroundColor: "white",
     marginRight: 16,
     shadowColor: "silver",

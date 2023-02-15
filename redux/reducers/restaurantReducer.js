@@ -2,6 +2,7 @@ import { SET_ADDRESS } from "../actions/productAction";
 
 const initState = {
   restaurant: [],
+  nearRestaurant: {},
 };
 
 function restaurantReducer(state = initState, action) {
@@ -10,6 +11,11 @@ function restaurantReducer(state = initState, action) {
       return {
         ...state,
         restaurant: action.payload,
+      };
+    case "SET_NEARLY_RESTAURANT":
+      return {
+        ...state,
+        nearRestaurant: action.payload,
       };
     default:
       return state;

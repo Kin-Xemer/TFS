@@ -8,18 +8,6 @@ export const getCartById = () => {
     axios
       .get(url)
       .then((response) => {
-        // const saveData = async () => {
-        //   try {
-        //     console.log("response from getCartByID", response.data.cartItems)
-        //     await AsyncStorage.setItem(
-        //       "cart",
-        //       JSON.stringify(response.data.cartItems)
-        //     );
-        //   } catch (e) {
-        //     console.log(e);
-        //   }
-        // };
-        // saveData();
         let cartItemArray = []
           response.data.cartItems.map((item, index) =>{
             let cartItem = {
@@ -36,6 +24,7 @@ export const getCartById = () => {
             type: "SET_CART",
             payload: cartItemArray,
             cart: response.data,
+            numberCart: response.numberCart
           });
 
       })

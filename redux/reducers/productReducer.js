@@ -8,8 +8,6 @@ import {
 } from "../actions/productAction";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { getCartById } from "../../Utils/api/getCart";
 const initCart = {
   numberCart: 0,
   cartsItem: [],
@@ -19,7 +17,21 @@ const initCart = {
 };
 
 const saveCart = (state) => {
-  const newCart = { ...state.cart, cartItems: state.cartsItem };
+  let sum = 0;
+  state.cartsItem.map((item) => {
+    sum = sum + item.quantity;
+  });
+  let totalPrice = 0;
+  state.cartsItem.map((item) => {
+    totalPrice = totalPrice + item.subTotal;
+  });
+  console.log(totalPrice);
+  const newCart = {
+    ...state.cart,
+    cartItems: state.cartsItem,
+    numberCart: sum,
+    totalPrice: totalPrice,
+  };
   axios
     .put(
       "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
@@ -55,6 +67,9 @@ function todoProduct(state = initCart, action) {
           if (item.id == action.payload.id) {
             state.cartsItem[key].quantity =
               state.cartsItem[key].quantity + action.quantity;
+            state.cartsItem[key].subTotal =
+              state.cartsItem[key].subTotal +
+              state.cartsItem[key].price * action.quantity;
             check = true;
           }
         });
@@ -74,10 +89,13 @@ function todoProduct(state = initCart, action) {
         ...state,
         numberCart: state.numberCart + action.quantity,
         updateCart: saveCart(state),
+        cart: newCart,
       };
     case INCREASE_QUANTITY:
-      state.numberCart++;
       state.cartsItem[action.payload].quantity++;
+      state.cartsItem[action.payload].subTotal =
+        state.cartsItem[action.payload].subTotal +
+        state.cartsItem[action.payload].price;
       return {
         ...state,
         updateCart: saveCart(state),
@@ -85,8 +103,10 @@ function todoProduct(state = initCart, action) {
     case DECREASE_QUANTITY:
       let quantity = state.cartsItem[action.payload].quantity;
       if (quantity > 1) {
-        state.numberCart--;
         state.cartsItem[action.payload].quantity--;
+        state.cartsItem[action.payload].subTotal =
+          state.cartsItem[action.payload].subTotal -
+          state.cartsItem[action.payload].price;
       }
       return {
         ...state,
@@ -94,19 +114,24 @@ function todoProduct(state = initCart, action) {
       };
     case DELETE_CART:
       let quantity_ = state.cartsItem[action.payload].quantity;
+      let newCart = [];
+      state.cartsItem.filter((item) => {
+        if (item.id != state.cartsItem[action.payload].id) {
+          newCart.push(item);
+        }
+      });
+      state.cartsItem = newCart;
       return {
         ...state,
-        numberCart: state.numberCart - quantity_,
-        cartsItem: state.cartsItem.filter((item) => {
-          return item.id != state.cartsItem[action.payload].id;
-        }),
-        // updateCart: saveCart(state)
+        updateCart: saveCart(state),
       };
     case "SET_CART":
+      action.numberCart;
       return {
         ...state,
         cartsItem: action.payload,
         cart: action.cart,
+        numberCart: action.numberCart,
       };
     case "SET_CARTITEM":
       return {
@@ -122,6 +147,11 @@ function todoProduct(state = initCart, action) {
         cart: {},
         account: {},
       };
+    //   case "SET_ACCOUNT":
+    // return {
+    //   ...state,
+    //   account: action.payload,
+    // };
     default:
       return state;
   }

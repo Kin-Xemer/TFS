@@ -3,10 +3,7 @@ import {
   Flex,
   Spacer,
   Divider,
-  VStack,
-  Box,
   Badge,
-  Button,
   Spinner,
 } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -21,17 +18,14 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ArrowDown2 } from "iconsax-react-native";
 import ImageTitle from "../ImageTitle/index";
 import SearchBar from "../SearchBar/index";
 import { Feather, Entypo } from "@expo/vector-icons";
 import Categories from "../Categories/index";
 import Title from "../Title";
 import CardFood from "../CardFood";
-import getAllFoodAPI from "../../services/getAllFood";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 import { fetchData } from "../../Utils/getFoodAPI";
@@ -49,9 +43,7 @@ const Home = (props) => {
   const [myLocation, setMyLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
   const [isFindDone, setIsFindDone] = useState(false);
-  const [counter, setCounter] = useState(0);
   const numberCart = useSelector((state) => state.cart.numberCart);
-  const cart = useSelector((state) => state.cart.cartsItem);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
@@ -69,7 +61,7 @@ const handleLogout = () =>{
         getCartById()(dispatch,cusName);
         dispatch({
           type: "SET_ACCOUNT",
-          payload: customerParsed.theAccount,
+          payload: customerParsed,
         });
         setIsLogin(true);
         setCusName(cusName);
@@ -88,9 +80,6 @@ const handleLogout = () =>{
   };
 
 
-const applyCart = () => {
-
-}
 
   const clearStorage = async () => {
     try {
@@ -103,22 +92,7 @@ const applyCart = () => {
     }
   };
 
-  // const geocodeAsync = () => {
-  //   console.log("dia chi", address);
-  //   axios
-  //     .get("https://maps.googleapis.com/maps/api/geocode/json", {
-  //       params: {
-  //         address: address,
-  //         key: GOOGLE_MAPS_APIKEY,
-  //       },
-  //     })
-  //     .then(function (res) {
-  //       setLocateCoord(res.data.results[0].geometry.location);
-  //     })
-  //     .catch((e) => {
-  //       console.log("error from homeIndex", e);
-  //     });
-  // };
+
   useEffect(() => {
     getLocation();
     getRestaurant()(dispatch);
@@ -163,7 +137,7 @@ const applyCart = () => {
         });
       })
       .catch((err) => {
-        console.log("err", err);
+        console.log("Get Location", err);
       });
   };
   return foods.length > 0 ? (

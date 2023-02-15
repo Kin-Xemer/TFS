@@ -22,6 +22,7 @@ import LoginScreenn from "./screens/LoginScreenn";
 import MoreScreen from "./screens/MoreScreen";
 import MapScreen from "./screens/MapScreen";
 import SelectStore from "./screens/SelectStore";
+import OrderScreen from "./screens/OrderScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
@@ -93,7 +94,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="OrderScreen"
-        component={HomeScreen}
+        component={OrderScreen}
         options={{
           tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Đơn hàng</Text>,
           tabBarIcon: ({ color }) => (
