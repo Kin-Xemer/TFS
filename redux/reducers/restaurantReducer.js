@@ -1,4 +1,3 @@
-import { SET_ADDRESS } from "../actions/productAction";
 
 const initState = {
   restaurant: [],

@@ -1,0 +1,26 @@
+import { THEME_COLOR } from "../Utils/themeColor";
+
+export const customStyles = {
+    stepIndicatorSize: 40,
+    currentStepIndicatorSize: 50,
+    separatorStrokeWidth: 2,
+    currentStepStrokeWidth: 3,
+    stepStrokeCurrentColor: THEME_COLOR,
+    stepStrokeWidth: 2,
+    stepStrokeFinishedColor: THEME_COLOR,
+    stepStrokeUnFinishedColor: "#aaaaaa",
+    separatorFinishedColor: THEME_COLOR,
+    separatorUnFinishedColor: "#aaaaaa",
+    stepIndicatorFinishedColor: THEME_COLOR,
+    stepIndicatorUnFinishedColor: "#ffffff",
+    stepIndicatorCurrentColor: "#ffffff",
+    stepIndicatorLabelFontSize: 13,
+    currentStepIndicatorLabelFontSize: 13,
+    stepIndicatorLabelCurrentColor: THEME_COLOR,
+    stepIndicatorLabelFinishedColor: "#ffffff",
+    stepIndicatorLabelUnFinishedColor: "#aaaaaa",
+    labelColor: "#999999",
+    labelSize: 13,
+    currentStepLabelColor: THEME_COLOR,
+    borderRadiusSize: 50,
+};

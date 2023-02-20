@@ -66,23 +66,11 @@ const FooterComponent = (props) => {
         </Flex>
         <Divider style={{ marginTop: 8 }} thickness={3} bg="#e4e2e2" />
       </View>
-      <Flex direction="row" style={styles.voucherView}>
-        <Image
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/3258/3258499.png",
-          }}
-          alt="imahe"
-          style={{ width: 45, height: 35 }}
-        />
-
-        <View style={{ marginLeft: 20 }}>
+      <Flex style={styles.voucherView}>
+        <View style={{ marginLeft: 8 }}>
           <Text style={{ fontSize: 14, fontFamily: "Quicksand-Bold" }}>
-            Đã áp dụng 2 Voucher
+            Chọn phương thức thanh toán
           </Text>
-        </View>
-        <Spacer />
-        <View>
-          <ArrowCircleRight2 size="24" color={THEME_COLOR} />
         </View>
       </Flex>
 
@@ -176,8 +164,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   voucherView: {
-    alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     borderWidth: 0.5,
     borderColor: "silver",
     borderRadius: 15,

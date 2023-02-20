@@ -95,7 +95,7 @@ const CardFood = (props) => {
               onPress={() => {
                 if (isLogin === true) {
                   addToCart(food, 1);
-                  Toast.success("Đã thêm vào giỏ hàng", 1);
+                  Toast.success("Đã thêm vào giỏ hàng", 0.5);
                 } else {
                   navigation.navigate("LoginScreenn");
                 }

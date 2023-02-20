@@ -1,12 +1,9 @@
 import {
-  GET_ALL_PRODUCT,
-  GET_NUMBER_CART,
   ADD_CART,
   DECREASE_QUANTITY,
   INCREASE_QUANTITY,
   DELETE_CART,
 } from "../actions/productAction";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 const initCart = {
   numberCart: 0,
@@ -25,31 +22,25 @@ const saveCart = (state) => {
   state.cartsItem.map((item) => {
     totalPrice = totalPrice + item.subTotal;
   });
-  console.log(totalPrice);
   const newCart = {
     ...state.cart,
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
   };
+  initCart.numberCart = sum;
   axios
     .put(
       "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
       newCart
     )
     .then((res) => {
-      console.log("done save cart in productReducer");
-      //  getCartById()(res.data.id)
+     
     });
 };
 
 function todoProduct(state = initCart, action) {
   switch (action.type) {
-    case GET_NUMBER_CART:
-      return {
-        ...state,
-        updateCart: saveCart(state),
-      };
     case ADD_CART:
       if (state.numberCart == 0) {
         let cart = {

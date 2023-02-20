@@ -81,7 +81,7 @@ const LoginForm = () => {
               JSON.stringify(response.data.cart.cartItems)
             );
           } catch (e) {
-            console.log("error from login save storage", e);
+            console.log("Save storage", e);
           }
         };
         navigation.navigate("HomeScreen");
@@ -173,7 +173,6 @@ const LoginForm = () => {
             py="3"
             onPress={() => {
               handleLogin();
-              console.log(username + "" + password);
             }}
             bg={COLOR}
             borderRadius={BORDER_RADIUS}

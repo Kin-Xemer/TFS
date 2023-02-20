@@ -129,7 +129,7 @@ const MapScreen = (props) => {
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
 
-    getNearlyRestaurant(stringAddress, restaurant, dispatch);
+    getNearlyRestaurant(stringAddress, dispatch);
     placeRef.current?.setAddressText(stringAddress);
     placeRef.current?.blur();
   };

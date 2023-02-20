@@ -23,7 +23,9 @@ import MoreScreen from "./screens/MoreScreen";
 import MapScreen from "./screens/MapScreen";
 import SelectStore from "./screens/SelectStore";
 import OrderScreen from "./screens/OrderScreen";
+import MyOrderDetailScreen from "./screens/MyOrderDetailScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import PaymentScreen from "./screens/PaymentScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
@@ -45,6 +47,8 @@ const AppNavigator = () => {
       <Stack.Screen name="SelectStore" component={SelectStore} />  
       <Stack.Screen name="LoginScreenn" component={LoginScreenn} options={{gestureEnabled: false}}/>
       <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
+      <Stack.Screen name="MyOrderDetailScreen" component={MyOrderDetailScreen} />
+      <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
     </Stack.Navigator>
   );
 };
@@ -62,6 +66,7 @@ const HomeScreen = () => {
       <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="MoreScreen" component={MoreScreen} />
+
     </Stack.Navigator>
   );
 };
@@ -123,13 +128,6 @@ const TabNavigator = () => {
         }}
       />
     </Tab.Navigator>
-  );
-};
-const SettingScreen = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="MoreScreen" component={HomeScreen} />
-    </Stack.Navigator>
   );
 };
 

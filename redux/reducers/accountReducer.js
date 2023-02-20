@@ -6,6 +6,7 @@ customerName: "",
 
 function accountReducer(state = initState, action) {
 switch (action.type) {
+
   case "SET_ACCOUNT":
     return {
       ...state,

@@ -24,7 +24,7 @@ export const getCartById = () => {
             type: "SET_CART",
             payload: cartItemArray,
             cart: response.data,
-            numberCart: response.numberCart
+            numberCart: response.data.numberCart
           });
 
       })

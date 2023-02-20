@@ -1,6 +1,4 @@
 import { GET_ALL_FOOD } from "../actions/productAction";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 const initState = {
   food: [],
 };

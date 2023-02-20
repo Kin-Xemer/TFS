@@ -89,7 +89,6 @@ const ListCart = (props) => {
     price: item.price,
   }));
   let handleOnChangeText = (value) => {
-    console.log(value);
     setTextAreaCount(value.length);
     setNote(value);
   };
@@ -158,7 +157,6 @@ const ListCart = (props) => {
         restaurantId: nearlyRestaurant.restaurantId,
         status: "pending",
       };
-      console.log(order);
       createOrder(order);
     });
     // navigation.goBack();

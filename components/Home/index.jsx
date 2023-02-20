@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Flex,
-  Spacer,
-  Divider,
-  Badge,
-  Spinner,
-} from "native-base";
+import { Flex, Spacer, Divider, Badge, Spinner, Image, Button } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -30,7 +24,8 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 import { fetchData } from "../../Utils/getFoodAPI";
 import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
-import { getCartById } from '../../Utils/api/getCart';
+import { getCartById } from "../../Utils/api/getCart";
+import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -47,25 +42,34 @@ const Home = (props) => {
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
+  const restaurant = useSelector((state) => state.restaurant.restaurant);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
-const handleLogout = () =>{
-  clearStorage();
-}
+  const handleLogout = () => {
+    clearStorage();
+  };
   const checkLogin = async () => {
     try {
       const cus = await AsyncStorage.getItem("customer");
       if (cus !== null) {
         const customerParsed = JSON.parse(cus);
         let cusName = customerParsed.theAccount.accountId;
-        getCartById()(dispatch,cusName);
+        getCartById()(dispatch, cusName);
         dispatch({
           type: "SET_ACCOUNT",
           payload: customerParsed,
         });
+        dispatch({
+          type: "SET_ORDER_STATUS",
+          payload: null,
+        });
         setIsLogin(true);
         setCusName(cusName);
       } else {
+        dispatch({
+          type: "SET_ORDER_STATUS",
+          payload: "",
+        });
         setCusName("");
       }
       // if (cusName !== null) {
@@ -79,19 +83,21 @@ const handleLogout = () =>{
     }
   };
 
-
-
   const clearStorage = async () => {
     try {
+      dispatch({
+        type: "SET_ORDER_STATUS",
+        payload: "",
+      });
       await AsyncStorage.removeItem("customer");
+
       setIsLogin(false);
-      dispatch({ type:"LOGOUT"})
+      dispatch({ type: "LOGOUT" });
       navigation.navigate("LoginScreenn");
     } catch (e) {
       alert("Failed to clear the async storage.");
     }
   };
-
 
   useEffect(() => {
     getLocation();
@@ -135,6 +141,10 @@ const handleLogout = () =>{
           type: "SET_ADDRESS",
           payload: response.data.results[0],
         });
+        getNearlyRestaurant(
+          response.data.results[0].formatted_address,
+          dispatch
+        );
       })
       .catch((err) => {
         console.log("Get Location", err);
@@ -174,6 +184,7 @@ const handleLogout = () =>{
           </TouchableOpacity>
         </View>
         <Spacer />
+
         <View style={styles.cartView}>
           <Badge // bg="red.400"
             colorScheme="danger"
@@ -272,6 +283,11 @@ const handleLogout = () =>{
           >
             <Text style={styles.buttonText}>dang xuat</Text>
           </TouchableOpacity>
+          <Button
+            onPress={() => {
+              console.log(numberCart)
+            }}
+          >Check button</Button>
         </View>
       </ScrollView>
     </Flex>
