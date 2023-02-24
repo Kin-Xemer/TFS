@@ -27,55 +27,39 @@ import { Setting4 } from "iconsax-react-native";
 import Toast from "react-native-toast-message";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import RatingBar from "../RatingBar";
+import axios from "axios";
+import CardFood from "../CardFood";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const HEADER_MAX_HEIGHT = screenHeight * 0.23;
-const HEADER_MIN_HEIGHT = 114;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-const     InformationView = () => {
+const InformationView = (props) => {
+  const { listFood, listFoodFilter, filterSelected, sliceFood } = props;
   const toast = useToast();
   const route = useRoute();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [food, setFood] = useState(route.params.food);
   const [quantity, setQuantity] = useState(1);
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
+  const [filterFood, setFilterFood] = useState([]);
+  useEffect(() => {
+    if (filterSelected.name === "Tất cả") {
+      setFilterFood(listFood);
+    } else {
+      setFilterFood(filterSelected.foodList);
+    }
+  }, [filterSelected.name]);
 
   return (
     <View style={styles.inforView}>
-      <Flex direction="row" width={"100%"} style={{backgroundColor: "white", paddingVertical: 4}}>
-        <TouchableOpacity>
-          <View style={styles.filterButtonView}>        
-              <Setting4 size="18" color="#000" />
+      {filterFood.slice(0, sliceFood).map((item, index) => {
+        return (
+          <View key={index} style={{ marginBottom: 50 }}>
+            {/* <Text>{item.id} . {item.foodName} : <Text>{item.price}</Text></Text> */}
+            <CardFood style={styles.item} food={item} />
           </View>
-        </TouchableOpacity>
-        <Spacer />
-        <TouchableOpacity>
-          <View style={styles.filterButtonView}>
-            <Text style={{ fontFamily: "Quicksand-Regular", fontSize:15 }}>Ngày lễ</Text>
-          </View>
-        </TouchableOpacity>
-        <Spacer />
-        <TouchableOpacity>
-          <View style={styles.filterButtonView}>
-            <Text style={{ fontFamily: "Quicksand-Regular", fontSize:15 }}>Khuyến mãi</Text>
-          </View>
-        </TouchableOpacity>
-        <Spacer />
-        <TouchableOpacity>
-          <View style={styles.filterButtonView}>
-            <Text style={{ fontFamily: "Quicksand-Regular", fontSize:15 }}>Giá</Text>
-          </View>
-        </TouchableOpacity>
-        <Spacer />
-        <TouchableOpacity>
-          <View style={styles.filterButtonView}>
-            <Text style={{ fontFamily: "Quicksand-Regular", fontSize:15 }}>Loc theo</Text>
-          </View> 
-        </TouchableOpacity>
-      </Flex>
+        );
+      })}
     </View>
   );
 };
@@ -86,6 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   filterButtonView: {
+    width: "100%",
     marginHorizontal: 3,
     paddingHorizontal: 12,
     height: 35,
@@ -101,6 +86,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
     paddingTop: 26,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
   },
 });
 export default InformationView;

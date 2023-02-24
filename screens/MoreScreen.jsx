@@ -13,15 +13,17 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
-import { AddCircle, MinusCirlce } from "iconsax-react-native";
+import { AddCircle, Setting4 } from "iconsax-react-native";
 import { Flex, Spacer, Text, Heading, Button, useToast } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
 import Toast from "react-native-toast-message";
 import { THEME_COLOR } from "../Utils/themeColor";
 import InformationView from "../components/InformationView";
+import FilterView from "../components/FilterView";
+import SearchBar from "../components/SearchBar";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-const IMAGE_HEIGHT = (9*screenWidth)/16
+const IMAGE_HEIGHT = (9 * screenWidth) / 16;
 const HEADER_MAX_HEIGHT = IMAGE_HEIGHT;
 const HEADER_MIN_HEIGHT = 114;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
@@ -31,28 +33,26 @@ const FoodInformationScreen = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [food, setFood] = useState(route.params.food);
+  const [currentPos, setCurrentPos] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [sliceFood,setSliceFood] = useState(10);
+  const [isScrollBottom,setIsScrollBottom] = useState(false);
+  const [filterSelected, setFilterSelected] = useState({
+    name: "Tất cả",
+    id: "1000",
+    foodList: food,
+  });
   const [contentOffset, setContentOffset] = useState(0);
-  const [totalPrice, setTotalPrice] = useState();
-
   const id = "test-toast";
 
-  const addToCart = (food, quantity) => {
-    dispatch({ type: "ADD_CART", payload: food, quantity });
-  };
-
-  const addQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-  const minusQuantity = () => {
-    setQuantity(quantity - 1);
-  };
   useEffect(() => {
-    setTotalPrice(food.price * quantity);
-  }, [quantity]);
+    ScrollViewRef.current.scrollTo({
+      y: 175,
+    });
+  }, [filterSelected]);
 
   const scrollY = useRef(new Animated.Value(0)).current;
-
+  const ScrollViewRef = useRef();
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, -HEADER_SCROLL_DISTANCE],
@@ -80,6 +80,12 @@ const FoodInformationScreen = (props) => {
     outputRange: [0, 0, -8],
     extrapolate: "clamp",
   });
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+  };
+
   return (
     <Flex style={styles.container}>
       <View style={{ height: 36 }}></View>
@@ -116,18 +122,17 @@ const FoodInformationScreen = (props) => {
           }}
         >
           <View>
-            {contentOffset > 200 ? (
-              <Flex direction="row">
-                <Entypo name="chevron-left" size={36} color="black" />
-                {contentOffset > 330 ? (
-                  <View style={{ justifyContent: "center" }}>
-                    <Text style={[styles.textStyle, { fontSize: 18 }]}>
-                      {food.foodName}
-                    </Text>
+            {contentOffset > 128 ? (
+              <Flex direction="row" style={{alignItems:"center"}}>
+                <Entypo name="chevron-left" size={38} color="black" />
+                <View style={{ width: "80%" }}>
+                  <SearchBar />
+                </View>
+                <TouchableOpacity>
+                  <View style={{marginHorizontal: 6}}>
+                    <Setting4 size="26" color="#000" />
                   </View>
-                ) : (
-                  ""
-                )}
+                </TouchableOpacity>
               </Flex>
             ) : (
               <Entypo name="chevron-left" size={36} color="white" />
@@ -137,57 +142,57 @@ const FoodInformationScreen = (props) => {
       </Animated.View>
 
       <Animated.ScrollView
+        ref={ScrollViewRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
+          paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 20,
+          minHeight: screenHeight,
         }}
         scrollEventThrottle={16}
+        stickyHeaderIndices={[0]}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
-            listener: (event) =>
-              setContentOffset(event.nativeEvent.contentOffset.y),
+            listener: (event) => {
+              setContentOffset(event.nativeEvent.contentOffset.y);
+              setIsScrollBottom(false);
+              // if (ifCloseToTop(event.nativeEvent)) {
+              //   console.log(event.nativeEvent.contentOffset.y)
+              //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
+              //   // ScrollViewRef.current.scrollTo({
+              //   //   y:
+              //   //   140
+              //   // });
+              // }
+              if (isCloseToBottom(event.nativeEvent)) {
+                let number = sliceFood;
+                setSliceFood(sliceFood+10)
+                setIsScrollBottom(true)
+              }
+            },
           }
         )}
       >
-        <InformationView/>
+        <FilterView
+          setFilterSelected={setFilterSelected}
+          filterSelected={filterSelected}
+          listFood={food}
+        />
+        <InformationView
+        sliceFood={sliceFood}
+          listFood={food}
+          filterSelected={filterSelected}
+          listFoodFiltered={food}
+        />
       </Animated.ScrollView>
-      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          activeOpacity={0.8}
-          onPress={() => {
-            addToCart(food, quantity);
-            if (!toast.isActive(id)) {
-              toast.show({
-                id,
-                duration: 2000,
-                placement: "top",
-                render: () => {
-                  return (
-                    <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
-                      Đã thêm vào giỏ hàng
-                    </Box>
-                  );
-                },
-              });
-            }
-            navigation.goBack();
-          }}
-        >
-          <Text style={styles.buttonText}>
-            Thêm - {convertPrice(totalPrice)} đ
-          </Text>
-        </TouchableOpacity>
-      </View>
     </Flex>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 44,
+    paddingTop: 55,
     backgroundColor: "white",
   },
   textStyle: {
@@ -195,18 +200,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  inforView: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingHorizontal: 16,
-    paddingTop: 26,
-  },
-  textFoodContent: {
-    fontFamily: "Quicksand-SemiBold",
-    fontSize: 12,
-    color: "#6E798C",
-  },
   titleBox: {
     width: "100%",
     alignItems: "flex-start",
@@ -216,32 +209,6 @@ const styles = StyleSheet.create({
   textDescription: {
     fontFamily: "Quicksand-Bold",
     fontSize: 15,
-  },
-  textDesDetail: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 14,
-    color: "#A4A4A4",
-  },
-  description: {
-    marginTop: 16,
-  },
-  buttonStyle: {
-    borderRadius: 15,
-    backgroundColor: THEME_COLOR,
-    height: 47,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 18,
-    color: "#fff",
-  },
-  ratingContainer: {
-    width: "100%",
-    height: 135,
-    borderRadius: 15,
-    backgroundColor: "#F4F3F3",
   },
   header: {
     position: "absolute",
@@ -263,8 +230,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   topBar: {
-    marginTop: 50,
-    height: 50,
+    marginTop: 60,
+    height: 80,
     position: "absolute",
     top: 0,
     left: 0,

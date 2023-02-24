@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Flex, Spacer, Divider, Badge, Spinner, Image, Button } from "native-base";
+import {
+  Flex,
+  Spacer,
+  Divider,
+  Badge,
+  Spinner,
+  Image,
+  Button,
+} from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -44,7 +52,7 @@ const Home = (props) => {
   );
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const stringAddress = useSelector((state) => state.address.stringAddress);
-  const foods = useSelector((state) => state.food.food);
+  const foods = useSelector((state) => state.food.food)
   const handleLogout = () => {
     clearStorage();
   };
@@ -102,6 +110,7 @@ const Home = (props) => {
   useEffect(() => {
     getLocation();
     getRestaurant()(dispatch);
+   
   }, []);
   useEffect(() => {
     if (isFocused) {
@@ -126,6 +135,10 @@ const Home = (props) => {
     }
     let location = await Location.getCurrentPositionAsync({});
     setMyLocation(location);
+    dispatch({
+      type: "SET_LOCAL",
+      payload: location,
+    });
     axios
       .get(
         "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -213,7 +226,7 @@ const Home = (props) => {
               padding: 4,
             }}
             onPress={() => {
-              navigation.navigate("CartScreen");
+              navigation.navigate("CartScreen", { locateCoord: myLocation });
             }}
           >
             <View>
@@ -222,7 +235,7 @@ const Home = (props) => {
           </TouchableWithoutFeedback>
         </View>
       </Flex>
-      <View style={{ marginBottom: 6 }}>
+      <View style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}>
         <SearchBar />
       </View>
       <ScrollView
@@ -245,7 +258,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods.slice(0, 10)}
+          data={foods}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -258,7 +271,7 @@ const Home = (props) => {
               </TouchableOpacity>
             </Flex>
           )}
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={item=> item.id}
         />
         <Title textTitle="Bán chạy" />
         {/* <FlatList
@@ -285,9 +298,11 @@ const Home = (props) => {
           </TouchableOpacity>
           <Button
             onPress={() => {
-              console.log(numberCart)
+              console.log(foods);
             }}
-          >Check button</Button>
+          >
+            Check button
+          </Button>
         </View>
       </ScrollView>
     </Flex>
@@ -298,7 +313,7 @@ const Home = (props) => {
         { alignItems: "center", justifyContent: "center" },
       ]}
     >
-      <Spinner displayName="Loading posts" />
+      <Spinner accessibilityLabel="Loading posts" />
     </View>
   );
 };

@@ -21,9 +21,13 @@ const BORDER_RADIUS = 15;
 const ITEM_MARGIN_BOTTOM = 10;
 const ITEM_MARGIN_HORIZONTAL = 16;
 const HeaderComponent = (props) => {
-  let { note, setVisible } = props;
+  let { note, setVisible, locateCoord } = props;
   const navigation = useNavigation();
   const route = useRoute();
+  const address = useSelector(
+    (state) => state.address.address.formatted_address
+  );
+  const stringAddress = useSelector((state) => state.address.stringAddress);
   return (
     <View style={{ backgroundColor: "white" }}>
       <Flex direction="row" style={{ paddingHorizontal: 16, paddingTop: 8 }}>
@@ -41,7 +45,7 @@ const HeaderComponent = (props) => {
                 numberOfLines={1}
                 style={[styles.textStyle, styles.addressText]}
               >
-                Đại học FPT, Quận 9, Thành Phố Hồ Chí Minh,
+                {stringAddress === "" ? address : stringAddress}
               </Text>
             </View>
           </Flex>
@@ -49,7 +53,10 @@ const HeaderComponent = (props) => {
         <Spacer />
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate("SelectStore");
+            navigation.navigate("MapScreen", {
+              addresses: address,
+              locateCoord: locateCoord,
+            });
           }}
         >
           <View style={styles.changeButton}>
@@ -102,7 +109,7 @@ const HeaderComponent = (props) => {
             backgroundColor: "#f0f0f0",
             height: 30,
             justifyContent: "center",
-          
+
             borderRadius: 5,
           }}
         >

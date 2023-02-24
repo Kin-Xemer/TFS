@@ -64,7 +64,7 @@ const ImageTitle = (props) => {
             <View key={item.eventId} style={styles.container}>
               <Image
                 source={{
-                  uri: item.image_url,
+                  uri: item.image_url !== "" ? item.image_url : "https://live.staticflickr.com/65535/52482097903_8da5e0c69d_b.jpg" ,
                 }}           
                 alt="Alternate Text"           
                 height={IMAGE_HEIGHT}

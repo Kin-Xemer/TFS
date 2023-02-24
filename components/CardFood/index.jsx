@@ -42,7 +42,7 @@ const CardFood = (props) => {
       <View
         style={{
           width: "100%",
-          height: 110,
+          height: 115,
           shadowColor: "silver",
           shadowOffset: {
             width: 0,
@@ -111,9 +111,9 @@ const CardFood = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    width: 155,
+    width: 183,
     backgroundColor: "white",
-    marginRight: 16,
+    marginRight: 15,
     shadowColor: "silver",
     shadowOffset: {
       width: 0,

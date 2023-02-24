@@ -5,13 +5,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, TextArea, Spacer, Divider, Image } from "native-base";
+import { Flex, TextArea, Spacer, Spinner, Image } from "native-base";
 import Dash from "react-native-dash";
 import RBSheet from "react-native-raw-bottom-sheet";
 import VisibleItem from "../VisibleItem";
@@ -24,13 +25,18 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const route = useRoute();
   const items = useSelector((state) => state.cart);
   const cart = useSelector((state) => state.cart.cart);
+  const [isDone, setIsDone] = useState(true);
+  const [orderId, setOrderId] = useState();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
   const customerId = useSelector((state) => state.account.account.customerId);
-  const nearlyRestaurant = useSelector((state) => state.restaurant.nearRestaurant);
+  const nearlyRestaurant = useSelector(
+    (state) => state.restaurant.nearRestaurant
+  );
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const address = useSelector(
     (state) => state.address.address.formatted_address
@@ -41,7 +47,7 @@ const ListCart = (props) => {
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
-  const [, setKeyboardVisible] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const refRBSheet = useRef();
   let { deleteItem, isFocused } = props;
   let list = [];
@@ -112,53 +118,90 @@ const ListCart = (props) => {
   };
 
   const createOrder = (orders) => {
-    axios
-      .post(
-        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders",
-        orders
-      )
-      .then((res) => {
-        const newCart = {
-          ...cart,
-          cartItems: [],
-          numberCart: 0,
-          totalPrice: 0,
-        };
-        axios
-          .put(
-            "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
-            newCart
-          )
-          .then((res) => {
-            navigation.navigate("Home");
-          })
-          .catch((err) => {
-            console.log("Update Cart: ", err);
+    if (orders.paymentMethod === "cash") {
+      setIsDone(false);
+      axios
+        .post(
+          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders",
+          orders
+        )
+        .then((res) => {
+          const newCart = {
+            ...cart,
+            cartItems: [],
+            numberCart: 0,
+            totalPrice: 0,
+          };
+          axios
+            .put(
+              "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
+              newCart
+            )
+            .then((res) => {
+              setIsDone(true);
+              navigation.navigate("Home");
+            })
+            .catch((err) => {
+              console.log("Update Cart: ", err);
+            });
+        })
+        .catch((err) => {
+          console.log("Create Order: ", err);
+        });
+    } else if (orders.paymentMethod === "ZaloPay") {
+      setIsDone(false);
+      axios
+        .post(
+          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders/zaloPay",
+          orders
+        )
+        .then((res) => {
+          setIsDone(true);
+          navigation.navigate("ZaloPaymentScreen", {
+            paymentResponse: res.data,
           });
-      })
-      .catch((err) => {
-        console.log("Create Order: ", err);
-      });
+        })
+        .catch((err) => {
+          console.log("Create Order: ", err);
+        });
+    }
+  };
+
+  const handlePaymentMethod = (method) => {
+    console.log("method", method);
+    setPaymentMethod(method);
   };
 
   const handleCheckout = () => {
-    let url =
-      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/customers/cart/" +
-      username;
-    axios.get(url).then((response) => {
-      const cartData = response.data;
-      let order = {
-        totalPrice: cartData.totalPrice,
-        totalQuantity: cartData.numberCart,
-        paymentMethod: "ZaloPay",
-        deliveryAddress: stringAddress === "" ? address : stringAddress,
-        customerId: customerId,
-        itemList: cartData.cartItems,
-        restaurantId: nearlyRestaurant.restaurantId,
-        status: "pending",
-      };
-      createOrder(order);
-    });
+    axios
+      .get(
+        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders"
+      )
+      .then((res) => {
+        let maxId = Math.max(...res.data.map((item) => item.id));
+        let second = new Date().getSeconds();
+        let minute = new Date().getMinutes()*100;
+        let date = new Date().getDate()*1000
+        let url =
+          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/customers/cart/" +
+          username;
+        axios.get(url).then((response) => {
+          const cartData = response.data;
+          let order = {
+            id: maxId + 1 + second + date + minute,
+            totalPrice: cartData.totalPrice,
+            totalQuantity: cartData.numberCart,
+            paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
+            deliveryAddress: stringAddress === "" ? address : stringAddress,
+            customerId: customerId,
+            itemList: cartData.cartItems,
+            restaurantId: nearlyRestaurant.restaurantId,
+            status: "pending",
+          };
+         createOrder(order);
+          //console.log(order)
+        });
+      });
     // navigation.goBack();
   };
   const renderItem = (data, rowMap) => {
@@ -216,12 +259,14 @@ const ListCart = (props) => {
                 totalCart={totalCart}
                 deliveryFee={deliveryFee}
                 servicesFee={servicesFee}
+                setPaymentMethod={handlePaymentMethod}
               />
             }
             ListHeaderComponent={
               <HeaderComponent
                 setVisible={() => refRBSheet.current.open()}
                 note={note}
+                locateCoord={route.params.locateCoord}
               />
             }
             contentContainerStyle={{
@@ -230,34 +275,44 @@ const ListCart = (props) => {
           />
           <View style={styles.paymentView}>
             <Flex direction="row" style={styles.paymentContentView}>
-              <Image
-                source={require("../../assets/Icon-app_blue-bg.png")}
-                alt="imahe"
-                style={{ width: 30, height: 30 }}
-              />
-              <Flex style={{ marginLeft: 8 }}>
-                <Text style={{ fontSize: 12, fontFamily: "Quicksand-Regular" }}>
-                  ZaloPay
-                </Text>
-                <Text style={{ fontSize: 15, fontFamily: "Quicksand-Bold" }}>
-                  {convertPrice(
-                    totalCart + servicesFee + deliveryFee - discount
-                  )}{" "}
-                  đ
-                </Text>
-              </Flex>
+              <Text style={{ fontSize: 15, fontFamily: "Quicksand-Medium" }}>
+                Tổng tiền
+              </Text>
+              <Spacer />
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontFamily: "Quicksand-Bold",
+                  color: THEME_COLOR,
+                }}
+              >
+                {convertPrice(totalCart + servicesFee + deliveryFee - discount)}{" "}
+                đ
+              </Text>
             </Flex>
           </View>
           <View style={{ paddingHorizontal: 16, backgroundColor: "white" }}>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              activeOpacity={0.8}
-              onPress={() => {
-                handleCheckout();
-              }}
-            >
-              <Text style={styles.buttonText}> Thanh toán</Text>
-            </TouchableOpacity>
+            {isDone ? (
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                activeOpacity={0.8}
+                onPress={() => {
+                  handleCheckout();
+                }}
+              >
+                <Text style={styles.buttonText}> Thanh toán</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.buttonStyleLoading}
+                activeOpacity={0.8}
+              >
+                <Flex flexDirection={"row"}>
+                  <ActivityIndicator size="small" color="white" />
+                  <Text style={styles.buttonText}> Đang thanh toán</Text>
+                </Flex>
+              </TouchableOpacity>
+            )}
           </View>
         </>
       ) : (
@@ -390,6 +445,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  buttonStyleLoading: {
+    borderRadius: 15,
+    backgroundColor: "#ff9b9b",
+    height: 47,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   buttonText: {
     fontFamily: "Quicksand-Bold",
     fontSize: 18,
@@ -404,6 +466,7 @@ const styles = StyleSheet.create({
   },
   paymentContentView: {
     paddingVertical: 10,
+    alignItems: "flex-end",
   },
   note: {
     padding: 16,

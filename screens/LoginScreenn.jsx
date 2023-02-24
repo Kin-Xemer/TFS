@@ -10,6 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 import BottomSheet from "@gorhom/bottom-sheet";
 import LoginForm from "../components/LoginForm/LoginForm";
+import { THEME_COLOR } from "../Utils/themeColor";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const LoginScreenn = (props) => {
   const navigation = useNavigation();
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
     flex: 1,
-    backgroundColor: "#d83a3a",
+    backgroundColor: THEME_COLOR,
   },
 });
 export default LoginScreenn;

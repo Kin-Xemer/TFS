@@ -75,6 +75,7 @@ const OrderScreen = (props) => {
         setOrders(res.data);
         if (status === null && status !== "") {
           setFilterOrder(res.data);
+          setValue("all")
         } else if (status === "") {
           setFilterOrder([]);
         }

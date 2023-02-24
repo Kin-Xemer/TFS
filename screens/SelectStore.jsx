@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   storeItemSelected: {
     width: "100%",
     borderWidth: 1.5,
-    borderColor: "#d83a3a",
+    borderColor: THEME_COLOR,
     backgroundColor: "#ffefef",
     marginBottom: 4,
     justifyContent: "center",

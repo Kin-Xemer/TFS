@@ -56,7 +56,7 @@ const MyOrderDetailScreen = (props) => {
       <MyOrderItem order={order} />
       <Spacer />
       {/* {order.status === "done" || order.status === "deny" ? (
-        <OrderButton bgColor={"#d83a3a"}
+        <OrderButton bgColor={THEME_COLOR}
         buttonText={"Đặt lại"}
         buttonHandler={() => {
           console.log("press");

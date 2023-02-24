@@ -11,20 +11,41 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Flex, Badge, Spacer, Divider, Image } from "native-base";
-import { ArrowCircleRight2, ArrowDown2 } from "iconsax-react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import { Flex, Badge, Spacer, Divider, Image, Box } from "native-base";
+import {
+  ArrowCircleRight2,
+  ArrowDown2,
+  DollarCircle,
+} from "iconsax-react-native";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import DetailTextStyle from "./DetailTextStyle";
+import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FooterComponent = (props) => {
-  const { totalCart, discount, deliveryFee, servicesFee } = props;
+  const { totalCart, discount, deliveryFee, servicesFee, setPaymentMethod } = props;
   const navigation = useNavigation();
+  const [payment, setPayment] = useState("cash");
+  let arrayPayment = [
+    {
+      payment: "cash",
+      textPayment: "Thanh toán khi nhận hàng",
+      url: require("../../assets/icons/cash.png"),
+      size: 35
+    },
+    {
+      payment: "ZaloPay",
+      textPayment: "Thanh toán qua ví ZaloPay",
+      url: require("../../assets/icons/zalo.png"),
+      size: 35
+    },
+  ];
   return (
     <ImageBackground
       source={require("../../assets/nen.png")}
       resizeMode="stretch"
-      style={{ paddingBottom: 20, backgroundColor: "red" }}
+      style={{ paddingBottom: 20 }}
     >
       <View style={{ backgroundColor: "white" }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
@@ -67,10 +88,52 @@ const FooterComponent = (props) => {
         <Divider style={{ marginTop: 8 }} thickness={3} bg="#e4e2e2" />
       </View>
       <Flex style={styles.voucherView}>
-        <View style={{ marginLeft: 8 }}>
-          <Text style={{ fontSize: 14, fontFamily: "Quicksand-Bold" }}>
-            Chọn phương thức thanh toán
-          </Text>
+        <View style={{ marginLeft: 8, justifyContent: "center" }}>
+          <Flex
+            flexDirection={"row"}
+            style={{ justifyContent: " center", alignItems: "center" }}
+          >
+            <Text style={{ fontSize: 18, fontFamily: "Quicksand-Bold" }}>
+              Phương thức thanh toán
+            </Text>
+          </Flex>
+          <Flex marginTop={3}>
+            {arrayPayment.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    setPayment(item.payment);
+                    setPaymentMethod(item.payment)
+                  }}
+                  key={index}
+                  activeOpacity={0.5}
+                >
+                  <Flex
+                    style={
+                      payment === item.payment
+                        ? styles.paymentSelected
+                        : styles.paymentUnSelected
+                    }
+                    flexDirection="row"
+                  >
+                    <Box>
+                      <Image source={item.url} alt={item.textPayment} h={item.size} w={item.size} />
+                    </Box>
+                    {"   "}
+                    <Text
+                      style={
+                        payment === item.payment
+                          ? styles.textActive
+                          : styles.textInActive
+                      }
+                    >
+                      {item.textPayment}
+                    </Text>
+                  </Flex>
+                </TouchableOpacity>
+              );
+            })}
+          </Flex>
         </View>
       </Flex>
 
@@ -119,7 +182,7 @@ const FooterComponent = (props) => {
           <Text
             style={{
               fontFamily: "Quicksand-Bold",
-              fontSize: 14,
+              fontSize: 16,
             }}
           >
             {convertPrice(totalCart + servicesFee + deliveryFee - discount)} đ
@@ -131,7 +194,7 @@ const FooterComponent = (props) => {
             style={{
               fontFamily: "Quicksand-SemiBold",
               fontSize: 13,
-              color: "#d83a3a",
+              color: THEME_COLOR,
             }}
           >
             Xem chi tiết
@@ -185,6 +248,33 @@ const styles = StyleSheet.create({
   },
   textView: {
     marginVertical: 6,
+  },
+  paymentUnSelected: {
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 0.8,
+    borderColor: "gray",
+    marginBottom: 4,
+    padding: 12,
+    borderRadius: 15,
+  },
+  paymentSelected: {
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1.5,
+    borderColor: THEME_COLOR,
+    backgroundColor: "#ffefef",
+    marginBottom: 4,
+    padding:12,
+    borderRadius: 15,
+  },
+  textInActive: {
+    fontFamily: FONT.MEDIUM,
+    fontSize: 15,
+  },
+  textActive: {
+    fontFamily: FONT.BOLD,
+    fontSize: 16,
   },
 });
 export default FooterComponent;

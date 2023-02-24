@@ -17,7 +17,7 @@ const SearchBar = (props) => {
           bgColor="transparent"
           size="30px"
           borderWidth={0}
-          h={35}
+          h={36}
           onChangeText={(text) => {
             //setSearchResult(text);
           }}
@@ -32,8 +32,6 @@ const SearchBar = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    marginTop: 4,
-    paddingHorizontal: 16,
     backgroundColor: "white",
   },
 

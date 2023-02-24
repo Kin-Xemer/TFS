@@ -288,7 +288,7 @@ const MapScreen = (props) => {
               backgroundColor: THEME_COLOR,
             }}
             onPress={() => {
-              navigation.navigate("Home");
+              navigation.goBack();
               dispatch({
                 type: "SET_STRING_ADDRESS",
                 payload: stringAddress,

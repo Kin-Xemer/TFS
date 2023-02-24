@@ -24,6 +24,7 @@ import MapScreen from "./screens/MapScreen";
 import SelectStore from "./screens/SelectStore";
 import OrderScreen from "./screens/OrderScreen";
 import MyOrderDetailScreen from "./screens/MyOrderDetailScreen";
+import ZaloPaymentScreen from "./screens/ZaloPaymentScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import PaymentScreen from "./screens/PaymentScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
@@ -49,6 +50,7 @@ const AppNavigator = () => {
       <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
       <Stack.Screen name="MyOrderDetailScreen" component={MyOrderDetailScreen} />
       <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+      <Stack.Screen name="ZaloPaymentScreen" component={ZaloPaymentScreen} />
     </Stack.Navigator>
   );
 };
