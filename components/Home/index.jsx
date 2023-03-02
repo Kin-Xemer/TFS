@@ -34,6 +34,7 @@ import { fetchData } from "../../Utils/getFoodAPI";
 import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
 import { getCartById } from "../../Utils/api/getCart";
 import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
+import { BASE_URL } from "../../services/baseURL";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -43,6 +44,8 @@ const Home = (props) => {
   const [isLogin, setIsLogin] = useState(false);
   const [cusName, setCusName] = useState("");
   const [locateCoord, setLocateCoord] = useState(null);
+  const [events, setEvents] = useState();
+  const [regions,setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
   const [isFindDone, setIsFindDone] = useState(false);
@@ -56,6 +59,20 @@ const Home = (props) => {
   const handleLogout = () => {
     clearStorage();
   };
+  const addToCart = async (food, quantity) => {
+    await dispatch({ type: "ADD_CART", payload: food, quantity });
+    await getCartById()(dispatch, cusName);
+  };
+  const getRegion = ()=>{
+    axios.get(BASE_URL + "/regions").then((response)=>{
+      setRegions(response.data);
+    }).catch((error)=>{console.log("error More Screen", error)})
+  }
+  const getEvent = ()=>{
+    axios.get(BASE_URL + "/events").then((response)=>{
+      setEvents(response.data);
+    })
+  }
   const checkLogin = async () => {
     try {
       const cus = await AsyncStorage.getItem("customer");
@@ -110,6 +127,8 @@ const Home = (props) => {
   useEffect(() => {
     getLocation();
     getRestaurant()(dispatch);
+    getRegion();
+    getEvent();
    
   }, []);
   useEffect(() => {
@@ -252,7 +271,7 @@ const Home = (props) => {
           <ImageTitle />
         </View>
         <Divider />
-        <Categories />
+        <Categories events={events} regions={regions} />
         <Title textTitle="Món chính" />
         <FlatList
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
@@ -267,7 +286,7 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood isLogin={isLogin} food={item} />
+                <CardFood addToCart={addToCart} isLogin={isLogin} itemWith={170} mr={15} food={item} />
               </TouchableOpacity>
             </Flex>
           )}

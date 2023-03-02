@@ -16,6 +16,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ArrowUp3, ArrowDown3 } from "iconsax-react-native";
 import Order from "../components/Order/index";
 import { FONT } from "../Utils/themeFont.js";
+import { BASE_URL } from "../services/baseURL.js";
 const OrderScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -37,6 +38,10 @@ const OrderScreen = (props) => {
       value: "pending",
     },
     { label: "Đã xác nhận", value: "accept" },
+    {
+      label: "Chờ thanh toán",
+      value: "waiting",
+    },
     {
       label: "Đang giao hàng",
       value: "delivery",
@@ -65,17 +70,19 @@ const OrderScreen = (props) => {
   const getAllOrder = () => {
     setFilterOrder([]);
     setIsDone(false);
-    let url =
-      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders/customer/" +
-      customerId;
+    let url = BASE_URL + "/orders/customer/" + customerId;
     axios
       .get(url)
       .then((res) => {
         setIsDone(true);
+        res.data.sort(
+          (item) =>
+            new Date(item.orderDate).getTime() - new Date().getTime() > 0
+        );
         setOrders(res.data);
         if (status === null && status !== "") {
           setFilterOrder(res.data);
-          setValue("all")
+          setValue("all");
         } else if (status === "") {
           setFilterOrder([]);
         }

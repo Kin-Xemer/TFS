@@ -1,30 +1,23 @@
 import { useEffect, useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   TouchableWithoutFeedback,
   ImageBackground,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import DropDownPicker from "react-native-dropdown-picker";
-import { Flex, Badge, Spacer, Divider, Image, Box } from "native-base";
-import {
-  ArrowCircleRight2,
-  ArrowDown2,
-  DollarCircle,
-} from "iconsax-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Flex, Spacer, Divider, Image, Box, Button, Text } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FooterComponent = (props) => {
-  const { totalCart, discount, deliveryFee, servicesFee, setPaymentMethod } = props;
+  const { totalCart, discount, deliveryFee, servicesFee, setPaymentMethod } =
+    props;
   const navigation = useNavigation();
   const [payment, setPayment] = useState("cash");
   let arrayPayment = [
@@ -32,13 +25,13 @@ const FooterComponent = (props) => {
       payment: "cash",
       textPayment: "Thanh toán khi nhận hàng",
       url: require("../../assets/icons/cash.png"),
-      size: 35
+      size: 35,
     },
     {
       payment: "ZaloPay",
       textPayment: "Thanh toán qua ví ZaloPay",
       url: require("../../assets/icons/zalo.png"),
-      size: 35
+      size: 35,
     },
   ];
   return (
@@ -47,12 +40,25 @@ const FooterComponent = (props) => {
       resizeMode="stretch"
       style={{ paddingBottom: 20 }}
     >
-      <View style={{ backgroundColor: "white" }}>
+      <View style={{ backgroundColor: "white", paddingHorizontal: 16 }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-        <Flex
-          direction="row"
-          style={{ paddingHorizontal: 16, alignItems: "center" }}
+        <TouchableOpacity style={styles.changeButton}
+        onPress={() =>{
+            console.log("check")
+        }}
         >
+          <Text
+            style={{
+              fontSize: 13,
+              color: THEME_COLOR,
+              fontFamily: FONT.BOLD,
+            }}
+          >
+            Thêm dịch vụ 
+          </Text>
+        </TouchableOpacity>
+        <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
+        <Flex direction="row" style={{ alignItems: "center" }}>
           <View style={styles.locationHeader}>
             <Flex direction="row" style={{ marginBottom: 4 }}>
               <View>
@@ -103,7 +109,7 @@ const FooterComponent = (props) => {
                 <TouchableOpacity
                   onPress={() => {
                     setPayment(item.payment);
-                    setPaymentMethod(item.payment)
+                    setPaymentMethod(item.payment);
                   }}
                   key={index}
                   activeOpacity={0.5}
@@ -117,7 +123,12 @@ const FooterComponent = (props) => {
                     flexDirection="row"
                   >
                     <Box>
-                      <Image source={item.url} alt={item.textPayment} h={item.size} w={item.size} />
+                      <Image
+                        source={item.url}
+                        alt={item.textPayment}
+                        h={item.size}
+                        w={item.size}
+                      />
                     </Box>
                     {"   "}
                     <Text
@@ -220,8 +231,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME_COLOR,
     borderRadius: 50,
-    width: 100,
-    height: 28,
+    padding: 4,
+    paddingHorizontal: 10
   },
   locationHeader: {
     marginVertical: 4,
@@ -265,7 +276,7 @@ const styles = StyleSheet.create({
     borderColor: THEME_COLOR,
     backgroundColor: "#ffefef",
     marginBottom: 4,
-    padding:12,
+    padding: 12,
     borderRadius: 15,
   },
   textInActive: {

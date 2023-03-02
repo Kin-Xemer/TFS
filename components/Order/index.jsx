@@ -24,6 +24,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
 import { convertPrice } from "../../Utils/convertPrice";
 import { convertDate } from '../../Utils/convertDate';
+import { BASE_URL } from "../../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Order = (props) => {
   const { orders, isFocused, isDone } = props;
@@ -66,6 +67,13 @@ const Order = (props) => {
       statusText = "Đang làm";
       colorText = "#FFB302";
     }
+    else if (status === "waiting") {
+      statusIcon = {
+        uri: "https://live.staticflickr.com/65535/52721391003_e147a151f0_w.jpg",
+      };
+      statusText = "Chờ thanh toán";
+      colorText = "#FFB302";
+    }
     return (
       <Flex flexDirection={"row"}>
         <Image w={21} h={21} alt="pending" source={statusIcon} />
@@ -81,12 +89,34 @@ const Order = (props) => {
       <FlatList
         data={orders}
         style={{marginTop: 16,marginBottom: 150 }}
-    
+      
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("MyOrderDetailScreen", { orders: item });
+              if(item.status === "waiting"){
+                axios
+                .post(
+                  BASE_URL+ "/orders/zaloPay",
+                  item
+                )
+                .then((response) => {
+                  let url = BASE_URL + "/orders/checkPayment/" + response.data.apptransid;
+                  axios.get(url).then((res) => {
+                    navigation.navigate("ZaloPaymentScreen", {
+                      paymentResponse:  response.data,
+                      order: item,
+                      paymentStatus: res.data
+                    });
+                  });
+                })
+                .catch((err) => {
+                  alert(err.message);
+                });
+              }else{
+                navigation.navigate("MyOrderDetailScreen", { orders: item });
+              }
+              
             }}
             activeOpacity={0.7}
           >
@@ -106,7 +136,7 @@ const Order = (props) => {
                     </Text>
                   </Text>
                   <Spacer />
-                  <View style={{ width: "35%", alignItems: "center" }}>
+                  <View style={{ width: "40%", alignItems: "center" }}>
                     {status(item.status)}
                   </View>
                 </Flex>

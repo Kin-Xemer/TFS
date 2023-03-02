@@ -1,9 +1,10 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../../services/baseURL";
 export const getCartById = () => {
   return (dispatch, username) => {
     let url =
-      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/customers/cart/" +
+    BASE_URL +"/customers/cart/" +
       username;
     axios
       .get(url)

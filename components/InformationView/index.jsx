@@ -1,39 +1,16 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  ImageBackground,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Animated,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
-import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
-import { AddCircle, MinusCirlce } from "iconsax-react-native";
-import {
-  Flex,
-  Spacer,
-  Text,
-  Heading,
-  Button,
-  useToast,
-  Box,
-} from "native-base";
-import { Setting4 } from "iconsax-react-native";
-import Toast from "react-native-toast-message";
-import { THEME_COLOR } from "../../Utils/themeColor";
-import RatingBar from "../RatingBar";
-import axios from "axios";
+
+import { Text, useToast, Spinner } from "native-base";
+
 import CardFood from "../CardFood";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const InformationView = (props) => {
-  const { listFood, listFoodFilter, filterSelected, sliceFood } = props;
+  const { filterFood, sliceFood } = props;
   const toast = useToast();
   const route = useRoute();
   const navigation = useNavigation();
@@ -41,25 +18,45 @@ const InformationView = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
-  const [filterFood, setFilterFood] = useState([]);
+  const [isDone, setIsDone] = useState(false);
+  var timesRunModal = 0;
   useEffect(() => {
-    if (filterSelected.name === "Tất cả") {
-      setFilterFood(listFood);
-    } else {
-      setFilterFood(filterSelected.foodList);
-    }
-  }, [filterSelected.name]);
+    setIsDone(false);
+    const interval = setInterval(() => {
+      timesRunModal += 1;
+      if (timesRunModal === 1) {
+        setIsDone(true);
+        clearInterval(interval);
+      }
+    }, 1);
+  }, [filterFood]);
 
   return (
-    <View style={styles.inforView}>
-      {filterFood.slice(0, sliceFood).map((item, index) => {
-        return (
-          <View key={index} style={{ marginBottom: 50 }}>
-            {/* <Text>{item.id} . {item.foodName} : <Text>{item.price}</Text></Text> */}
-            <CardFood style={styles.item} food={item} />
-          </View>
-        );
-      })}
+    <View>
+      {isDone && filterFood && filterFood.length > 0 ? (
+        <View style={styles.inforView}>
+          {filterFood.slice(0, sliceFood).map((item, index) => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={{ marginBottom: 50, width: "50%", marginTop: -25 }}
+                onPress={() =>
+                  navigation.navigate("FoodInformationScreen", { food: item })
+                }
+                key={index}
+              >
+                <CardFood style={styles.item} mh={7} food={item} />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : filterFood.length === 0 ? (
+        <Text>assad</Text>
+      ) : (
+        <View style={{ marginTop: 20, alignItems: "center" }}>
+          <Spinner size={"sm"} />
+        </View>
+      )}
     </View>
   );
 };
@@ -86,6 +83,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
     paddingTop: 26,
+    marginTop: 10,
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",

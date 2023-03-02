@@ -96,7 +96,7 @@ const FoodInformationScreen = (props) => {
             },
           ]}
           source={{
-            uri: food.imgUrl,
+            uri: food.imgUrl !== "" ? food.imgUrl : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
           }}
         />
       </Animated.View>

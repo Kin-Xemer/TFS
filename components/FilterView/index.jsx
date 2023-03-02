@@ -23,6 +23,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import ModalPicker from "../ModalPicker/index";
 import { FONT } from "../../Utils/themeFont";
 import axios from "axios";
+import { BASE_URL } from "../../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FilterView = (props) => {
   const { listFood, filterSelected, setFilterSelected } = props;
@@ -30,13 +31,7 @@ const FilterView = (props) => {
   const [isVisiblePrice, setIsVisiblePrice] = useState(false);
   const [itemSelected, setItemSelected] = useState("");
   const [offset, setOffset] = useState();
-  const [arrayFilter, setArrayFilter] = useState([
-    {
-      name: "Tất cả",
-      id: "1000",
-      foodList: listFood,
-    },
-  ]);
+  const [arrayFilter, setArrayFilter] = useState(["Tất cả"]);
   const arrayOptions = ["Tăng dần", "Giảm dần"];
   useEffect(() => {
     getCategory();
@@ -44,33 +39,15 @@ const FilterView = (props) => {
 
   const getCategory = () => {
     axios
-      .get(
-        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/categories"
-      )
+      .get(BASE_URL + "/categories")
       .then((res) => {
         res.data.map((data) => {
-          setArrayFilter((oldArray) => [
-            ...oldArray,
-            {
-              name: data.categoryName,
-              id: data.id,
-              foodList: data.foodList.filter((item) => {
-                if (item.status === true) {
-                  return item;
-                }
-              }),
-            },
-          ]);
+          setArrayFilter((oldArray) => [...oldArray, data.categoryName]);
         });
       })
       .catch((error) => {
         console.log("Error FilterView", error);
       });
-  };
-  const handleSelectFilter = (filterName) => {
-    if (filterName.name === "Giá") {
-      toggleModalPrice();
-    }
   };
   const toggleModalPrice = () => {
     setIsVisiblePrice(!isVisiblePrice);
@@ -98,7 +75,6 @@ const FilterView = (props) => {
             <TouchableOpacity
               key={index}
               onPress={() => {
-                handleSelectFilter(filter);
                 setFilterSelected(filter);
               }}
               style={{ marginEnd: 8 }}
@@ -106,19 +82,19 @@ const FilterView = (props) => {
             >
               <View
                 style={
-                  filterSelected.name === filter.name
+                  filterSelected === filter
                     ? styles.filterButtonSelected
                     : styles.filterButtonUnSelected
                 }
               >
                 <Text
                   style={
-                    filterSelected.name === filter.name
+                    filterSelected === filter
                       ? styles.itemSelected
                       : styles.itemUnselected
                   }
                 >
-                  {filter.name}
+                  {filter}
                 </Text>
               </View>
             </TouchableOpacity>

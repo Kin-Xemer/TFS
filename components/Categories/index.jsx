@@ -10,13 +10,15 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Categories = (props) => {
   const navigation = useNavigation();
   const foods = useSelector((state) => state.food.food)
-  const {openAllFood} = props;
+  const {openAllFood, events, regions} = props;
   return (
     <Flex direction="row" style={styles.container}>
       <TouchableOpacity
       onPress={()=>{
         navigation.navigate("MoreScreen",{
           food: foods,
+          events: events,
+          regions: regions,
           banner:"https://live.staticflickr.com/65535/52702504583_ff7ec0f38a_z.jpg"
         })
       }}

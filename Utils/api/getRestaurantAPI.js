@@ -1,9 +1,10 @@
 import axios from "axios";
+import { BASE_URL } from "../../services/baseURL";
 export const getRestaurant = () => {
     return (dispatch) => {
       axios
         .get(
-          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/restaurants"
+          BASE_URL +"/restaurants"
         )
         .then((result) => {
           dispatch({ type: "SET_RESTAURANT", payload: result.data });

@@ -5,6 +5,7 @@ import {
   DELETE_CART,
 } from "../actions/productAction";
 import axios from "axios";
+import { BASE_URL } from "../../services/baseURL";
 const initCart = {
   numberCart: 0,
   cartsItem: [],
@@ -31,7 +32,7 @@ const saveCart = (state) => {
   initCart.numberCart = sum;
   axios
     .put(
-      "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
+      BASE_URL + "/carts",
       newCart
     )
     .then((res) => {

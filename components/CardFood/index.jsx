@@ -15,20 +15,20 @@ import { convertPrice } from "../../Utils/convertPrice";
 import axios from "axios";
 import { useEffect } from "react";
 import { THEME_COLOR } from "../../Utils/themeColor";
-import { getCartById } from '../../Utils/api/getCart';
+import { getCartById } from "../../Utils/api/getCart";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  let { food, isLogin } = props;
+  let { food, isLogin, itemWith, mh, mr } = props;
   const dispatch = useDispatch();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
   const navigation = useNavigation();
   const addToCart = async (food, quantity) => {
-   await dispatch({ type: "ADD_CART", payload: food, quantity });
-   await getCartById()(dispatch,username);
+    await dispatch({ type: "ADD_CART", payload: food, quantity });
+    await getCartById()(dispatch, username);
   };
   return (
     <Box
@@ -37,7 +37,10 @@ const CardFood = (props) => {
       borderWidth="0.5"
       borderRadius="15"
       alignItems="flex-start"
-      style={styles.container}
+      style={[
+        styles.container,
+        { width: itemWith, marginHorizontal: mh, marginRight: mr },
+      ]}
     >
       <View
         style={{
@@ -57,22 +60,25 @@ const CardFood = (props) => {
           borderTopRightRadius={15}
           borderTopLeftRadius={15}
           source={{
-            uri: food.imgUrl,
+            uri:
+              food.imgUrl !== ""
+                ? food.imgUrl
+                : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
           }}
           alt="image"
         />
       </View>
-      <Flex p={1} pl={2} pb={2} w="100%">
+      <Flex p={1} pl={2.5} pr={2} pb={2} w="100%">
         <Flex style={styles.titleBox}>
           <Text
-            numberOfLines={2}
-            pl={1}
-            style={[styles.textStyle, { fontSize: 16 }]}
+            numberOfLines={1}
+           
+            style={[styles.textStyle, { fontSize: 18 }]}
           >
             {food.foodName}
           </Text>
         </Flex>
-        <Flex style={styles.contentBox}>
+        <Flex>
           <Flex direction="row" style={{ alignItems: "center" }}>
             <AntDesign name="star" size={15} color="gold" />
             <Text pl={1} style={styles.textFoodContent}>
@@ -111,9 +117,7 @@ const CardFood = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    width: 183,
     backgroundColor: "white",
-    marginRight: 15,
     shadowColor: "silver",
     shadowOffset: {
       width: 0,
@@ -134,7 +138,7 @@ const styles = StyleSheet.create({
   titleBox: {
     width: "100%",
     alignItems: "flex-start",
-    height: 38,
+    marginBottom:6
   },
   priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
 });

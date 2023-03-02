@@ -22,6 +22,9 @@ import { THEME_COLOR } from "../Utils/themeColor";
 import InformationView from "../components/InformationView";
 import FilterView from "../components/FilterView";
 import SearchBar from "../components/SearchBar";
+import BottomSheet from "../components/BottomSheet";
+import axios from "axios";
+import { BASE_URL } from "../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const IMAGE_HEIGHT = (9 * screenWidth) / 16;
 const HEADER_MAX_HEIGHT = IMAGE_HEIGHT;
@@ -30,26 +33,99 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const FoodInformationScreen = (props) => {
   const toast = useToast();
   const route = useRoute();
+  const refRBSheet = useRef();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [food, setFood] = useState(route.params.food);
+  const [events, setEvents] = useState(route.params.events);
+  const [regions, setRegions] = useState(route.params.regions);
   const [currentPos, setCurrentPos] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [sliceFood,setSliceFood] = useState(10);
-  const [isScrollBottom,setIsScrollBottom] = useState(false);
-  const [filterSelected, setFilterSelected] = useState({
-    name: "Tất cả",
-    id: "1000",
-    foodList: food,
-  });
+  const [sliceFood, setSliceFood] = useState(10);
+  const [selectedRegions, setSelectedRegions] = useState();
+  const [selectedEvents, setSelectedEvents] = useState();
+  const [filterFood, setFilterFood] = useState([]);
+  const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [regionProps, setRegionProps] = useState("");
+  const [eventProps, setEventProps] = useState("");
+  const [priceProps, setPriceProps] = useState("");
+  const [filterSelected, setFilterSelected] = useState("Tất cả");
   const [contentOffset, setContentOffset] = useState(0);
   const id = "test-toast";
 
   useEffect(() => {
     ScrollViewRef.current.scrollTo({
-      y: 175,
+      y: 153,
     });
-  }, [filterSelected]);
+  }, [filterFood]);
+
+  const filterSelectedRegions = (array) => {
+    if (regionProps === "") {
+      return array;
+    } else {
+      return array.filter(
+        (item) =>
+          item.theRegion !== null && item.theRegion.region_name === regionProps
+      );
+    }
+  };
+
+  const filterSelectedCategory = (array) => {
+    if (filterSelected === "Tất cả") {
+      return array;
+    } else {
+      return array.filter(
+        (item) =>
+          item.theCategory !== null &&
+          item.theCategory.categoryName === filterSelected
+      );
+    }
+  };
+
+  const filterSelectedEvents = (array) => {
+    if (eventProps === "") {
+      return array;
+    } else {
+      return array.filter(
+        (item) =>
+          item.eventList.length > 0 &&
+          item.eventList.filter(
+            (eventItem) => eventItem.eventName === eventProps
+          ).length > 0
+      );
+    }
+  };
+
+  const filterSelectedPrice = (array) => {
+    if (priceProps === "min"){
+      let minArray = array.sort((el1,el2) => el1.price.toString().localeCompare(el2.price, undefined, {numeric: true})) 
+      return minArray
+    }else if (priceProps === "max"){
+      let maxArray = array.sort((el1,el2) => el2.price.toString().localeCompare(el1.price, undefined, {numeric: true}))
+      return maxArray
+    } 
+  }
+
+  const handleFilter = (regions, events, price) => {
+    if (regions === "" && events === "" && price === "") {
+      let result = food;
+      result = filterSelectedCategory(result);
+      setFilterFood(result);
+    } else {
+      setRegionProps(regions);
+      setEventProps(events);
+      setPriceProps(price);
+    }
+  };
+  useEffect(() => {
+    let result = food;
+    result = filterSelectedRegions(result);
+    result = filterSelectedCategory(result);
+    result = filterSelectedEvents(result);
+  filterSelectedPrice(result);
+    // filterSelectedPrice();
+    setFilterFood(result);
+  }, [regionProps, eventProps, priceProps, filterSelected]);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const ScrollViewRef = useRef();
@@ -80,10 +156,16 @@ const FoodInformationScreen = (props) => {
     outputRange: [0, 0, -8],
     extrapolate: "clamp",
   });
-  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }) => {
     const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
   };
 
   return (
@@ -116,29 +198,43 @@ const FoodInformationScreen = (props) => {
           },
         ]}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <View>
-            {contentOffset > 128 ? (
-              <Flex direction="row" style={{alignItems:"center"}}>
+        <View style={{ width: "100%" }}>
+          {contentOffset > 128 ? (
+            <Animated.View
+              style={{ alignItems: "center", flexDirection: "row" }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.goBack();
+                }}
+                
+              >
                 <Entypo name="chevron-left" size={38} color="black" />
-                <View style={{ width: "80%" }}>
-                  <SearchBar />
+              </TouchableOpacity>
+              <View style={{ width: "80%" }}>
+                <SearchBar />
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  refRBSheet.current.open();
+                }}
+              >
+                <View style={{ marginHorizontal: 6 }}>
+                  <Setting4 size="26" color="#000" />
                 </View>
-                <TouchableOpacity>
-                  <View style={{marginHorizontal: 6}}>
-                    <Setting4 size="26" color="#000" />
-                  </View>
-                </TouchableOpacity>
-              </Flex>
-            ) : (
+              </TouchableOpacity>
+            </Animated.View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}
+              style={{ width: "10%"}}
+            >
               <Entypo name="chevron-left" size={36} color="white" />
-            )}
-          </View>
-        </TouchableWithoutFeedback>
+            </TouchableOpacity>
+          )}
+        </View>
       </Animated.View>
 
       <Animated.ScrollView
@@ -165,10 +261,10 @@ const FoodInformationScreen = (props) => {
               //   //   140
               //   // });
               // }
+              // console.log(event.nativeEvent.contentOffset.y)
               if (isCloseToBottom(event.nativeEvent)) {
-                let number = sliceFood;
-                setSliceFood(sliceFood+10)
-                setIsScrollBottom(true)
+                setSliceFood(sliceFood + 10);
+                setIsScrollBottom(true);
               }
             },
           }
@@ -180,12 +276,19 @@ const FoodInformationScreen = (props) => {
           listFood={food}
         />
         <InformationView
-        sliceFood={sliceFood}
+          sliceFood={sliceFood}
           listFood={food}
           filterSelected={filterSelected}
-          listFoodFiltered={food}
+          filterFood={filterFood}
+          setFilterFood={setFilterFood}
         />
       </Animated.ScrollView>
+      <BottomSheet
+        handleFilter={handleFilter}
+        events={events}
+        regions={regions}
+        refRBSheet={refRBSheet}
+      />
     </Flex>
   );
 };

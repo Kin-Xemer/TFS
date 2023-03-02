@@ -21,8 +21,10 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import FooterComponent from "./FooterComponent";
 import HeaderComponent from "./HeaderConponent";
 import { convertPrice } from "../../Utils/convertPrice";
+import { BASE_URL } from "../../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
+  let { deleteItem, isFocused , service} = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
@@ -41,18 +43,17 @@ const ListCart = (props) => {
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
-  const [discount, setDiscount] = useState(30000);
+  const [discount, setDiscount] = useState(0);
   const [deliveryFee, seyDeliveryFee] = useState(0);
-  const [servicesFee, setServicesFee] = useState(2000);
+  const [servicesFee, setServicesFee] = useState(0);
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const refRBSheet = useRef();
-  let { deleteItem, isFocused } = props;
+
   let list = [];
   let totalCart = 0;
-
   Object.keys(items.cartsItem).forEach(function (item) {
     totalCart += items.cartsItem[item].quantity * items.cartsItem[item].price;
     list.push(items.cartsItem[item]);
@@ -120,11 +121,9 @@ const ListCart = (props) => {
   const createOrder = (orders) => {
     if (orders.paymentMethod === "cash") {
       setIsDone(false);
+      let url = BASE_URL + "/orders";
       axios
-        .post(
-          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders",
-          orders
-        )
+        .post(url, orders)
         .then((res) => {
           const newCart = {
             ...cart,
@@ -133,36 +132,42 @@ const ListCart = (props) => {
             totalPrice: 0,
           };
           axios
-            .put(
-              "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/carts",
-              newCart
-            )
+            .put(BASE_URL + "/carts", newCart)
             .then((res) => {
               setIsDone(true);
               navigation.navigate("Home");
             })
             .catch((err) => {
-              console.log("Update Cart: ", err);
+              alert("Update Cart: ", err);
             });
         })
         .catch((err) => {
-          console.log("Create Order: ", err);
+          alert("Create Order: ", err.message);
         });
     } else if (orders.paymentMethod === "ZaloPay") {
       setIsDone(false);
       axios
-        .post(
-          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders/zaloPay",
-          orders
-        )
-        .then((res) => {
-          setIsDone(true);
-          navigation.navigate("ZaloPaymentScreen", {
-            paymentResponse: res.data,
+        .post(BASE_URL + "/orders", orders)
+        .then((res) => {})
+        .catch((err) => {
+          alert("Update Order: ", err.message);
+        });
+      axios
+        .post(BASE_URL + "/orders/zaloPay", orders)
+        .then((response) => {
+          let url =
+            BASE_URL + "/orders/checkPayment/" + response.data.apptransid;
+          axios.get(url).then((res) => {
+            setIsDone(true);
+            navigation.navigate("ZaloPaymentScreen", {
+              paymentResponse: response.data,
+              order: orders,
+              paymentStatus: res.data,
+            });
           });
         })
         .catch((err) => {
-          console.log("Create Order: ", err);
+          alert("Create Order: ", err.message);
         });
     }
   };
@@ -173,35 +178,30 @@ const ListCart = (props) => {
   };
 
   const handleCheckout = () => {
-    axios
-      .get(
-        "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/orders"
-      )
-      .then((res) => {
-        let maxId = Math.max(...res.data.map((item) => item.id));
-        let second = new Date().getSeconds();
-        let minute = new Date().getMinutes()*100;
-        let date = new Date().getDate()*1000
-        let url =
-          "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/customers/cart/" +
-          username;
-        axios.get(url).then((response) => {
-          const cartData = response.data;
-          let order = {
-            id: maxId + 1 + second + date + minute,
-            totalPrice: cartData.totalPrice,
-            totalQuantity: cartData.numberCart,
-            paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
-            deliveryAddress: stringAddress === "" ? address : stringAddress,
-            customerId: customerId,
-            itemList: cartData.cartItems,
-            restaurantId: nearlyRestaurant.restaurantId,
-            status: "pending",
-          };
-         createOrder(order);
-          //console.log(order)
-        });
+    axios.get(BASE_URL + "/orders").then((res) => {
+      let maxId = Math.max(...res.data.map((item) => item.id));
+      let second = new Date().getSeconds();
+      let minute = new Date().getMinutes() * 100;
+      let date = new Date().getDate() * 1000;
+      let url = BASE_URL + "/customers/cart/" + username;
+      axios.get(url).then((response) => {
+        const cartData = response.data;
+        let order = {
+          id: maxId + 1 + second + date + minute,
+          totalPrice: cartData.totalPrice,
+          totalQuantity: cartData.numberCart,
+          paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
+          deliveryAddress: stringAddress === "" ? address : stringAddress,
+          customerId: customerId,
+          itemList: cartData.cartItems,
+          restaurantId: nearlyRestaurant.restaurantId,
+          status: "pending",
+          note:note
+        };
+        createOrder(order);
+        //console.log(order)
       });
+    });
     // navigation.goBack();
   };
   const renderItem = (data, rowMap) => {
@@ -255,6 +255,7 @@ const ListCart = (props) => {
             showsVerticalScrollIndicator={false}
             ListFooterComponent={
               <FooterComponent
+                service={service}
                 discount={discount}
                 totalCart={totalCart}
                 deliveryFee={deliveryFee}

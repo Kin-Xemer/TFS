@@ -1,13 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ListCart from "../components/ListCartItem/ListCart";
 import { useIsFocused } from '@react-navigation/native';
 import { getCartById } from '../Utils/api/getCart';
+import { BASE_URL } from "../services/baseURL";
+import axios from "axios";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CartScreen = (props) => {
   const isFocused = useIsFocused()
   const { food } = props;
+  const [service, setService] = useState();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
@@ -15,14 +18,20 @@ const CartScreen = (props) => {
   const deleteItem = (typeAction, id) => {
     dispatch({ type:typeAction, payload:id})
   };
+  const getService = () =>{
+    axios.get(BASE_URL + "/services").then((res) =>{
+      setService(res.data)
+    })
+  }
   useEffect(() => {
     if (isFocused) {
+      getService();
       getCartById()(dispatch,username);
     }
   }, [isFocused]);
   return (
     <View style={styles.container}>
-        <ListCart deleteItem={deleteItem} isFocused={isFocused}/>
+        <ListCart service={service} deleteItem={deleteItem} isFocused={isFocused}/>
     </View>
   );
 };

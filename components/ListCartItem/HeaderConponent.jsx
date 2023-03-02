@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
@@ -10,12 +9,10 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, Badge, Spacer, Divider, Image } from "native-base";
+import { Flex, Badge, Spacer, Divider, Text } from "native-base";
 import { Location, Edit2 } from "iconsax-react-native";
-import VisibleItem from "../VisibleItem";
-import HiddenItemWithActions from "../HiddenItemWithActions";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 15;
 const ITEM_MARGIN_BOTTOM = 10;
@@ -106,14 +103,18 @@ const HeaderComponent = (props) => {
         <View
           style={{
             marginLeft: 16,
-            backgroundColor: "#f0f0f0",
             height: 30,
             justifyContent: "center",
 
             borderRadius: 5,
           }}
         >
-          <Text>{note}</Text>
+          <Text fontFamily={FONT.BOLD} color={"#4a4a4a"}>
+            Ghi chú:{" "}
+            <Text color={"#8c8c8c"} fontFamily={FONT.MEDIUM}>
+              {note}
+            </Text>
+          </Text>
         </View>
       )}
 

@@ -29,6 +29,7 @@ import { FONT } from "../../Utils/themeFont";
 import ImageLogin from "../ImageLogin/ImageLogin";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Lock, Mobile, User } from "iconsax-react-native";
+import { BASE_URL } from "../../services/baseURL";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
@@ -56,19 +57,10 @@ const LoginForm = () => {
     setPassword(e);
   };
 
-  let url =
-    "http://tfsapiv1-env.eba-aagv3rp5.ap-southeast-1.elasticbeanstalk.com/api/accountsByUsername/" +
-    username +
-    "&" +
-    password;
-
   const handleLogin = () => {
-    axios({
-      method: "post",
-      url: url,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    })
+    let url = BASE_URL + "/user/login"
+    axios
+      .post(url, { username: username, password: password })
       .then(function (response) {
         const saveData = async () => {
           try {
@@ -118,7 +110,7 @@ const LoginForm = () => {
         </Flex>
         <Stack space={4} w="100%" alignItems="center">
           <Input
-           keyboardType="numeric"
+            keyboardType="numeric"
             type=""
             fontFamily={FONT.MEDIUM}
             fontSize={15}
