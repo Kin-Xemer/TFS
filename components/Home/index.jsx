@@ -293,18 +293,25 @@ const Home = (props) => {
           keyExtractor={item=> item.id}
         />
         <Title textTitle="Bán chạy" />
-        {/* <FlatList
-          contentContainerStyle={{ marginLeft: 17 }}
+        <FlatList
+          contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods.slice(0, 10)}
+          data={foods}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
-              <CardFood food={item} />
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  navigation.navigate("FoodInformationScreen", { food: item })
+                }
+              >
+                <CardFood addToCart={addToCart} isLogin={isLogin} itemWith={170} mr={15} food={item} />
+              </TouchableOpacity>
             </Flex>
           )}
-          keyExtractor={(item) => `${item.id}`}
-        /> */}
+          keyExtractor={item=> item.id}
+        />
         <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
           <TouchableOpacity
             style={styles.buttonStyle}

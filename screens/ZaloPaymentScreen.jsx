@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
+import { useIsFocused } from '@react-navigation/native';
 import Lottie from "lottie-react-native";
 import {
   Flex,
@@ -30,24 +31,32 @@ import QRCode from "react-native-qrcode-svg";
 import { BASE_URL } from "../services/baseURL";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
+import { getCartById } from '../Utils/api/getCart';
 import { convertPrice } from "../Utils/convertPrice";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ZaloPaymentScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const isFocused = useIsFocused()
   const [paymentStatus, setPaymentStatus] = useState(
     route.params.paymentStatus
   );
   const cart = useSelector((state) => state.cart.cart);
   const paymentObject = route.params.paymentResponse;
   const order = route.params.order;
+  const account = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
+  const [orderStatus, setOrderStatus] = useState(route.params.order.status);
   const username = useSelector((state) => state.account.account.customerName);
   useEffect(() => {
     checkPayment();
+    checkOrderPayment();
   }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       checkPayment();
+      checkOrderPayment();
     }, 400);
 
     return () => clearInterval(interval);
@@ -57,24 +66,32 @@ const ZaloPaymentScreen = () => {
     if (paymentStatus.returnCode === 1) {
       let url = BASE_URL + "/orders";
       const paymentOrder = { ...order, status: "accept" };
-      axios.put(url, paymentOrder).then((response) => {
-        const newCart = {
-          ...cart,
-          cartItems: [],
-          numberCart: 0,
-          totalPrice: 0,
-        };
-        axios.put(BASE_URL + "/carts", newCart);
-      }).catch((error) => {
-        alert(error.message);
-      });
+      axios
+        .put(url, paymentOrder)
+        .then((response) => {
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
     }
   }, [paymentStatus.returnCode]);
+
+  useEffect(() => {
+    if (isFocused) {
+      getCartById()(dispatch,account);
+    }
+  }, [isFocused]);
 
   const checkPayment = () => {
     let url = BASE_URL + "/orders/checkPayment/" + paymentObject.apptransid;
     axios.get(url).then((res) => {
       setPaymentStatus(res.data);
+    });
+  };
+  const checkOrderPayment = () => {
+    let url = BASE_URL + "/orders/" + order.id;
+    axios.get(url).then((res) => {
+      setOrderStatus(res.data.status);
     });
   };
   return (
@@ -98,57 +115,77 @@ const ZaloPaymentScreen = () => {
           height: "40%",
         }}
       >
-        {paymentStatus && paymentStatus.returnCode === -49 ? (
-          <QRCode value={paymentObject.zaloUrl} size={150} />
+        {orderStatus === "waiting" ? (
+          paymentStatus && paymentStatus.returnCode === -49 ? (
+            <QRCode value={paymentObject.zaloUrl} size={150} />
+          ) : (
+            <View>
+              {paymentStatus.returnCode === -244 ? (
+                <Text
+                  style={{ fontSize: 20, fontFamily: FONT.BOLD, color: "red" }}
+                >
+                  Đơn hàng bị từ chối giao dịch
+                </Text>
+              ) : paymentStatus.returnCode === 10 ? (
+                <View style={{ alignItems: "center", marginBottom: 50 }}>
+                  <Lottie
+                    style={{ height: 180, width: 180 }}
+                    source={require("../assets/animation/2.json")}
+                    autoPlay
+                    loop
+                  />
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontFamily: FONT.BOLD,
+                      color: "#FFB302",
+                    }}
+                  >
+                    Đang tiến hành giao dịch
+                  </Text>
+                </View>
+              ) : paymentStatus.returnCode === 1 && orderStatus !=="waiting"? (
+                <View style={{ alignItems: "center", marginBottom: 50 }}>
+                  <Lottie
+                    loop={false}
+                    style={{ height: 180, width: 180 }}
+                    source={require("../assets/animation/success.json")}
+                    autoPlay
+                  />
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontFamily: FONT.BOLD,
+                      color: "#20BF55",
+                    }}
+                  >
+                    Giao dịch thành công
+                  </Text>
+                </View>
+              ) : (
+                ""
+              )}
+            </View>
+          )
         ) : (
-          <View>
-            {paymentStatus.returnCode === -244 ? (
-              <Text
-                style={{ fontSize: 20, fontFamily: FONT.BOLD, color: "red" }}
-              >
-                Đơn hàng bị từ chối giao dịch
-              </Text>
-            ) : paymentStatus.returnCode === 10 ? (
-              <View style={{ alignItems: "center", marginBottom: 50 }}>
-                <Lottie
-                  style={{ height: 180, width: 180 }}
-                  source={require("../assets/animation/spin.json")}
-                  autoPlay
-                  loop
-                />
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: FONT.BOLD,
-                    color: "#FFB302",
-                  }}
-                >
-                  Đang tiến hành giao dịch
-                </Text>
-              </View>
-            ) : paymentStatus.returnCode === 1 ? (
-              <View style={{ alignItems: "center", marginBottom: 50 }}>
-                <Lottie
-                  loop={false}
-                  style={{ height: 180, width: 180 }}
-                  source={require("../assets/animation/success.json")}
-                  autoPlay
-                />
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: FONT.BOLD,
-                    color: "#20BF55",
-                  }}
-                >
-                  Giao dịch thành công
-                </Text>
-              </View>
-            ) : (
-              ""
-            )}
-          </View>
-        )}
+          <View style={{ alignItems: "center", marginBottom: 50 }}>
+          <Lottie
+            style={{ height: 180, width: 180 }}
+            source={require("../assets/animation/130714-cala-waiting-04.json")}
+            autoPlay
+            loop
+          />
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: FONT.BOLD,
+              color: "#FFB302",
+            }}
+          >
+            Đơn hàng đang chờ xác nhận
+          </Text>
+        </View>
+        ) }
       </View>
       <Text>{JSON.stringify(paymentObject)}</Text>
       <View
@@ -159,7 +196,6 @@ const ZaloPaymentScreen = () => {
         }}
       >
         <Flex flexDirection="row" style={styles.infor}>
-         
           <Text style={[styles.title, { color: "gray" }]}>Khách hàng</Text>
           <Spacer />
           <Text style={[styles.title, { fontFamily: FONT.BOLD, fontSize: 16 }]}>

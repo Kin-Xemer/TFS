@@ -47,34 +47,7 @@ const ModalPicker = (props) => {
             paddingBottom: 50 
           }}
         >
-         {arrayOptions.map((item, index) => {
-        return (
-          <TouchableOpacity
-            key={index}
-            onPress={() => {
-              handleSelectItem(item);
-            }}
-          >
-            <View style={{ paddingVertical: 16 }}>
-              <Flex flexDirection={"row"}>
-                <Text
-                  style={
-                    itemSelected === item
-                      ? styles.itemSelected
-                      : styles.itemUnselected
-                  }
-                >
-                  {item}
-                </Text>
-                <Spacer />
-                {itemSelected === item ? (
-                  <Entypo name="check" color={THEME_COLOR} size={20} />
-                ) : null}
-              </Flex>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+        <Text>ákjasdk</Text>
         </Flex>
       </Modal>
     </View>

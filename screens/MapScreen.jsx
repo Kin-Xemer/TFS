@@ -25,7 +25,8 @@ import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
 import { useEffect } from "react";
 import { Button, Flex, Image, Spacer } from "native-base";
 import { convertLatLng } from "../Utils/convertLatLng";
-import {getNearlyRestaurant} from '../Utils/api/getNearlyRestaurant';
+import { getNearlyRestaurant } from "../Utils/api/getNearlyRestaurant";
+import { FONT } from "../Utils/themeFont";
 
 const { width, height } = Dimensions.get("window");
 const MapScreen = (props) => {
@@ -176,7 +177,13 @@ const MapScreen = (props) => {
       >
         <Flex flexDirection="row">
           <View>
-            <Text>Chọn địa chỉ giao hàng</Text>
+            <Text
+              style={{
+                fontFamily: FONT.MEDIUM,
+              }}
+            >
+              Chọn địa chỉ giao hàng
+            </Text>
           </View>
           <Spacer />
         </Flex>
@@ -272,7 +279,7 @@ const MapScreen = (props) => {
               style={{
                 fontSize: 17,
                 color: "white",
-                fontFamily: "Quicksand-Bold",
+                fontFamily: FONT.BOLD,
               }}
             >
               Chọn địa chỉ giao hàng

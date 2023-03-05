@@ -24,12 +24,13 @@ import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
-  let { deleteItem, isFocused , service} = props;
+  let { deleteItem, isFocused, service } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
   const items = useSelector((state) => state.cart);
   const cart = useSelector((state) => state.cart.cart);
+  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [isDone, setIsDone] = useState(true);
   const [orderId, setOrderId] = useState();
   const username = useSelector(
@@ -158,11 +159,19 @@ const ListCart = (props) => {
           let url =
             BASE_URL + "/orders/checkPayment/" + response.data.apptransid;
           axios.get(url).then((res) => {
-            setIsDone(true);
-            navigation.navigate("ZaloPaymentScreen", {
-              paymentResponse: response.data,
-              order: orders,
-              paymentStatus: res.data,
+            const newCart = {
+              ...cart,
+              cartItems: [],
+              numberCart: 0,
+              totalPrice: 0,
+            };
+            axios.put(BASE_URL + "/carts", newCart).then((r) => {
+              setIsDone(true);
+              navigation.navigate("ZaloPaymentScreen", {
+                paymentResponse: response.data,
+                order: orders,
+                paymentStatus: res.data,
+              });
             });
           });
         })
@@ -196,7 +205,7 @@ const ListCart = (props) => {
           itemList: cartData.cartItems,
           restaurantId: nearlyRestaurant.restaurantId,
           status: "pending",
-          note:note
+          note: note,
         };
         createOrder(order);
         //console.log(order)
@@ -265,8 +274,11 @@ const ListCart = (props) => {
             }
             ListHeaderComponent={
               <HeaderComponent
+                nearlyRestaurant={nearlyRestaurant}
                 setVisible={() => refRBSheet.current.open()}
                 note={note}
+                deliveryMethod={deliveryMethod}
+                setDeliveryMethod={setDeliveryMethod}
                 locateCoord={route.params.locateCoord}
               />
             }

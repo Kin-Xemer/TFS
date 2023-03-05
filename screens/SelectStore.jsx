@@ -35,6 +35,7 @@ const SelectStore = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const nearlyRes = route.params.nearlyRestaurant;
   const addressCoord = useSelector((state) => state.address.address);
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const [isSelectedAddress, setIsSelectedAddress] = useState(false);
@@ -42,7 +43,6 @@ const SelectStore = (props) => {
   const [stringAddress, setStringAddress] = useState("");
   const [resultAddress, setResultAddress] = useState();
   const [myLocation, setMyLocation] = useState();
-  const [droplocationCors, setDroplocationCors] = useState();
   const [isDone, setIsDone] = useState(true);
   const [selectedCoord, setSeletedCoord] = useState(null);
   const [placeFlexIndex, setPlaceFlexIndex] = useState(1);
@@ -78,8 +78,9 @@ const SelectStore = (props) => {
     mapRef.current.animateToRegion(destination, DURATION - 500);
   };
   const onLoadAddress = () => {
-    const lat = addressCoord.geometry.location.lat;
-    const lng = addressCoord.geometry.location.lng;
+    const lat = nearlyRes.latitude;
+    const lng = nearlyRes.longitude;
+    setSelectedStore(nearlyRes.restaurantLocation)
     const destination = convertLatLng(lat, lng);
     mapRef.current.animateToRegion(destination, DURATION);
   };
@@ -103,6 +104,7 @@ const SelectStore = (props) => {
         {selectedCoord ? (
           <Marker
             coordinate={selectedCoord}
+      
             image={require("../assets/icons/restaurant.png")}
           />
         ) : (
@@ -116,6 +118,7 @@ const SelectStore = (props) => {
           };
           return (
             <Marker
+            title={item.restaurantName}
               onPress={(e) => {
                 handleOnPressMarker(e, item);
               }}
