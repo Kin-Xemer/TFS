@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   ScrollView,
+  PermissionsAndroid,
 } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -35,6 +36,7 @@ import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
 import { getCartById } from "../../Utils/api/getCart";
 import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
 import { BASE_URL } from "../../services/baseURL";
+import Geolocation from 'react-native-geolocation-service';
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -59,10 +61,7 @@ const Home = (props) => {
   const handleLogout = () => {
     clearStorage();
   };
-  const addToCart = async (food, quantity) => {
-    await dispatch({ type: "ADD_CART", payload: food, quantity });
-    await getCartById()(dispatch, cusName);
-  };
+
   const getRegion = ()=>{
     axios.get(BASE_URL + "/regions").then((response)=>{
       setRegions(response.data);
@@ -286,14 +285,14 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood addToCart={addToCart} isLogin={isLogin} itemWith={170} mr={15} food={item} />
+                <CardFood isLogin={isLogin} itemWith={170} mr={15} food={item} />
               </TouchableOpacity>
             </Flex>
           )}
           keyExtractor={item=> item.id}
         />
         <Title textTitle="Bán chạy" />
-        <FlatList
+        {/* <FlatList
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -311,7 +310,7 @@ const Home = (props) => {
             </Flex>
           )}
           keyExtractor={item=> item.id}
-        />
+        /> */}
         <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
           <TouchableOpacity
             style={styles.buttonStyle}
@@ -324,7 +323,7 @@ const Home = (props) => {
           </TouchableOpacity>
           <Button
             onPress={() => {
-              console.log(foods);
+              navigation.navigate("PaymentScreen")
             }}
           >
             Check button

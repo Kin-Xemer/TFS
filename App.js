@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import AppNavigator from "./AppNavigator";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { THEME_COLOR } from "./Utils/themeColor";
+import linking from "./linking";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs([
   "expo-app-loading is deprecated in favor of expo-splash-screen:",
@@ -38,7 +39,7 @@ export default function App() {
   } else
     return (
       <Provider store={stores}>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <StatusBar
             animated={true}
             backgroundColor="white"

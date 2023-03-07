@@ -97,7 +97,7 @@ const FooterComponent = (props) => {
         <View style={{ marginLeft: 8, justifyContent: "center" }}>
           <Flex
             flexDirection={"row"}
-            style={{ justifyContent: " center", alignItems: "center" }}
+            style={{ alignItems: "center" }}
           >
             <Text style={{ fontSize: 18, fontFamily: "Quicksand-Bold" }}>
               Phương thức thanh toán

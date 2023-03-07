@@ -9,12 +9,14 @@ import {
   Animated,
   SafeAreaView,
   TouchableOpacity,
+  NativeModules,
+  NativeEventEmitter,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 import Lottie from "lottie-react-native";
 import {
   Flex,
@@ -31,54 +33,92 @@ import QRCode from "react-native-qrcode-svg";
 import { BASE_URL } from "../services/baseURL";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
-import { getCartById } from '../Utils/api/getCart';
+import { getCartById } from "../Utils/api/getCart";
 import { convertPrice } from "../Utils/convertPrice";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { PayZaloBridge } = NativeModules;
+
+const payZaloBridgeEmitter = new NativeEventEmitter(PayZaloBridge);
+
+const subscription = payZaloBridgeEmitter.addListener(
+  "EventPayZalo",
+  (data) => {
+    if (data.returnCode == 1) {
+      console.log("payment successful", data);
+    } else {
+      alert("Pay error! loDKSAJDi ne" + data.returnCode);
+      console.log(data);
+    }
+  }
+);
 const ZaloPaymentScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const isFocused = useIsFocused()
-  const [paymentStatus, setPaymentStatus] = useState(
-    route.params.paymentStatus
-  );
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
-  const paymentObject = route.params.paymentResponse;
-  const order = route.params.order;
   const account = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
-  const [orderStatus, setOrderStatus] = useState(route.params.order.status);
   const username = useSelector((state) => state.account.account.customerName);
+
+  const [paymentStatus, setPaymentStatus] = useState();
+  const [isDone, setIsDone] = useState(false);
+  const paymentObject = route.params.paymentResponse;
+  const order = route.params.order;
+
+  useEffect(() => {}, []);
+  const payOrder = () => {
+    var payZP = NativeModules.PayZaloBridge;
+    payZP.payOrder(paymentObject.zptranstoken);
+  };
+  // const [orderStatus, setOrderStatus] = useState(route.params.order.status);
   useEffect(() => {
     checkPayment();
-    checkOrderPayment();
+    //   checkOrderPayment();
   }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       checkPayment();
-      checkOrderPayment();
+      //  checkOrderPayment();
     }, 400);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (paymentStatus.returnCode === 1) {
+    if (paymentStatus && paymentStatus.returnCode === 1) {
+      setIsDone(false);
       let url = BASE_URL + "/orders";
-      const paymentOrder = { ...order, status: "accept" };
-      axios
-        .put(url, paymentOrder)
-        .then((response) => {
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      axios.post(url, order).then((response) => {
+        setPaymentStatus({...paymentStatus, returnCode: response});
+        const newCart = {
+          ...cart,
+          cartItems: [],
+          numberCart: 0,
+          totalPrice: 0,
+        };
+        axios
+          .put(BASE_URL + "/carts", newCart)
+          .then((res) => {
+            setIsDone(true);
+            
+            dispatch({ type: "LOGOUT" });
+            //  navigation.navigate("Home");
+          })
+          .catch((err) => {
+            alert("Update Cart: ", err);
+          });
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
     }
-  }, [paymentStatus.returnCode]);
+  }, [paymentStatus]);
 
   useEffect(() => {
     if (isFocused) {
-      getCartById()(dispatch,account);
+      // getCartById()(dispatch,account);
     }
   }, [isFocused]);
 
@@ -88,12 +128,12 @@ const ZaloPaymentScreen = () => {
       setPaymentStatus(res.data);
     });
   };
-  const checkOrderPayment = () => {
-    let url = BASE_URL + "/orders/" + order.id;
-    axios.get(url).then((res) => {
-      setOrderStatus(res.data.status);
-    });
-  };
+  // const checkOrderPayment = () => {
+  //   let url = BASE_URL + "/orders/" + order.id;
+  //   axios.get(url).then((res) => {
+  //     setOrderStatus(res.data.status);
+  //   });
+  // };
   return (
     <View style={styles.container}>
       <View
@@ -112,10 +152,10 @@ const ZaloPaymentScreen = () => {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          height: "40%",
+          height: "25%",
         }}
       >
-        {orderStatus === "waiting" ? (
+        {/* {orderStatus === "waiting" ? (
           paymentStatus && paymentStatus.returnCode === -49 ? (
             <QRCode value={paymentObject.zaloUrl} size={150} />
           ) : (
@@ -185,9 +225,51 @@ const ZaloPaymentScreen = () => {
             Đơn hàng đang chờ xác nhận
           </Text>
         </View>
-        ) }
+        ) } */}
+        {paymentStatus && paymentStatus.returnCode === 1 ? (
+          <View style={{ alignItems: "center", marginBottom: 50 }}>
+            <Lottie
+              loop={false}
+              style={{ height: 180, width: 180 }}
+              source={require("../assets/animation/success.json")}
+              autoPlay
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: FONT.BOLD,
+                color: "#20BF55",
+              }}
+            >
+              Giao dịch thành công
+            </Text>
+          </View>
+        ) : paymentStatus &&paymentStatus.returnCode === 10 ? (
+          <View style={{ alignItems: "center", marginBottom: 50 }}>
+            <Lottie
+              style={{ height: 180, width: 180 }}
+              source={require("../assets/animation/2.json")}
+              autoPlay
+              loop
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: FONT.BOLD,
+                color: "#FFB302",
+              }}
+            >
+              Đang tiến hành giao dịch
+            </Text>
+          </View>
+        ) : paymentStatus &&paymentStatus.returnCode === -244 ? (
+          <Text style={{ fontSize: 20, fontFamily: FONT.BOLD, color: "red" }}>
+            Đơn hàng bị từ chối giao dịch
+          </Text>
+        ) : null}
       </View>
       <Text>{JSON.stringify(paymentObject)}</Text>
+      <Text>{JSON.stringify(paymentStatus &&paymentStatus)}</Text>
       <View
         style={{
           backgroundColor: "white",
@@ -246,7 +328,7 @@ const ZaloPaymentScreen = () => {
         <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
       </TouchableOpacity>
 
-      {paymentStatus.returnCode === 1 ? (
+      {/* {paymentStatus.returnCode === 1 ? (
         <TouchableOpacity
           style={styles.buttonStyle}
           activeOpacity={0.8}
@@ -256,7 +338,17 @@ const ZaloPaymentScreen = () => {
         >
           <Text style={styles.buttonText}>Tiếp tục mua hàng</Text>
         </TouchableOpacity>
-      ) : null}
+      ) : null} */}
+
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        activeOpacity={0.8}
+        onPress={() => {
+          payOrder();
+        }}
+      >
+        <Text style={styles.buttonText}>Tiếp tục mua hàng</Text>
+      </TouchableOpacity>
     </View>
   );
 };

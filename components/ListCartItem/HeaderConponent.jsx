@@ -33,7 +33,7 @@ const HeaderComponent = (props) => {
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const listDeliveryMethod = [
     { label: "Giao hàng", value: "delivery" },
-    { label: "Tự đến lấy", value: "takeaway" },
+    { label: "Lấy tại cửa hàng", value: "takeaway" },
   ];
   const handlePressRadio = (value) => {
     setDeliveryMethod(value);

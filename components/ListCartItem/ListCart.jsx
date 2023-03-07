@@ -135,7 +135,9 @@ const ListCart = (props) => {
           axios
             .put(BASE_URL + "/carts", newCart)
             .then((res) => {
+
               setIsDone(true);
+              dispatch({ type: "LOGOUT" });
               navigation.navigate("Home");
             })
             .catch((err) => {
@@ -148,32 +150,15 @@ const ListCart = (props) => {
     } else if (orders.paymentMethod === "ZaloPay") {
       setIsDone(false);
       axios
-        .post(BASE_URL + "/orders", orders)
-        .then((res) => {})
-        .catch((err) => {
-          alert("Update Order: ", err.message);
-        });
-      axios
         .post(BASE_URL + "/orders/zaloPay", orders)
         .then((response) => {
-          let url =
-            BASE_URL + "/orders/checkPayment/" + response.data.apptransid;
-          axios.get(url).then((res) => {
-            const newCart = {
-              ...cart,
-              cartItems: [],
-              numberCart: 0,
-              totalPrice: 0,
-            };
-            axios.put(BASE_URL + "/carts", newCart).then((r) => {
-              setIsDone(true);
-              navigation.navigate("ZaloPaymentScreen", {
-                paymentResponse: response.data,
-                order: orders,
-                paymentStatus: res.data,
-              });
+          console.log(response.data);
+            setIsDone(true);
+            navigation.navigate("ZaloPaymentScreen", {
+              paymentResponse: response.data,
+              order: orders,
             });
-          });
+         
         })
         .catch((err) => {
           alert("Create Order: ", err.message);
