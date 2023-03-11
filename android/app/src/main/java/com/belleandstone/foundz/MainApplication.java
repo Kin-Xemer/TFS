@@ -13,6 +13,9 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.belleandstone.foundz.newarchitecture.MainApplicationReactNativeHost;
+import com.facebook.react.ReactApplication; //<- Dòng này
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;//<- Dòng này
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;//<- Dòng này
 
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
@@ -39,6 +42,8 @@ public class MainApplication extends Application implements ReactApplication {
       // Packages that cannot be autolinked yet can be added manually here, for example:
       // packages.add(new MyReactNativePackage());
        packages.add(new PayZaloBridge());
+         packages.add(new RNFirebaseMessagingPackage());//<- Dòng này
+      packages.add(new RNFirebaseNotificationsPackage());//<- Dòng này
       return packages;
     }
 

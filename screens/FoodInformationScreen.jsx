@@ -18,6 +18,7 @@ import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
 import Toast from 'react-native-toast-message';
 import { THEME_COLOR } from "../Utils/themeColor";
+import { FONT } from "../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -430,17 +431,6 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 16,
   },
-  buttonStyle: {
-    borderRadius: 15,
-    backgroundColor: THEME_COLOR,
-    height: 47,
-    alignItems: "center",justifyContent: "center",
-  },
-  buttonText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 18,
-    color: "#fff",
-  },
   ratingContainer: {
     width: "100%",
     height: 135,
@@ -478,6 +468,18 @@ const styles = StyleSheet.create({
     width: "45%",
     height: "100%",
     justifyContent: "center",
+  },
+  buttonStyle: {
+    borderRadius: 15,
+    backgroundColor: THEME_COLOR,
+    height: 47,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontFamily:FONT.BOLD,
+    fontSize: 18,
+    color: "#fff",
   },
 });
 export default FoodInformationScreen;

@@ -1,4 +1,10 @@
-import { View, StyleSheet, Text, Dimensions,TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { SearchNormal1, ArrowDown2 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import { Flex, Image, Spacer } from "native-base";
@@ -9,20 +15,21 @@ import { useSelector } from "react-redux";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Categories = (props) => {
   const navigation = useNavigation();
-  const foods = useSelector((state) => state.food.food)
-  const {openAllFood, events, regions} = props;
+  const foods = useSelector((state) => state.food.food);
+  const { openAllFood, events, regions } = props;
   return (
     <Flex direction="row" style={styles.container}>
       <TouchableOpacity
-      onPress={()=>{
-        navigation.navigate("MoreScreen",{
-          food: foods,
-          events: events,
-          regions: regions,
-          banner:"https://live.staticflickr.com/65535/52702504583_ff7ec0f38a_z.jpg"
-        })
-      }}
-      activeOpacity={0.8}
+        onPress={() => {
+          navigation.navigate("MoreScreen", {
+            food: foods,
+            events: events,
+            regions: regions,
+            banner:
+              "https://live.staticflickr.com/65535/52702504583_ff7ec0f38a_z.jpg",
+          });
+        }}
+        activeOpacity={0.8}
       >
         <Flex style={styles.iconCateContainer}>
           <Image
@@ -36,7 +43,13 @@ const Categories = (props) => {
         </Flex>
       </TouchableOpacity>
       <Spacer />
-      <Flex style={styles.iconCateContainer}>
+      <TouchableOpacity
+        style={styles.iconCateContainer}
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.navigate("PartyScreen") 
+        }}
+      >
         <Image
           source={require("../../assets/banan.png")}
           alt="Bàn tiệc"
@@ -45,7 +58,7 @@ const Categories = (props) => {
           borderRadius={10}
         />
         <Text style={[styles.textStyle, styles.titleText]}>Bàn tiệc</Text>
-      </Flex>
+      </TouchableOpacity>
       <Spacer />
       <Flex style={styles.iconCateContainer}>
         <Image

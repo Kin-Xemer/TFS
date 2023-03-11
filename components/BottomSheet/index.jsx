@@ -288,10 +288,5 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: THEME_COLOR,
   },
-  buttonText: {
-    fontFamily: FONT.BOLD,
-    fontSize: 20,
-    color: "white",
-  },
 });
 export default BottomSheet;

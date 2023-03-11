@@ -7,7 +7,12 @@ export const getRestaurant = () => {
           BASE_URL +"/restaurants"
         )
         .then((result) => {
-          dispatch({ type: "SET_RESTAURANT", payload: result.data });
+          let restaurantActive = result.data.filter((item) => {
+            if (item.status === true) {
+              return item
+            }
+          })
+          dispatch({ type: "SET_RESTAURANT", payload: restaurantActive });
         });
     };
   };

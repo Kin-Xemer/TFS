@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
 import { Toast } from "@ant-design/react-native";

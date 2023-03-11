@@ -35,6 +35,7 @@ import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { getCartById } from "../Utils/api/getCart";
 import { convertPrice } from "../Utils/convertPrice";
+import ActionButton from "../components/ActionButton";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const { PayZaloBridge } = NativeModules;
 
@@ -88,31 +89,7 @@ const ZaloPaymentScreen = () => {
 
   useEffect(() => {
     if (paymentStatus && paymentStatus.returnCode === 1) {
-      setIsDone(false);
-      let url = BASE_URL + "/orders";
-      axios.post(url, order).then((response) => {
-        setPaymentStatus({...paymentStatus, returnCode: response});
-        const newCart = {
-          ...cart,
-          cartItems: [],
-          numberCart: 0,
-          totalPrice: 0,
-        };
-        axios
-          .put(BASE_URL + "/carts", newCart)
-          .then((res) => {
-            setIsDone(true);
-            
-            dispatch({ type: "LOGOUT" });
-            //  navigation.navigate("Home");
-          })
-          .catch((err) => {
-            alert("Update Cart: ", err);
-          });
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+      navigation.navigate("ZaloPaymentSuccessScreen", { order: order, paymentObject: paymentObject  });
     }
   }, [paymentStatus]);
 
@@ -144,107 +121,18 @@ const ZaloPaymentScreen = () => {
           height: 40,
         }}
       >
-        <Text style={[styles.title, { fontSize: 20, color: THEME_COLOR }]}>
-          QUÉT QR
+        <Text style={[styles.title, { fontFamily:FONT.SEMI,fontSize: 20, color: THEME_COLOR }]}>
+          THANH TOÁN
         </Text>
       </View>
       <View
         style={{
           alignItems: "center",
           justifyContent: "center",
-          height: "25%",
+          height: "15%",
         }}
       >
-        {/* {orderStatus === "waiting" ? (
-          paymentStatus && paymentStatus.returnCode === -49 ? (
-            <QRCode value={paymentObject.zaloUrl} size={150} />
-          ) : (
-            <View>
-              {paymentStatus.returnCode === -244 ? (
-                <Text
-                  style={{ fontSize: 20, fontFamily: FONT.BOLD, color: "red" }}
-                >
-                  Đơn hàng bị từ chối giao dịch
-                </Text>
-              ) : paymentStatus.returnCode === 10 ? (
-                <View style={{ alignItems: "center", marginBottom: 50 }}>
-                  <Lottie
-                    style={{ height: 180, width: 180 }}
-                    source={require("../assets/animation/2.json")}
-                    autoPlay
-                    loop
-                  />
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontFamily: FONT.BOLD,
-                      color: "#FFB302",
-                    }}
-                  >
-                    Đang tiến hành giao dịch
-                  </Text>
-                </View>
-              ) : paymentStatus.returnCode === 1 && orderStatus !=="waiting"? (
-                <View style={{ alignItems: "center", marginBottom: 50 }}>
-                  <Lottie
-                    loop={false}
-                    style={{ height: 180, width: 180 }}
-                    source={require("../assets/animation/success.json")}
-                    autoPlay
-                  />
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontFamily: FONT.BOLD,
-                      color: "#20BF55",
-                    }}
-                  >
-                    Giao dịch thành công
-                  </Text>
-                </View>
-              ) : (
-                ""
-              )}
-            </View>
-          )
-        ) : (
-          <View style={{ alignItems: "center", marginBottom: 50 }}>
-          <Lottie
-            style={{ height: 180, width: 180 }}
-            source={require("../assets/animation/130714-cala-waiting-04.json")}
-            autoPlay
-            loop
-          />
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: FONT.BOLD,
-              color: "#FFB302",
-            }}
-          >
-            Đơn hàng đang chờ xác nhận
-          </Text>
-        </View>
-        ) } */}
-        {paymentStatus && paymentStatus.returnCode === 1 ? (
-          <View style={{ alignItems: "center", marginBottom: 50 }}>
-            <Lottie
-              loop={false}
-              style={{ height: 180, width: 180 }}
-              source={require("../assets/animation/success.json")}
-              autoPlay
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontFamily: FONT.BOLD,
-                color: "#20BF55",
-              }}
-            >
-              Giao dịch thành công
-            </Text>
-          </View>
-        ) : paymentStatus &&paymentStatus.returnCode === 10 ? (
+        {paymentStatus && paymentStatus.returnCode === 10 ? (
           <View style={{ alignItems: "center", marginBottom: 50 }}>
             <Lottie
               style={{ height: 180, width: 180 }}
@@ -262,14 +150,12 @@ const ZaloPaymentScreen = () => {
               Đang tiến hành giao dịch
             </Text>
           </View>
-        ) : paymentStatus &&paymentStatus.returnCode === -244 ? (
+        ) : paymentStatus && paymentStatus.returnCode === -244 ? (
           <Text style={{ fontSize: 20, fontFamily: FONT.BOLD, color: "red" }}>
             Đơn hàng bị từ chối giao dịch
           </Text>
         ) : null}
       </View>
-      <Text>{JSON.stringify(paymentObject)}</Text>
-      <Text>{JSON.stringify(paymentStatus &&paymentStatus)}</Text>
       <View
         style={{
           backgroundColor: "white",
@@ -323,7 +209,7 @@ const ZaloPaymentScreen = () => {
         onPress={() => {
           navigation.goBack();
         }}
-        activeOpacity={1}
+        activeOpacity={0.7}
       >
         <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
       </TouchableOpacity>
@@ -340,15 +226,7 @@ const ZaloPaymentScreen = () => {
         </TouchableOpacity>
       ) : null} */}
 
-      <TouchableOpacity
-        style={styles.buttonStyle}
-        activeOpacity={0.8}
-        onPress={() => {
-          payOrder();
-        }}
-      >
-        <Text style={styles.buttonText}>Tiếp tục mua hàng</Text>
-      </TouchableOpacity>
+      <ActionButton onPress={() => payOrder()} buttonText="Tiếp tục với ZaloPay"/>
     </View>
   );
 };
@@ -365,19 +243,6 @@ const styles = StyleSheet.create({
   },
   infor: {
     padding: 16,
-  },
-  buttonStyle: {
-    marginTop: 50,
-    borderRadius: 15,
-    backgroundColor: THEME_COLOR,
-    height: 47,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 18,
-    color: "#fff",
   },
 });
 export default ZaloPaymentScreen;

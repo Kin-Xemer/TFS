@@ -36,26 +36,30 @@ const SelectStore = (props) => {
   const route = useRoute();
   const isFocused = useIsFocused();
   const nearlyRes = route.params.nearlyRestaurant;
-  const addressCoord = useSelector((state) => state.address.address);
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const [isSelectedAddress, setIsSelectedAddress] = useState(false);
   const [index, setIndex] = useState(1);
-  const [stringAddress, setStringAddress] = useState("");
-  const [resultAddress, setResultAddress] = useState();
   const [myLocation, setMyLocation] = useState();
   const [isDone, setIsDone] = useState(true);
-  const [selectedCoord, setSeletedCoord] = useState(null);
   const [placeFlexIndex, setPlaceFlexIndex] = useState(1);
   const [selectedStore, setSelectedStore] = useState("");
   const snapPoints = useMemo(() => ["25%", "40%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
+  var timesRunModal = 0;
   useEffect(() => {
-    if (isFocused) {
-      onLoadAddress();
+    if(isFocused){
+      onLoadAddress()
+      const interval = setInterval(() => {
+        timesRunModal += 1;
+        if (timesRunModal === 1) {
+          onLoadAddress()
+          clearInterval(interval);
+        }
+      }, 1);
     }
-  }, []);
+  }, [isFocused]);
 
   const handleSelectedStore = (item) => {
     setSelectedStore(item.restaurantLocation);
@@ -78,10 +82,12 @@ const SelectStore = (props) => {
     mapRef.current.animateToRegion(destination, DURATION - 500);
   };
   const onLoadAddress = () => {
+  
     const lat = nearlyRes.latitude;
     const lng = nearlyRes.longitude;
     setSelectedStore(nearlyRes.restaurantLocation)
     const destination = convertLatLng(lat, lng);
+    console.log(destination)
     mapRef.current.animateToRegion(destination, DURATION);
   };
 
@@ -95,13 +101,11 @@ const SelectStore = (props) => {
     <View style={styles.container}>
       <MapView
         style={StyleSheet.absoluteFill}
-        showsUserLocation={true}
         ref={mapRef}
-        mapType="mutedStandard"
-        userLocationCalloutEnabled={true}
+        mapType="standard"
         onPress={() => {}}
       >
-        {selectedCoord ? (
+        {/* {selectedCoord ? (
           <Marker
             coordinate={selectedCoord}
       
@@ -109,12 +113,12 @@ const SelectStore = (props) => {
           />
         ) : (
           ""
-        )}
+        )} */}
 
         {restaurant.map((item, index) => {
           const coord = {
-            latitude: item.latitude,
-            longitude: item.longitude,
+            latitude: parseFloat(item.latitude),
+            longitude: parseFloat(item.longitude),
           };
           return (
             <Marker

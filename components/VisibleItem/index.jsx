@@ -65,20 +65,6 @@ const VisibleItem = (props) => {
             >
               {data.item.name}
             </Text>
-            <View>
-              <Text
-                style={[
-                  styles.title,
-                  {
-                    color: "#999",
-                    fontSize: 12,
-                    fontFamily: "Quicksand-SemiBold",
-                  },
-                ]}
-              >
-                Ghi chu
-              </Text>
-            </View>
             <View style={{ marginBottom: 8 }}>
               <Text
                 style={[

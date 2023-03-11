@@ -12,6 +12,8 @@ const initCart = {
   updateCart: null,
   cart: {},
   account: {},
+  serviceList: [],
+  serviceListObject: [],
 };
 
 const saveCart = (state) => {
@@ -19,6 +21,7 @@ const saveCart = (state) => {
   state.cartsItem.map((item) => {
     sum = sum + item.quantity;
   });
+
   let totalPrice = 0;
   state.cartsItem.map((item) => {
     totalPrice = totalPrice + item.subTotal;
@@ -28,8 +31,12 @@ const saveCart = (state) => {
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
+    comboList:[],
+    partyItem:[]
   };
   initCart.numberCart = sum;
+  console.log( BASE_URL + "/carts",
+  newCart)
   axios
     .put(
       BASE_URL + "/carts",
@@ -37,6 +44,8 @@ const saveCart = (state) => {
     )
     .then((res) => {
      
+    }).catch((err) => {
+      console.log(err.message)
     });
 };
 
@@ -129,6 +138,17 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
         cartsItem: action.payload,
+        
+      };
+    case "SET_SERVICE_LIST":
+      return {
+        ...state,
+        serviceList: action.payload,
+      };
+    case "SET_SERVICE_LIST_OBJECT":
+      return {
+        ...state,
+        serviceListObject: action.payload,
       };
     case "LOGOUT":
       return {
@@ -138,6 +158,7 @@ function todoProduct(state = initCart, action) {
         updateCart: null,
         cart: {},
         account: {},
+        serviceList: []
       };
     //   case "SET_ACCOUNT":
     // return {

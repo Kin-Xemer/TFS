@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
 export const fetchData = () => {
     return (dispatch) => {
+      
       axios
         .get(
           BASE_URL +"/foods"

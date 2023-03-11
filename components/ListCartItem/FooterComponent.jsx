@@ -16,8 +16,16 @@ import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FooterComponent = (props) => {
-  const { totalCart, discount, deliveryFee, servicesFee, setPaymentMethod } =
-    props;
+  const {
+    totalCart,
+    discount,
+    deliveryFee,
+    servicesFee,
+    setPaymentMethod,
+    setInvisible,
+    toggleModal,
+    listSelectedService,
+  } = props;
   const navigation = useNavigation();
   const [payment, setPayment] = useState("cash");
   let arrayPayment = [
@@ -34,6 +42,7 @@ const FooterComponent = (props) => {
       size: 35,
     },
   ];
+
   return (
     <ImageBackground
       source={require("../../assets/nen.png")}
@@ -42,21 +51,61 @@ const FooterComponent = (props) => {
     >
       <View style={{ backgroundColor: "white", paddingHorizontal: 16 }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-        <TouchableOpacity style={styles.changeButton}
-        onPress={() =>{
-            console.log("check")
-        }}
-        >
+      {listSelectedService.length > 0 ?   <View style={{ marginVertical: 6 }}>
           <Text
             style={{
-              fontSize: 13,
-              color: THEME_COLOR,
-              fontFamily: FONT.BOLD,
+              fontSize: 18,
+              fontFamily: "Quicksand-Bold",
+              color: "#8c8c8c",
             }}
           >
-            Thêm dịch vụ 
+            DỊCH VỤ
           </Text>
-        </TouchableOpacity>
+        </View> : null}
+        <View>
+         <View style={{ marginBottom: 10 }}>
+         {listSelectedService.map((item, index) => {
+            return (
+              <Flex flexDirection={"row"} key={index} style={{ paddingVertical: 4}}>
+                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
+                  {item.serviceName}
+                </Text>
+                <Spacer />
+                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}> + {convertPrice(item.servicePrice)} đ</Text>
+              </Flex>
+            );
+          })}
+         </View>
+
+          <TouchableOpacity
+            style={styles.changeButton}
+            onPress={() => {
+              toggleModal();
+            }}
+          >
+            {listSelectedService.length > 0 ? (
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: THEME_COLOR,
+                  fontFamily: FONT.BOLD,
+                }}
+              >
+                Sửa dịch vụ
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: THEME_COLOR,
+                  fontFamily: FONT.BOLD,
+                }}
+              >
+                Thêm dịch vụ
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
         <Flex direction="row" style={{ alignItems: "center" }}>
           <View style={styles.locationHeader}>
@@ -95,10 +144,7 @@ const FooterComponent = (props) => {
       </View>
       <Flex style={styles.voucherView}>
         <View style={{ marginLeft: 8, justifyContent: "center" }}>
-          <Flex
-            flexDirection={"row"}
-            style={{ alignItems: "center" }}
-          >
+          <Flex flexDirection={"row"} style={{ alignItems: "center" }}>
             <Text style={{ fontSize: 18, fontFamily: "Quicksand-Bold" }}>
               Phương thức thanh toán
             </Text>
@@ -232,7 +278,7 @@ const styles = StyleSheet.create({
     borderColor: THEME_COLOR,
     borderRadius: 50,
     padding: 4,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   locationHeader: {
     marginVertical: 4,

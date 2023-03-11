@@ -77,7 +77,7 @@ const OrderScreen = (props) => {
         setIsDone(true);
         res.data.sort(
           (item) =>
-            new Date(item.orderDate).getTime() - new Date().getTime() > 0
+            new Date(item.orderDate).getTime() - new Date().getTime() < 0
         );
         setOrders(res.data);
         if (status === null && status !== "") {

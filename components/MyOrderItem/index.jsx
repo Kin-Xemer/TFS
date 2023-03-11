@@ -12,12 +12,12 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const MyOrderItem = (props) => {
   const { order } = props;
-  const [fee, setFee] = useState(13500);
+  const [fee, setFee] = useState(0);
   return (
     <View style={styles.container}>
-      <Box mb={25} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
-      <View>
-        <Text mb={2} fontFamily={FONT.BOLD} fontSize={18} color={"#8c8c8c"}>
+      <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
+      <View style={{ marginBottom: 5 }}>
+        <Text fontFamily={FONT.BOLD} fontSize={18} color={"#8c8c8c"}>
           MÓN ĂN
         </Text>
         {order.itemList.map((item, index) => {
@@ -28,23 +28,47 @@ const MyOrderItem = (props) => {
           );
         })}
       </View>
-      {order.note && order.note !== "" ? (
+
+      {order.serviceList.length > 0 ? (
         <View>
-          <Text mt={4}fontFamily={FONT.BOLD}  color={"#696969"}>Ghi chú: <Text color={"#8c8c8c"} fontFamily={FONT.MEDIUM} >{order.note}</Text></Text>
+          <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
+          <Text fontFamily={FONT.BOLD} fontSize={18} color={"#8c8c8c"}>
+            DỊCH VỤ
+          </Text>
         </View>
       ) : null}
-      <Box
-        mb={25}
-        mt={15}
-        borderBottomWidth={0.3}
-        borderBottomColor="#8c8c8c"
-      />
+      {order.serviceList.map((item, index) => {
+        return (
+          <Flex flexDirection={"row"} key={index}>
+            <View>
+              <Text fontFamily={FONT.BOLD} fontSize={14}>
+                {item.serviceName}
+              </Text>
+            </View>
+            <Spacer />
+            <Text fontFamily={FONT.SEMI} fontSize={16}>
+              {convertPrice(item.servicePrice)} đ
+            </Text>
+          </Flex>
+        );
+      })}
+      {order.note && order.note !== "" ? (
+        <View>
+          <Text mt={4} fontFamily={FONT.BOLD} color={"#696969"}>
+            Ghi chú:{" "}
+            <Text color={"#8c8c8c"} fontFamily={FONT.MEDIUM}>
+              {order.note}
+            </Text>
+          </Text>
+        </View>
+      ) : null}
+      <Box mb={4} mt={15} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
       <Flex flexDirection="row">
         <Text fontFamily={FONT.MEDIUM} fontSize={17}>
           Tổng đơn hàng:{" "}
         </Text>
         <Spacer />
-        <Text fontFamily={FONT.SEMI} fontSize={17}>
+        <Text fontFamily={FONT.BOLD} fontSize={17}>
           {convertPrice(order.totalPrice)} đ
         </Text>
       </Flex>
@@ -53,7 +77,7 @@ const MyOrderItem = (props) => {
           Phí giao hàng:{" "}
         </Text>
         <Spacer />
-        <Text fontFamily={FONT.SEMI} fontSize={17}>
+        <Text fontFamily={FONT.BOLD} fontSize={17}>
           {convertPrice(fee)}đ
         </Text>
       </Flex>
@@ -66,6 +90,7 @@ const MyOrderItem = (props) => {
           {convertPrice(order.totalPrice + fee)} đ
         </Text>
       </Flex>
+      <Box mb={4} mt={15} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
     </View>
   );
 };

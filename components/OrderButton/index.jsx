@@ -1,31 +1,33 @@
 
-import {
-    useRoute,
-    useNavigation,
-    useIsFocused,
-  } from "@react-navigation/native";
-  import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-  import { Provider } from "@ant-design/react-native";
-  import { Entypo } from "@expo/vector-icons";
-  import { useSelector, useDispatch } from "react-redux";
-  import axios from "axios";
-  import { useState, useMemo, useEffect } from "react";
-  import { Box, Button, Flex } from "native-base";
-  import { FONT } from "../../Utils/themeFont";
-  import { convertDate } from "../../Utils/convertDate";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { FONT } from "../../Utils/themeFont";
+import { THEME_COLOR } from "../../Utils/themeColor";
 const OrderButton = (props) => {
-    const {buttonHandler, bgColor, buttonText} = props;
-    return (
-        <View style={styles.container}>
-            <Button backgroundColor={bgColor} borderRadius={15} p={4} onPress={buttonHandler}>
-                <Text>{buttonText}</Text>
-            </Button>
-        </View>
-    )
-}
+  const { buttonHandler, bgColor, buttonText } = props;
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+      style={[styles.buttonStyle, {backgroundColor: bgColor}]}
+      activeOpacity={0.8}
+      onPress={buttonHandler}
+      >
+        <Text style={styles.buttonText}>{buttonText}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 const styles = StyleSheet.create({
-    container:{
-        marginBottom: 50
-    }
-})
+    buttonStyle: {
+        borderRadius: 15,
+        backgroundColor: THEME_COLOR,
+        height: 47,
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      buttonText: {
+        fontFamily:FONT.BOLD,
+        fontSize: 18,
+        color: "#fff",
+      },
+});
 export default OrderButton;

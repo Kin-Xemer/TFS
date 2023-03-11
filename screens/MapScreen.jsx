@@ -32,7 +32,7 @@ const { width, height } = Dimensions.get("window");
 const MapScreen = (props) => {
   const dispatch = useDispatch();
   const placeRef = useRef();
-  const bottomSheetRef = useRef(null);
+  const bottomSheetRef = useRef();
   const mapRef = useRef();
   const navigation = useNavigation();
   const route = useRoute();
@@ -46,17 +46,24 @@ const MapScreen = (props) => {
   const [myLocation, setMyLocation] = useState(route.params.locateCoord);
   const [isDone, setIsDone] = useState(true);
   const [selectedCoord, setSeletedCoord] = useState(null);
-  const [selectedStore, setSelectedStore] = useState("");
-  const snapPoints = useMemo(() => ["20%", "43%"], []);
+  const [initRe, saaaa] = useState("");
+  const snapPoints = useMemo(() => ["23%", "40%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
-
+  var timesRunModal = 0;
   useEffect(() => {
-    if (isFocused) {
-      onLoadAddress();
+    if(isFocused){
+      onLoadAddress()
+      const interval = setInterval(() => {
+        timesRunModal += 1;
+        if (timesRunModal === 1) {
+          onLoadAddress()
+          clearInterval(interval);
+        }
+      }, 1);
     }
-  }, []);
+  }, [isFocused]);
 
   const handleFocusText = (text) => {
     if (text.length === 0) {
@@ -70,22 +77,14 @@ const MapScreen = (props) => {
     }
   };
 
-  const handleOnPressMarker = (e, item) => {
-    // const lat = e.nativeEvent.coordinate.latitude;
-    // const lng = e.nativeEvent.coordinate.longitude;
-    const destination = convertLatLng(
-      e.nativeEvent.coordinate.latitude,
-      e.nativeEvent.coordinate.longitude
-    );
-    setSelectedStore(item.restaurantLocation);
-    setIndex(1);
-    mapRef.current.animateToRegion(destination);
-  };
   const onLoadAddress = () => {
     const lat = addressCoord.geometry.location.lat;
     const lng = addressCoord.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
-    mapRef.current.animateToRegion(destination);
+    console.log("isfocues")
+      
+      mapRef.current.animateToRegion(destination);
+    
   };
 
   const onHandleMyLocation = () => {
@@ -129,7 +128,7 @@ const MapScreen = (props) => {
     const lng = resultAddress.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
-
+    console.log("Mapscrressn ", stringAddress)
     getNearlyRestaurant(stringAddress, dispatch);
     placeRef.current?.setAddressText(stringAddress);
     placeRef.current?.blur();
@@ -153,7 +152,7 @@ const MapScreen = (props) => {
           }
         }}
         ref={mapRef}
-        mapType="mutedStandard"
+        mapType="standard"
         userLocationCalloutEnabled={true}
         onPress={() => {}}
       >
@@ -332,7 +331,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     borderColor: "silver",
-    borderWidth: "0.5",
+    borderWidth: 0.5,
     height: 44,
     fontFamily: "Quicksand-SemiBold",
     padding: 12,

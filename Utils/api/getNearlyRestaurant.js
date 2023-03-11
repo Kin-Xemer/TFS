@@ -19,8 +19,10 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
       .get(url)
       .then((res) => {
         let arr = res.data.rows[0].elements.map((item) => {
+        
           return item.distance.value;
         });
+        console.log(arr)
         let min = Math.min(...arr);
         let index = arr.indexOf(min);
         let nearlyObject = response.data[index];

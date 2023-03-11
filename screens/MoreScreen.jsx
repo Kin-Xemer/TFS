@@ -209,7 +209,7 @@ const FoodInformationScreen = (props) => {
                 }}
                 
               >
-                <Entypo name="chevron-left" size={38} color="black" />
+                <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
               </TouchableOpacity>
               <View style={{ width: "80%" }}>
                 <SearchBar />

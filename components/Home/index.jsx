@@ -36,7 +36,9 @@ import { getRestaurant } from "../../Utils/api/getRestaurantAPI";
 import { getCartById } from "../../Utils/api/getCart";
 import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
 import { BASE_URL } from "../../services/baseURL";
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from "react-native-geolocation-service";
+import { getServices } from "../../Utils/api/getServices";
+import ActionButton from "../ActionButton";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -47,7 +49,7 @@ const Home = (props) => {
   const [cusName, setCusName] = useState("");
   const [locateCoord, setLocateCoord] = useState(null);
   const [events, setEvents] = useState();
-  const [regions,setRegions] = useState();
+  const [regions, setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
   const [isFindDone, setIsFindDone] = useState(false);
@@ -57,21 +59,26 @@ const Home = (props) => {
   );
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const stringAddress = useSelector((state) => state.address.stringAddress);
-  const foods = useSelector((state) => state.food.food)
+  const foods = useSelector((state) => state.food.food);
   const handleLogout = () => {
     clearStorage();
   };
 
-  const getRegion = ()=>{
-    axios.get(BASE_URL + "/regions").then((response)=>{
-      setRegions(response.data);
-    }).catch((error)=>{console.log("error More Screen", error)})
-  }
-  const getEvent = ()=>{
-    axios.get(BASE_URL + "/events").then((response)=>{
+  const getRegion = () => {
+    axios
+      .get(BASE_URL + "/regions")
+      .then((response) => {
+        setRegions(response.data);
+      })
+      .catch((error) => {
+        console.log("error More Screen", error);
+      });
+  };
+  const getEvent = () => {
+    axios.get(BASE_URL + "/events").then((response) => {
       setEvents(response.data);
-    })
-  }
+    });
+  };
   const checkLogin = async () => {
     try {
       const cus = await AsyncStorage.getItem("customer");
@@ -128,10 +135,11 @@ const Home = (props) => {
     getRestaurant()(dispatch);
     getRegion();
     getEvent();
-   
+    getServices(dispatch);
   }, []);
   useEffect(() => {
     if (isFocused) {
+
       fetchData()(dispatch);
       checkLogin();
     }
@@ -152,7 +160,6 @@ const Home = (props) => {
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
-    setMyLocation(location);
     dispatch({
       type: "SET_LOCAL",
       payload: location,
@@ -167,6 +174,7 @@ const Home = (props) => {
           GOOGLE_MAPS_APIKEY
       )
       .then((response) => {
+        console.log("find done");
         setIsFindDone(true);
         dispatch({
           type: "SET_ADDRESS",
@@ -194,7 +202,9 @@ const Home = (props) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("MapScreen", {
-                addresses: address,
+                addresses: stringAddress === ""
+                ? address
+                : stringAddress,
                 locateCoord: myLocation,
               });
             }}
@@ -203,7 +213,7 @@ const Home = (props) => {
               {/* <Location size="14" color={THEME_COLOR} /> */}
               <Text
                 numberOfLines={1}
-                style={[styles.textStyle, styles.addressText]}
+                style={[styles.textStyle, styles.addressText, {width: "90%"}]}
               >
                 {isFindDone === true
                   ? stringAddress === ""
@@ -238,7 +248,7 @@ const Home = (props) => {
           >
             {numberCart}
           </Badge>
-          <TouchableWithoutFeedback
+          <TouchableOpacity
             style={{
               marginVertical: "auto",
               padding: 4,
@@ -250,7 +260,7 @@ const Home = (props) => {
             <View>
               <Feather name="shopping-cart" size={27} color={THEME_COLOR} />
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         </View>
       </Flex>
       <View style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}>
@@ -276,7 +286,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods}
+          data={foods.slice(0, 15)}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -285,11 +295,16 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood isLogin={isLogin} itemWith={170} mr={15} food={item} />
+                <CardFood
+                  isLogin={isLogin}
+                  itemWith={170}
+                  mr={15}
+                  food={item}
+                />
               </TouchableOpacity>
             </Flex>
           )}
-          keyExtractor={item=> item.id}
+          keyExtractor={(item) => item.id}
         />
         <Title textTitle="Bán chạy" />
         {/* <FlatList
@@ -312,22 +327,18 @@ const Home = (props) => {
           keyExtractor={item=> item.id}
         /> */}
         <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            activeOpacity={0.8}
+          <ActionButton
             onPress={() => {
               handleLogout();
             }}
-          >
-            <Text style={styles.buttonText}>dang xuat</Text>
-          </TouchableOpacity>
-          <Button
+            buttonText="Đăng xuất"
+          />
+          <ActionButton
             onPress={() => {
-              navigation.navigate("PaymentScreen")
+              navigation.navigate("PaymentScreen");
             }}
-          >
-            Check button
-          </Button>
+            buttonText=" Check button"
+          />
         </View>
       </ScrollView>
     </Flex>
@@ -369,13 +380,6 @@ const styles = StyleSheet.create({
   },
   locationHeader: {
     marginVertical: 4,
-  },
-  buttonStyle: {
-    borderRadius: 15,
-    backgroundColor: THEME_COLOR,
-    height: 47,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 export default Home;

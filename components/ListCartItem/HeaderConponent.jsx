@@ -73,7 +73,7 @@ const HeaderComponent = (props) => {
                 numberOfLines={1}
                 style={[styles.textStyle, styles.addressText]}
               >
-                {stringAddress === "" ? address : stringAddress}
+                {nearlyRestaurant.restaurantLocation}
               </Text>
             </View>
           </Flex>

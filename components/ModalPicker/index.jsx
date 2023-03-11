@@ -20,13 +20,33 @@ import {
   FlatList,
   Box,
   Button,
+  Checkbox,
 } from "native-base";
 import Modal from "react-native-modal";
-import { THEME_COLOR } from '../../Utils/themeColor';
+import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
+import { convertPrice } from "../../Utils/convertPrice";
+import ActionButton from '../ActionButton/index';
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ModalPicker = (props) => {
-  const { isVisible, toggleModal , handleSelectItem, arrayOptions, itemSelected} = props;
+  const { listService,isVisible, toggleModal, selectedService, setSelectedService, setIsvisible } = props;
+ const dispatch = useDispatch();
+  const [groupValue, setGroupValue] = useState(selectedService);
+  const handleSelectedService = () => {
+    dispatch({type:"SET_SERVICE_LIST", payload: groupValue});
+    let results = filter();
+    dispatch({type:"SET_SERVICE_LIST_OBJECT", payload: results});
+    setIsvisible(false)
+  };
+  const filter =()=>{
+    let arr = [];
+    groupValue.map((serv) =>{
+      listService.map((item) => {if(item.id === serv){
+        arr.push(item);
+      }})
+    })
+    return arr;
+  }
   return (
     <View>
       <Modal
@@ -37,46 +57,72 @@ const ModalPicker = (props) => {
         swipeDirection={["down"]}
         style={{ justifyContent: "flex-end", margin: 0 }}
       >
-        <Flex
-          backgroundColor="white"
-          w="100%"
+        <View
           style={{
             padding: 16,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            paddingBottom: 50 
+            paddingBottom:10,
+            backgroundColor:"white"
           }}
         >
-        <Text>ákjasdk</Text>
-        </Flex>
+          <Flex >
+            <Checkbox.Group
+              defaultValue={groupValue}
+              onChange={(values) => {
+                setGroupValue(values || []);
+              }}
+            >
+              <FlatList
+                data={listService}
+                style={{ width: "100%", marginBottom:10 }}
+                renderItem={({ item, index }) => (
+                  <Flex
+                    flexDirection="row"
+                    key={index}
+                    style={{
+                      padding: 4,
+                      borderBottomWidth: 1,
+                      borderBottomColor: "gray",
+                      paddingVertical: 8,
+                      width: "100%",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Checkbox
+                      colorScheme="danger"
+                      value={item.id}
+                      my="4"
+                    >
+                      <Text style={{ fontFamily: FONT.SEMI, fontSize: 16 }}>
+                        {item.serviceName}
+                      </Text>
+                    </Checkbox>
+                    <Spacer />
+                    <Text style={{ fontFamily: FONT.SEMI, fontSize: 16 }}>
+                      {convertPrice(item.servicePrice)} đ
+                    </Text>
+                  </Flex>
+                )}
+              />
+            </Checkbox.Group>
+          </Flex>
+          <ActionButton
+                onPress={() => {
+                  handleSelectedService();
+                }}
+                buttonText="Xác nhận"
+              />
+        </View>
       </Modal>
     </View>
   );
 };
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingTop: 44,
-      backgroundColor: "white",
-    },
-    filterButtonView: {
-      width: "100%",
-      marginHorizontal: 3,
-      paddingHorizontal: 12,
-      height: 35,
-      backgroundColor: "#ededed",
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 50,
-    },
-    itemSelected: {
-      fontFamily: FONT.BOLD,
-      fontSize: 18,
-      color: THEME_COLOR,
-    },
-    itemUnselected: {
-      fontFamily: FONT.REGULAR,
-      fontSize: 18,
-    },
-  });
+  container: {
+    flex: 1,
+    paddingTop: 44,
+    backgroundColor: "white",
+  },
+});
 export default ModalPicker;

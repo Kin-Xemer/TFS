@@ -22,6 +22,9 @@ import FooterComponent from "./FooterComponent";
 import HeaderComponent from "./HeaderConponent";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
+import ModalPicker from "../ModalPicker/index";
+import ActionButton from "../ActionButton";
+import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
   let { deleteItem, isFocused, service } = props;
@@ -32,18 +35,23 @@ const ListCart = (props) => {
   const cart = useSelector((state) => state.cart.cart);
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [isDone, setIsDone] = useState(true);
-  const [orderId, setOrderId] = useState();
-  const username = useSelector(
-    (state) => state.account.account.theAccount.accountId
-  );
   const customerId = useSelector((state) => state.account.account.customerId);
-  const nearlyRestaurant = useSelector(
-    (state) => state.restaurant.nearRestaurant
-  );
   const stringAddress = useSelector((state) => state.address.stringAddress);
+  const listService = useSelector((state) => state.services.services);
+  const selectedService = useSelector((state) => state.cart.serviceList);
+  const listSelectedService = useSelector(
+    (state) => state.cart.serviceListObject
+  );
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
+  const username = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
+  const nearlyRestaurant = useSelector(
+    (state) => state.restaurant.nearRestaurant
+  );
+
   const [discount, setDiscount] = useState(0);
   const [deliveryFee, seyDeliveryFee] = useState(0);
   const [servicesFee, setServicesFee] = useState(0);
@@ -51,6 +59,7 @@ const ListCart = (props) => {
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [isVisible, setIsVisible] = useState(false);
   const refRBSheet = useRef();
 
   let list = [];
@@ -60,10 +69,23 @@ const ListCart = (props) => {
     list.push(items.cartsItem[item]);
   });
 
-  useEffect(() => {
-    if (isFocused) {
-    }
-  }, [isFocused]);
+  Object.keys(items.serviceListObject).forEach(function (item) {
+    totalCart += items.serviceListObject[item].servicePrice;
+  });
+  // const filter =()=>{
+  //   let arr = [];
+  //   selectedService.map((serv) =>{
+  //     listService.map((item) => {if(item.id === serv){
+  //       arr.push(item);
+  //     }})
+  //   })
+  //   return arr;
+  // }
+  //   useEffect(() => {
+  //     let results = filter();
+
+  //     setListSelectedService(results)
+  //   }, [selectedService]);
 
   //  useEffect(() => {
   //     const keyboardDidShowListener = Keyboard.addListener(
@@ -123,6 +145,7 @@ const ListCart = (props) => {
     if (orders.paymentMethod === "cash") {
       setIsDone(false);
       let url = BASE_URL + "/orders";
+      console.log(orders);
       axios
         .post(url, orders)
         .then((res) => {
@@ -135,17 +158,16 @@ const ListCart = (props) => {
           axios
             .put(BASE_URL + "/carts", newCart)
             .then((res) => {
-
               setIsDone(true);
               dispatch({ type: "LOGOUT" });
               navigation.navigate("Home");
             })
             .catch((err) => {
-              alert("Update Cart: ", err);
+              console.log("Update Cart: ", err);
             });
         })
         .catch((err) => {
-          alert("Create Order: ", err.message);
+          console.log("Create Order: ", err.message);
         });
     } else if (orders.paymentMethod === "ZaloPay") {
       setIsDone(false);
@@ -153,12 +175,11 @@ const ListCart = (props) => {
         .post(BASE_URL + "/orders/zaloPay", orders)
         .then((response) => {
           console.log(response.data);
-            setIsDone(true);
-            navigation.navigate("ZaloPaymentScreen", {
-              paymentResponse: response.data,
-              order: orders,
-            });
-         
+          setIsDone(true);
+          navigation.navigate("ZaloPaymentScreen", {
+            paymentResponse: response.data,
+            order: orders,
+          });
         })
         .catch((err) => {
           alert("Create Order: ", err.message);
@@ -171,20 +192,25 @@ const ListCart = (props) => {
     setPaymentMethod(method);
   };
 
+  const toggleModal = () => {
+    setIsVisible(!isVisible);
+  };
+
   const handleCheckout = () => {
     axios.get(BASE_URL + "/orders").then((res) => {
       let maxId = Math.max(...res.data.map((item) => item.id));
-      let second = new Date().getSeconds();
-      let minute = new Date().getMinutes() * 100;
-      let date = new Date().getDate() * 1000;
+
+      let date = new Date().toISOString().slice(2, 10).split("-").join("");
       let url = BASE_URL + "/customers/cart/" + username;
+
       axios.get(url).then((response) => {
         const cartData = response.data;
         let order = {
-          id: maxId + 1 + second + date + minute,
-          totalPrice: cartData.totalPrice,
+          id: maxId + 1,
+          totalPrice: totalCart,
           totalQuantity: cartData.numberCart,
           paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
+          serviceList: listSelectedService,
           deliveryAddress: stringAddress === "" ? address : stringAddress,
           customerId: customerId,
           itemList: cartData.cartItems,
@@ -193,7 +219,7 @@ const ListCart = (props) => {
           note: note,
         };
         createOrder(order);
-        //console.log(order)
+        //console.log(order);
       });
     });
     // navigation.goBack();
@@ -254,6 +280,8 @@ const ListCart = (props) => {
                 totalCart={totalCart}
                 deliveryFee={deliveryFee}
                 servicesFee={servicesFee}
+                toggleModal={toggleModal}
+                listSelectedService={listSelectedService}
                 setPaymentMethod={handlePaymentMethod}
               />
             }
@@ -291,15 +319,12 @@ const ListCart = (props) => {
           </View>
           <View style={{ paddingHorizontal: 16, backgroundColor: "white" }}>
             {isDone ? (
-              <TouchableOpacity
-                style={styles.buttonStyle}
-                activeOpacity={0.8}
+              <ActionButton
                 onPress={() => {
                   handleCheckout();
                 }}
-              >
-                <Text style={styles.buttonText}> Thanh toán</Text>
-              </TouchableOpacity>
+                buttonText="Thanh toán"
+              />
             ) : (
               <TouchableOpacity
                 style={styles.buttonStyleLoading}
@@ -408,7 +433,13 @@ const ListCart = (props) => {
           </TouchableOpacity>
         </Flex>
       </RBSheet>
-
+      <ModalPicker
+        selectedService={selectedService}
+        isVisible={isVisible}
+        toggleModal={toggleModal}
+        setIsvisible={setIsVisible}
+        listService={listService}
+      />
       <TouchableOpacity
         style={{ position: "absolute" }}
         onPress={() => {
@@ -436,13 +467,6 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "white",
   },
-  buttonStyle: {
-    borderRadius: 15,
-    backgroundColor: THEME_COLOR,
-    height: 47,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   buttonStyleLoading: {
     borderRadius: 15,
     backgroundColor: "#ff9b9b",
@@ -450,11 +474,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 18,
-    color: "#fff",
-  },
+
   paymentView: {
     backgroundColor: "white",
     justifyContent: "center",
@@ -474,6 +494,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     alignItems: "center",
+  },
+  buttonText: {
+    fontFamily: FONT.BOLD,
+    fontSize: 18,
+    color: "#fff",
   },
 });
 export default ListCart;

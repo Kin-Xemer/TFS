@@ -33,7 +33,7 @@ const StepProgess = (props) => {
   });
 
   return (
-   <View style={{marginTop: 60, marginBottom: 30}}>
+   <View style={{marginTop: 20, marginBottom: 10}}>
      <StepIndicator
       customStyles={customStyles}
       currentPosition={currentPosition}
