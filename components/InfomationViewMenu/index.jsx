@@ -6,10 +6,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Text, useToast, Spinner } from "native-base";
 
 import CardFood from "../CardFood";
+import CardFoodMenu from '../CardFoodMenu/index';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const InformationView = (props) => {
+const InformationViewMenu = (props) => {
   const { filterFood, sliceFood } = props;
   const toast = useToast();
   const route = useRoute();
@@ -31,14 +32,6 @@ const InformationView = (props) => {
     }, 1);
   }, [filterFood]);
 
-  useEffect(() => {
-    console.log("==============")
-    filterFood.map((food) =>{
-      console.log(food.price)
-    })
-    console.log("==============")
-  }, [filterFood]);
-
   return (
     <View>
       {isDone && filterFood && filterFood.length > 0 ? (
@@ -48,12 +41,12 @@ const InformationView = (props) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={{ marginBottom: 50, width: "50%", marginTop: -25 }}
-                onPress={() =>
-                  navigation.navigate("FoodInformationScreen", { food: item })
-                }
+                // onPress={() =>
+                //   navigation.navigate("FoodInformationScreen", { food: item })
+                // }
                 key={index}
               >
-                <CardFood style={styles.item} mh={7} food={item} />
+                <CardFoodMenu style={styles.item} mh={7} food={item} />
               </TouchableOpacity>
             );
           })}
@@ -97,4 +90,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
 });
-export default InformationView;
+export default InformationViewMenu;

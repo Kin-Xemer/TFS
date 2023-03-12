@@ -26,6 +26,7 @@ import MyOrderItem from "../components/MyOrderItem/index.jsx";
 import OrderButton from "../components/OrderButton/index";
 import ActionButton from "../components/ActionButton/index.jsx";
 import BackButton from "../components/BackButton/index.jsx";
+import { FONT } from "../Utils/themeFont.js";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -126,6 +127,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontFamily: "Quicksand-Bold",
+  }, buttonText: {
+    fontFamily:FONT.BOLD,
+    fontSize: 18,
+    color: "#fff",
   },
 });
 export default MyOrderDetailScreen;

@@ -6,10 +6,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Text, useToast, Spinner } from "native-base";
 
 import CardFood from "../CardFood";
+import CardFoodMenu from '../CardFoodMenu/index';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const InformationView = (props) => {
+const Menu = (props) => {
   const { filterFood, sliceFood } = props;
   const toast = useToast();
   const route = useRoute();
@@ -31,48 +32,16 @@ const InformationView = (props) => {
     }, 1);
   }, [filterFood]);
 
-  useEffect(() => {
-    console.log("==============")
-    filterFood.map((food) =>{
-      console.log(food.price)
-    })
-    console.log("==============")
-  }, [filterFood]);
-
   return (
     <View>
-      {isDone && filterFood && filterFood.length > 0 ? (
-        <View style={styles.inforView}>
-          {filterFood.slice(0, sliceFood).map((item, index) => {
-            return (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={{ marginBottom: 50, width: "50%", marginTop: -25 }}
-                onPress={() =>
-                  navigation.navigate("FoodInformationScreen", { food: item })
-                }
-                key={index}
-              >
-                <CardFood style={styles.item} mh={7} food={item} />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      ) : filterFood.length === 0 ? (
-        <Text>assad</Text>
-      ) : (
-        <View style={{ marginTop: 20, alignItems: "center" }}>
-          <Spinner size={"sm"} />
-        </View>
-      )}
+
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 44,
-    backgroundColor: "white",
+    backgroundColor: "red",
   },
   filterButtonView: {
     width: "100%",
@@ -97,4 +66,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
 });
-export default InformationView;
+export default Menu;

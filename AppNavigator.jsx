@@ -30,6 +30,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import PaymentScreen from "./screens/PaymentScreen";
 import FeedbackScreen from "./screens/FeedbackScreen";
 import PartyScreen from "./screens/PartyScreen";
+import AddFoodMenu from "./screens/AddFoodMenu";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
@@ -57,6 +58,7 @@ const AppNavigator = () => {
       <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
       <Stack.Screen name="ZaloPaymentScreen" component={ZaloPaymentScreen} />
       <Stack.Screen name="ZaloPaymentSuccessScreen" component={ZaloPaymentSuccessScreen} />
+      <Stack.Screen name="AddFoodMenu" component={AddFoodMenu} />
     </Stack.Navigator>
   );
 };

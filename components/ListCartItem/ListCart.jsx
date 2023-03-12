@@ -221,7 +221,6 @@ const ListCart = (props) => {
           receiveTime:"",
           reason:"",
           deliveryMethod:deliveryMethod,
-          
 
         };
        createOrder(order);

@@ -274,11 +274,12 @@ const styles = StyleSheet.create({
   changeButton: {
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: THEME_COLOR,
     borderRadius: 50,
     padding: 4,
     paddingHorizontal: 10,
+
   },
   locationHeader: {
     marginVertical: 4,
