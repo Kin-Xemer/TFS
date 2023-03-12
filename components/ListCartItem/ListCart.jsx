@@ -215,11 +215,17 @@ const ListCart = (props) => {
           customerId: customerId,
           itemList: cartData.cartItems,
           restaurantId: nearlyRestaurant.restaurantId,
-          status: "pending",
+          status: totalCart > 999999 ? "pending" :  "accept",
           note: note,
+          deliveryDate: "",
+          receiveTime:"",
+          reason:"",
+          deliveryMethod:deliveryMethod,
+          
+
         };
-        createOrder(order);
-        //console.log(order);
+       createOrder(order);
+      // console.log(order);
       });
     });
     // navigation.goBack();

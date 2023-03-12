@@ -22,10 +22,11 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
         
           return item.distance.value;
         });
-        console.log(arr)
         let min = Math.min(...arr);
+        console.log(arr)
         let index = arr.indexOf(min);
-        let nearlyObject = response.data[index];
+        let nearlyObject = activeResaurants[index];
+        console.log("min ", min + "index ", index + "near ", nearlyObject.restaurantName)
         dispatch({ type: "SET_NEARLY_RESTAURANT", payload: nearlyObject });
       })
       .catch((err) => {

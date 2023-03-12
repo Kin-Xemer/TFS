@@ -13,7 +13,7 @@ const ActionButton = (props) => {
     <TouchableOpacity
       style={styles.buttonStyle}
       activeOpacity={0.8}
-      onPress={() => {
+      onPress={() => {  
         onPress();
       }}
     >

@@ -160,6 +160,7 @@ const Home = (props) => {
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
+    console.log("get success")
     dispatch({
       type: "SET_LOCAL",
       payload: location,
