@@ -23,38 +23,25 @@ import {
   Box,
 } from "native-base";
 import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
-const FeedbackScreen = (props) => {
-  const { order } = props;
-  let feedBackType = [
-    {
-      id: 1,
-      rate: 1,
-      name: "Quá tệ",
-    },
-    {
-      id: 2,
-      rate: 2,
-      name: "Không ngon lắm",
-    },
-    {
-      id: 3,
-      rate: 3,
-      name: "Bình thường",
-    },
-    {
-      id: 4,
-      rate: 4,
-      name: "Ngon",
-    },
-    {
-      id: 5,
-      rate: 5,
-      name: "Hoàn hảo",
-    },
-  ];
+import { useRoute } from '@react-navigation/native';
+const FeedbackScreen = () => {
+  const route = useRoute();
+  const {order} = route.params;
+  useEffect(() => {
+    console.log("order", order)
+  },[])
+  
   return (
     <View style={styles.container}>
-      <CardFeedBack/>
+      {order.itemList.length > 0 ? (
+        order.itemList.map((item, index) => (
+          <View key={index}>
+            <CardFeedBack item={item} />
+          </View>
+        ))
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
@@ -63,6 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 30,
     backgroundColor: "white",
+    paddingHorizontal: 16
   },
 });
 export default FeedbackScreen;
