@@ -54,6 +54,7 @@ const Home = (props) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [isFindDone, setIsFindDone] = useState(false);
   const numberCart = useSelector((state) => state.cart.numberCart);
+  const cart = useSelector((state) => state.cart.cart);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
@@ -71,7 +72,10 @@ const Home = (props) => {
         setRegions(response.data);
       })
       .catch((error) => {
-        console.log("error More Screen", error);
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        if (error.response) {
+          console.log(error.response.data.message);
+        }
       });
   };
   const getEvent = () => {
@@ -139,7 +143,6 @@ const Home = (props) => {
   }, []);
   useEffect(() => {
     if (isFocused) {
-
       fetchData()(dispatch);
       checkLogin();
     }
@@ -160,7 +163,7 @@ const Home = (props) => {
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
-    console.log("get success")
+    console.log("get success");
     dispatch({
       type: "SET_LOCAL",
       payload: location,
@@ -190,6 +193,17 @@ const Home = (props) => {
         console.log("Get Location", err);
       });
   };
+
+  const handlePressParty = () => {
+    if(cart.party !== null){
+      navigation.navigate("EditPartyScreen", {
+        party: cart.party
+      })
+    }else{
+      navigation.navigate("PartyScreen")
+    }
+    
+  };
   return foods.length > 0 ? (
     <Flex style={styles.container}>
       <Flex direction="row" style={{ paddingHorizontal: 16 }}>
@@ -203,9 +217,7 @@ const Home = (props) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("MapScreen", {
-                addresses: stringAddress === ""
-                ? address
-                : stringAddress,
+                addresses: stringAddress === "" ? address : stringAddress,
                 locateCoord: myLocation,
               });
             }}
@@ -214,7 +226,7 @@ const Home = (props) => {
               {/* <Location size="14" color={THEME_COLOR} /> */}
               <Text
                 numberOfLines={1}
-                style={[styles.textStyle, styles.addressText, {width: "90%"}]}
+                style={[styles.textStyle, styles.addressText, { width: "90%" }]}
               >
                 {isFindDone === true
                   ? stringAddress === ""
@@ -281,7 +293,11 @@ const Home = (props) => {
           <ImageTitle />
         </View>
         <Divider />
-        <Categories events={events} regions={regions} />
+        <Categories
+          events={events}
+          regions={regions}
+          handlePressParty={handlePressParty}
+        />
         <Title textTitle="Món chính" />
         <FlatList
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
@@ -336,8 +352,9 @@ const Home = (props) => {
           />
           <ActionButton
             onPress={() => {
-              navigation.navigate("PaymentScreen");
+              navigation.navigate("FeedbackScreen");
             }}
+            
             buttonText=" Check button"
           />
         </View>

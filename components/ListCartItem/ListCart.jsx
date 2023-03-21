@@ -8,23 +8,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import axios from "axios";
+import Dash from "react-native-dash";
+import RBSheet from "react-native-raw-bottom-sheet";
+import VisibleItem from "../VisibleItem";
+import HiddenItemWithActions from "../HiddenItemWithActions";
+import FooterComponent from "./FooterComponent";
+import HeaderComponent from "./HeaderConponent";
+import ModalPicker from "../ModalPicker/index";
+import ActionButton from "../ActionButton";
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Flex, TextArea, Spacer, Spinner, Image } from "native-base";
-import Dash from "react-native-dash";
-import RBSheet from "react-native-raw-bottom-sheet";
-import VisibleItem from "../VisibleItem";
-import HiddenItemWithActions from "../HiddenItemWithActions";
 import { THEME_COLOR } from "../../Utils/themeColor";
-import FooterComponent from "./FooterComponent";
-import HeaderComponent from "./HeaderConponent";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
-import ModalPicker from "../ModalPicker/index";
-import ActionButton from "../ActionButton";
 import { FONT } from "../../Utils/themeFont";
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
   let { deleteItem, isFocused, service } = props;
@@ -42,6 +43,8 @@ const ListCart = (props) => {
   const listSelectedService = useSelector(
     (state) => state.cart.serviceListObject
   );
+  const itemList = useSelector((state) => state.cart.itemList);
+  const comboList = useSelector((state) => state.cart.comboList);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
@@ -72,45 +75,7 @@ const ListCart = (props) => {
   Object.keys(items.serviceListObject).forEach(function (item) {
     totalCart += items.serviceListObject[item].servicePrice;
   });
-  // const filter =()=>{
-  //   let arr = [];
-  //   selectedService.map((serv) =>{
-  //     listService.map((item) => {if(item.id === serv){
-  //       arr.push(item);
-  //     }})
-  //   })
-  //   return arr;
-  // }
-  //   useEffect(() => {
-  //     let results = filter();
-
-  //     setListSelectedService(results)
-  //   }, [selectedService]);
-
-  //  useEffect(() => {
-  //     const keyboardDidShowListener = Keyboard.addListener(
-  //       'keyboardDidShow',
-  //       (e) => {
-  //         setKeyboardVisible(true);
-  //         setKeyboardHeight(e.endCoordinates.height);
-  //         setPaddingEle(e.endCoordinates.height-100);
-  //       }
-  //     );
-
-  //     const keyboardDidHideListener = Keyboard.addListener(
-  //       'keyboardDidHide',
-  //       () => {
-  //         setKeyboardVisible(false);
-  //         setPaddingEle(10); // or some other action
-  //       }
-  //     );
-
-  //     return () => {
-  //       keyboardDidHideListener.remove();
-  //       keyboardDidShowListener.remove();
-  //     };
-  //   }, []);
-
+  totalCart += items.partyTotalPrice;
   const listData = list.map((item, index) => ({
     id: `${index}`,
     name: item.name,
@@ -133,41 +98,30 @@ const ListCart = (props) => {
     return newDate;
   }
 
-  const convertDateTime = () => {
-    let dt = new Date();
-    let date = convertUTCDateToLocalDate(dt).toISOString();
-    let day = date.slice(0, 10);
-    let time = date.slice(11, 22);
-    return time + " " + day;
-  };
-
+  // const convertDateTime = () => {
+  //   let dt = new Date();
+  //   let date = convertUTCDateToLocalDate(dt).toISOString();
+  //   let day = date.slice(0, 10);
+  //   let time = date.slice(11, 22);
+  //   return time + " " + day;
+  // };
   const createOrder = (orders) => {
     if (orders.paymentMethod === "cash") {
-      setIsDone(false);
       let url = BASE_URL + "/orders";
-      console.log(orders);
+
       axios
         .post(url, orders)
         .then((res) => {
-          const newCart = {
-            ...cart,
-            cartItems: [],
-            numberCart: 0,
-            totalPrice: 0,
-          };
-          axios
-            .put(BASE_URL + "/carts", newCart)
-            .then((res) => {
-              setIsDone(true);
-              dispatch({ type: "LOGOUT" });
-              navigation.navigate("Home");
-            })
-            .catch((err) => {
-              console.log("Update Cart: ", err);
-            });
+          setIsDone(true);
+          dispatch({ type: "LOGOUT" });
+          navigation.navigate("Home");
         })
-        .catch((err) => {
-          console.log("Create Order: ", err.message);
+        .catch((error) => {
+          setIsDone(true);
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          if (error.response) {
+            console.log(error.response.data.message);
+          }
         });
     } else if (orders.paymentMethod === "ZaloPay") {
       setIsDone(false);
@@ -182,6 +136,7 @@ const ListCart = (props) => {
           });
         })
         .catch((err) => {
+          setIsDone(true);
           alert("Create Order: ", err.message);
         });
     }
@@ -197,36 +152,51 @@ const ListCart = (props) => {
   };
 
   const handleCheckout = () => {
-    axios.get(BASE_URL + "/orders").then((res) => {
-      let maxId = Math.max(...res.data.map((item) => item.id));
-
-      let date = new Date().toISOString().slice(2, 10).split("-").join("");
-      let url = BASE_URL + "/customers/cart/" + username;
-
-      axios.get(url).then((response) => {
-        const cartData = response.data;
-        let order = {
-          id: maxId + 1,
-          totalPrice: totalCart,
-          totalQuantity: cartData.numberCart,
-          paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
-          serviceList: listSelectedService,
-          deliveryAddress: stringAddress === "" ? address : stringAddress,
-          customerId: customerId,
-          itemList: cartData.cartItems,
-          restaurantId: nearlyRestaurant.restaurantId,
-          status: totalCart > 999999 ? "pending" :  "accept",
-          note: note,
-          deliveryDate: "",
-          receiveTime:"",
-          reason:"",
-          deliveryMethod:deliveryMethod,
-
-        };
-       createOrder(order);
-      // console.log(order);
+    setIsDone(false);
+    axios
+      .get(BASE_URL + "/orders")
+      .then((res) => {
+        let maxId = Math.max(...res.data.map((item) => item.id));
+        let date = new Date().toISOString().slice(2, 10).split("-").join("");
+        let url = BASE_URL + "/customers/cart/" + username;
+        console.log(username);
+        axios
+          .get(url)
+          .then((response) => {
+            const cartData = response.data;
+            let order = {
+              id: maxId + 1,
+              totalPrice: totalCart,
+              totalQuantity: cartData.numberCart,
+              paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
+              serviceList: listSelectedService,
+              deliveryAddress: stringAddress === "" ? address : stringAddress,
+              customerId: customerId,
+              itemList: cartData.cartItems,
+              restaurantId: nearlyRestaurant.restaurantId,
+              status: totalCart > 999999 ? "pending" : "accept",
+              note: note,
+              deliveryDate: "",
+              receiveTime: "",
+              reason: "",
+              staffId: totalCart > 999999 ? null : 8,
+              deliveryMethod: deliveryMethod,
+              party: cartData.party,
+            };
+            createOrder(order);
+            //  console.log(order);
+          })
+          .catch((error) => {
+            setIsDone(true);
+            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+            console.log("getCart fromdb", error);
+          });
+      })
+      .catch((error) => {
+        setIsDone(true);
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        console.log("get all order  fromdb", error);
       });
-    });
     // navigation.goBack();
   };
   const renderItem = (data, rowMap) => {
@@ -266,7 +236,7 @@ const ListCart = (props) => {
           </Text>
         </View>
       </Flex>
-      {listData.length > 0 ? (
+      {listData.length > 0 || itemList.length > 0 ? (
         <>
           <SwipeListView
             data={listData}
@@ -450,7 +420,7 @@ const ListCart = (props) => {
         onPress={() => {
           navigation.goBack();
         }}
-        activeOpacity={1}
+        activeOpacity={0.7}
       >
         <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
       </TouchableOpacity>

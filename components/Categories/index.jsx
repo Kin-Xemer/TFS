@@ -16,7 +16,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Categories = (props) => {
   const navigation = useNavigation();
   const foods = useSelector((state) => state.food.food);
-  const { openAllFood, events, regions } = props;
+  const { openAllFood, events, regions ,handlePressParty } = props;
   return (
     <Flex direction="row" style={styles.container}>
       <TouchableOpacity
@@ -47,7 +47,7 @@ const Categories = (props) => {
         style={styles.iconCateContainer}
         activeOpacity={0.8}
         onPress={() => {
-          navigation.navigate("PartyScreen") 
+          handlePressParty();
         }}
       >
         <Image

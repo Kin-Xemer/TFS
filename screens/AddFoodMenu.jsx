@@ -24,13 +24,12 @@ import FilterView from "../components/FilterView";
 import SearchBar from "../components/SearchBar";
 import BottomSheet from "../components/BottomSheet";
 import axios from "axios";
+import { Provider } from "@ant-design/react-native";
 import { BASE_URL } from "../services/baseURL";
 import InformationViewMenu from "../components/InfomationViewMenu";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const IMAGE_HEIGHT = (9 * screenWidth) / 16;
 const HEADER_MAX_HEIGHT = IMAGE_HEIGHT;
-const HEADER_MIN_HEIGHT = 114;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const AddFoodMenu = (props) => {
   const toast = useToast();
   const route = useRoute();
@@ -98,7 +97,7 @@ const AddFoodMenu = (props) => {
   };
 
   const filterSelectedPrice = (array) => {
-    console.log("price",priceProps)
+    console.log("price", priceProps);
     if (priceProps === "") {
       return array;
     } else {
@@ -117,7 +116,9 @@ const AddFoodMenu = (props) => {
   };
 
   const handleFilter = (regions, events, price) => {
-    console.log("regions: " + regions + " Event: " + events + " price: " + price)
+    console.log(
+      "regions: " + regions + " Event: " + events + "price: " + price
+    );
     if (regions === "" && events === "" && price === "") {
       let result = food;
       result = filterSelectedCategory(result);
@@ -152,78 +153,79 @@ const AddFoodMenu = (props) => {
   //   };
 
   return (
-    <Flex style={styles.container}>
-      <View>
-        <View style={{ alignItems: "center", flexDirection: "row" }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
-          </TouchableOpacity>
-          <View style={{ width: "80%" }}>
-            <SearchBar />
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              refRBSheet.current.open();
-            }}
-          >
-            <View style={{ marginHorizontal: 6 }}>
-              <Setting4 size="26" color="#000" />
+
+      <Flex style={styles.container}>
+        <View>
+          <View style={{ alignItems: "center", flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
+            </TouchableOpacity>
+            <View style={{ width: "80%" }}>
+              <SearchBar />
             </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                refRBSheet.current.open();
+              }}
+            >
+              <View style={{ marginHorizontal: 6 }}>
+                <Setting4 size="26" color="#000" />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <FilterView
-        setFilterSelected={setFilterSelected}
-        filterSelected={filterSelected}
-        listFood={food}
-      />
-      <ScrollView
-        ref={ScrollViewRef}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        // onScroll={Animated.event(
-        //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        //   {
-        //     useNativeDriver: true,
-        //     listener: (event) => {
-        //       setContentOffset(event.nativeEvent.contentOffset.y);
-        //       setIsScrollBottom(false);
-        //       // if (ifCloseToTop(event.nativeEvent)) {
-        //       //   console.log(event.nativeEvent.contentOffset.y)
-        //       //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
-        //       //   // ScrollViewRef.current.scrollTo({
-        //       //   //   y:
-        //       //   //   140
-        //       //   // });
-        //       // }
-        //       // console.log(event.nativeEvent.contentOffset.y)
-        //       if (isCloseToBottom(event.nativeEvent)) {
-        //         setSliceFood(sliceFood + 10);
-        //         setIsScrollBottom(true);
-        //       }
-        //     },
-        //   }
-        // )}
-      >
-        <InformationViewMenu
-          sliceFood={sliceFood}
-          listFood={food}
+        <FilterView
+          setFilterSelected={setFilterSelected}
           filterSelected={filterSelected}
-          filterFood={filterFood}
-          setFilterFood={setFilterFood}
+          listFood={food}
         />
-      </ScrollView>
-      <BottomSheet
-        handleFilter={handleFilter}
-        events={events}
-        regions={regions}
-        refRBSheet={refRBSheet}
-      />
-    </Flex>
+        <ScrollView
+          ref={ScrollViewRef}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          // onScroll={Animated.event(
+          //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          //   {
+          //     useNativeDriver: true,
+          //     listener: (event) => {
+          //       setContentOffset(event.nativeEvent.contentOffset.y);
+          //       setIsScrollBottom(false);
+          //       // if (ifCloseToTop(event.nativeEvent)) {
+          //       //   console.log(event.nativeEvent.contentOffset.y)
+          //       //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
+          //       //   // ScrollViewRef.current.scrollTo({
+          //       //   //   y:
+          //       //   //   140
+          //       //   // });
+          //       // }
+          //       // console.log(event.nativeEvent.contentOffset.y)
+          //       if (isCloseToBottom(event.nativeEvent)) {
+          //         setSliceFood(sliceFood + 10);
+          //         setIsScrollBottom(true);
+          //       }
+          //     },
+          //   }
+          // )}
+        >
+          <InformationViewMenu
+            sliceFood={sliceFood}
+            listFood={food}
+            filterSelected={filterSelected}
+            filterFood={filterFood}
+            setFilterFood={setFilterFood}
+          />
+        </ScrollView>
+        <BottomSheet
+          handleFilter={handleFilter}
+          events={events}
+          regions={regions}
+          refRBSheet={refRBSheet}
+        />
+      </Flex>
   );
 };
 const styles = StyleSheet.create({

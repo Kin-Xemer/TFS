@@ -48,7 +48,6 @@ const MyOrderDetailScreen = (props) => {
 
   return (
     <View style={styles.container}>
-    
       <Flex style={styles.topBar} direction="row">
         <View
           style={{
@@ -66,47 +65,49 @@ const MyOrderDetailScreen = (props) => {
         <StepProgess status={order.status} />
         <OrderInfor order={order} restaurant={restaurant} />
         <MyOrderItem order={order} />
-      </ScrollView>
 
-      {order.status === "done" ? (
-        <Flex flexDirection={"row"}>
-          <View style={{ width: "49%", marginRight: 8 }}>
-            <OrderButton
-              bgColor={THEME_COLOR}
-              buttonText={"Đặt lại"}
-              buttonHandler={() => {
-                console.log("press");
-              }}
-            />
-          </View>
-          <View style={{ width: "49%" }}>
-            <TouchableOpacity
-              style={[styles.buttonStyle, { backgroundColor: "transparent" }]}
-              activeOpacity={0.8}
-              
-            >
-              <Text style={styles.buttonText}>{buttonText}</Text>
-            </TouchableOpacity>
-          </View>
-        </Flex>
-      ) : order.status === "deny" ? (
-        <OrderButton
-          bgColor={THEME_COLOR}
-          buttonText={"Đặt lại"}
-          buttonHandler={() => {
-            console.log("press");
-          }}
-        />
-      ) : (
-        <OrderButton
-          bgColor={"#8c8c8c"}
-          buttonText={"Xác nhận huỷ"}
-          buttonHandler={() => {
-            console.log("press");
-          }}
-        />
-      )}
-        <BackButton/>
+        {order.status === "done" ? (
+          <Flex flexDirection={"row"}>
+            <View style={{ width: "49%", marginRight: 8 }}>
+              <OrderButton
+                bgColor={THEME_COLOR}
+                buttonText={"Đặt lại"}
+                buttonHandler={() => {
+                  console.log("press");
+                }}
+              />
+            </View>
+            <View style={{ width: "49%" }}>
+              <TouchableOpacity
+                style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  navigation.navigate("FeedbackScreen", {order: order})
+                }}
+              >
+                <Text style={styles.buttonText}>Đánh giá</Text>
+              </TouchableOpacity>
+            </View>
+          </Flex>
+        ) : order.status === "deny" ? (
+          <OrderButton
+            bgColor={THEME_COLOR}
+            buttonText={"Đặt lại"}
+            buttonHandler={() => {
+              console.log("press");
+            }}
+          />
+        ) : (
+          <OrderButton
+            bgColor={"#d9d9d9"}
+            buttonText={"Xác nhận huỷ"}
+            buttonHandler={() => {
+              console.log("press");
+            }}
+          />
+        )}
+      </ScrollView>
+      <BackButton />
     </View>
   );
 };
@@ -127,10 +128,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontFamily: "Quicksand-Bold",
-  }, buttonText: {
-    fontFamily:FONT.BOLD,
+  },
+  buttonText: {
+    fontFamily: FONT.BOLD,
     fontSize: 18,
     color: "#fff",
+  },buttonStyle: {
+    borderRadius: 15,
+    backgroundColor: THEME_COLOR,
+    height: 47,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 export default MyOrderDetailScreen;

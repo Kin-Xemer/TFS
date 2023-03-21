@@ -11,9 +11,11 @@ const initCart = {
   cartsItem: [],
   updateCart: null,
   cart: {},
-  account: {},
   serviceList: [],
   serviceListObject: [],
+  itemList:[],
+  partyTotalPrice:0,
+  comboList:[]
 };
 
 const saveCart = (state) => {
@@ -26,26 +28,22 @@ const saveCart = (state) => {
   state.cartsItem.map((item) => {
     totalPrice = totalPrice + item.subTotal;
   });
+
   const newCart = {
     ...state.cart,
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
-    comboList:[],
-    partyItem:[]
+    comboList: [],
   };
   initCart.numberCart = sum;
-  console.log( BASE_URL + "/carts",
-  newCart)
+  console.log("new cart", newCart)
   axios
-    .put(
-      BASE_URL + "/carts",
-      newCart
-    )
-    .then((res) => {
-     
-    }).catch((err) => {
-      console.log(err.message)
+    .put(BASE_URL + "/carts", newCart)
+    .then((res) => {})
+    .catch((err) => {
+      alert("Đã có lỗi xảy ra");
+      console.log("Error", err)
     });
 };
 
@@ -114,7 +112,6 @@ function todoProduct(state = initCart, action) {
         updateCart: saveCart(state),
       };
     case DELETE_CART:
-      let quantity_ = state.cartsItem[action.payload].quantity;
       let newCart = [];
       state.cartsItem.filter((item) => {
         if (item.id != state.cartsItem[action.payload].id) {
@@ -138,7 +135,6 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
         cartsItem: action.payload,
-        
       };
     case "SET_SERVICE_LIST":
       return {
@@ -158,13 +154,46 @@ function todoProduct(state = initCart, action) {
         updateCart: null,
         cart: {},
         account: {},
-        serviceList: []
+        serviceList: [],
+        itemList:[],
+        comboList:[],
+        serviceListObject: [],
       };
-    //   case "SET_ACCOUNT":
-    // return {
-    //   ...state,
-    //   account: action.payload,
-    // };
+    case "SET_PARTY":
+      state.party.note = action.payload.note;
+      state.party.quantity = action.payload.quantity;
+      return {
+        ...state,
+        // updateCart: saveCart(state, action.payload),
+      };
+    case "SET_LIST_ITEM_EDIT":
+      return {
+        ...state,
+        itemList: action.payload
+      };
+    case "PUSH_LIST_ITEM_EDIT":
+      let item = {
+        foodId: action.payload.id,
+        foodImage: action.payload.imgUrl,
+        foodName: action.payload.foodName,
+        price: action.payload.price * 5,
+      };
+      state.itemList.push(item);
+      return {
+        ...state,
+      };
+      case "DELETE_MENU_ITEM_EDIT":
+      return {
+        ...state,
+        itemList: state.itemList.filter(
+          (item) => item.foodId !== action.payload
+        ),
+      };
+      case "SET_PARTY_TOTAL_PRICE":
+      return {
+        ...state,
+        partyTotalPrice: action.payload
+      };
     default:
       return state;
   }

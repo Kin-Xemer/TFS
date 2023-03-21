@@ -7,6 +7,7 @@ import accountReducer from "./accountReducer";
 import orderStatusReducer from './orderStatusReducer';
 import localLocationReducer from './localLocationReducer';
 import serviceReducer from './serviceReducer';
+import partyReducer from "./partyReducer";
 const rootReducer = combineReducers({
     cart: todoReducer,
     address: addressReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
     account: accountReducer,
     status:orderStatusReducer,
     local: localLocationReducer,
-    services: serviceReducer
+    services: serviceReducer,
+    party: partyReducer
 })
 
 export default rootReducer;

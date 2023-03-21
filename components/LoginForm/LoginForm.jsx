@@ -87,7 +87,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Provider>
+
       <View style={styles.container}>
         <View>
           <Text style={{ fontFamily: FONT.BOLD, fontSize: 28 }}>Đăng Nhập</Text>
@@ -186,7 +186,7 @@ const LoginForm = () => {
           </TouchableOpacity>
         </Stack>
       </View>
-    </Provider>
+
   );
 };
 const styles = StyleSheet.create({

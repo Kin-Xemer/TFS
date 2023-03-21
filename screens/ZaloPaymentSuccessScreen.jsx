@@ -68,21 +68,7 @@ const ZaloPaymentSuccessScreen = (props) => {
       axios
         .post(url, order)
         .then((response) => {
-          const newCart = {
-            ...cart,
-            cartItems: [],
-            numberCart: 0,
-            totalPrice: 0,
-          };
-          axios
-            .put(BASE_URL + "/carts", newCart)
-            .then((res) => {
-              dispatch({ type: "LOGOUT" });
-              //  navigation.navigate("Home");
-            })
-            .catch((err) => {
-              alert("Update Cart: ", err);
-            });
+          dispatch({ type: "LOGOUT" });
         })
         .catch((error) => {
           console.log(error.message);

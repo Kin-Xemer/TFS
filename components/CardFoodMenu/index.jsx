@@ -1,10 +1,5 @@
 import { Box, Image, Text, Flex, Spacer, useToast } from "native-base";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Toast } from "@ant-design/react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
@@ -24,10 +19,30 @@ const CardFoodMenu = (props) => {
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
+  const cart = useSelector((state) => state.cart.cart);
+  const itemParty = useSelector((state) => state.party.itemList);
+  const itemPartyEdit = useSelector((state) => state.cart.itemList);
   const navigation = useNavigation();
   const addToCart = async (food, quantity) => {
     // await dispatch({ type: "ADD_CART", payload: food, quantity });
     // await getCartById()(dispatch, username);
+  };
+  const addMenu = () => {
+    if (cart.party !== null) {
+      if (itemPartyEdit.some((item) => item.foodId === food.id)) {
+        Toast.fail("Món này đã có trong thực đơn", 1);
+      } else {
+        dispatch({ type: "PUSH_LIST_ITEM_EDIT", payload: food });
+        Toast.success("Đã thêm món ăn vào thực đơn", 1);
+      }
+    } else {
+      if (itemParty.some((item) => item.foodId === food.id)) {
+        Toast.fail("Món này đã có trong thực đơn", 1);
+      } else {
+        dispatch({ type: "SET_PARTY_LIST", payload: food });
+        Toast.success("Đã thêm món ăn vào thực đơn", 1);
+      }
+    }
   };
   return (
     <Box
@@ -69,11 +84,7 @@ const CardFoodMenu = (props) => {
       </View>
       <Flex p={1} pl={2.5} pr={2} pb={2} w="100%">
         <Flex style={styles.titleBox}>
-          <Text
-            numberOfLines={1}
-           
-            style={[styles.textStyle, { fontSize: 18 }]}
-          >
+          <Text numberOfLines={1} style={[styles.textStyle, { fontSize: 18 }]}>
             {food.foodName}
           </Text>
         </Flex>
@@ -92,18 +103,13 @@ const CardFoodMenu = (props) => {
           </Flex>
           <Flex direction="row" style={{ alignItems: "center" }}>
             <Text style={[styles.textFoodContent, styles.priceText]}>
-              {convertPrice(food.price*5)} đ
+              {convertPrice(food.price * 5)} đ
             </Text>
             <Spacer />
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                if (isLogin === true) {
-                  addToCart(food, 1);
-                  Toast.success("Đã thêm vào giỏ hàng", 0.5);
-                } else {
-                  navigation.navigate("LoginScreenn");
-                }
+                addMenu();
               }}
             >
               <AddCircle size="28" color={THEME_COLOR} variant="Bold" />
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
   titleBox: {
     width: "100%",
     alignItems: "flex-start",
-    marginBottom:6
+    marginBottom: 6,
   },
   priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
 });

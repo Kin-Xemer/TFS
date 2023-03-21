@@ -14,6 +14,8 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
+import { useSelector } from "react-redux";
+import Party from "./Party";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FooterComponent = (props) => {
   const {
@@ -27,6 +29,7 @@ const FooterComponent = (props) => {
     listSelectedService,
   } = props;
   const navigation = useNavigation();
+  const cart = useSelector((state) => state.cart.cart);
   const [payment, setPayment] = useState("cash");
   let arrayPayment = [
     {
@@ -51,32 +54,55 @@ const FooterComponent = (props) => {
     >
       <View style={{ backgroundColor: "white", paddingHorizontal: 16 }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-      {listSelectedService.length > 0 ?   <View style={{ marginVertical: 6 }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontFamily: "Quicksand-Bold",
-              color: "#8c8c8c",
-            }}
-          >
-            DỊCH VỤ
-          </Text>
-        </View> : null}
+       {cart.party ?  <View>
+        <Text
+              style={{
+                fontSize: 18,
+                fontFamily: "Quicksand-Bold",
+                color: "#8c8c8c",
+                marginBottom: 12 
+              }}
+            >
+              THỰC ĐƠN
+            </Text>
+        <Party />
+        <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
+       </View>: null}
+     
+        {listSelectedService.length > 0 ? (
+          <View style={{ marginVertical: 6 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontFamily: "Quicksand-Bold",
+                color: "#8c8c8c",
+              }}
+            >
+              DỊCH VỤ
+            </Text>
+          </View>
+        ) : null}
         <View>
-         <View style={{ marginBottom: 10 }}>
-         {listSelectedService.map((item, index) => {
-            return (
-              <Flex flexDirection={"row"} key={index} style={{ paddingVertical: 4}}>
-                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
-                  {item.serviceName}
-                </Text>
-                <Spacer />
-                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}> + {convertPrice(item.servicePrice)} đ</Text>
-              </Flex>
-            );
-          })}
-         </View>
-
+          <View style={{ marginBottom: 10 }}>
+            {listSelectedService.map((item, index) => {
+              return (
+                <Flex
+                  flexDirection={"row"}
+                  key={index}
+                  style={{ paddingVertical: 4 }}
+                >
+                  <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
+                    {item.serviceName}
+                  </Text>
+                  <Spacer />
+                  <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
+                    {" "}
+                    + {convertPrice(item.servicePrice)} đ
+                  </Text>
+                </Flex>
+              );
+            })}
+          </View>
           <TouchableOpacity
             style={styles.changeButton}
             onPress={() => {
@@ -279,7 +305,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 4,
     paddingHorizontal: 10,
-
   },
   locationHeader: {
     marginVertical: 4,

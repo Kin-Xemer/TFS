@@ -10,9 +10,9 @@ const HomeScreen = (props) => {
   const [loginStatus, setLoginStatus] = useState();
   return (
     <View style={styles.container}>
-      <Provider>
+  
         <Home isFocused={isFocused} />
-      </Provider>
+      
     </View>
   );
 };

@@ -295,7 +295,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':react-native-momosdk')
     implementation(name:'zpdk-release-V3', ext:'aar')
     implementation "com.google.firebase:firebase-messaging:20.0.0"
     //noinspection GradleDynamicVersion

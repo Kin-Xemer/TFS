@@ -4,7 +4,7 @@ import {
   createStackNavigator,
   TransitionPresets,
 } from "@react-navigation/stack";
-import{Home2, NotificationBing, Note, User} from "iconsax-react-native";
+import { Home2, NotificationBing, Note, User } from "iconsax-react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import {
   MaterialCommunityIcons,
@@ -30,36 +30,49 @@ import RegisterScreen from "./screens/RegisterScreen";
 import PaymentScreen from "./screens/PaymentScreen";
 import FeedbackScreen from "./screens/FeedbackScreen";
 import PartyScreen from "./screens/PartyScreen";
+import EditPartyScreen from "./screens/EditPartyScreen";
 import AddFoodMenu from "./screens/AddFoodMenu";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
-const AppNavigator = () => {  
-  
+const AppNavigator = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        ...TransitionPresets.SlideFromRightIOS,
-        gestureDirection: "horizontal",
-        headerTitleAlign: "center",
-      }}
-    >
-      <Stack.Screen name="TabNaviHome" component={TabNavigator} />  
-      <Stack.Screen name="MapScreen" component={MapScreen} />  
-      <Stack.Screen name="SelectStore" component={SelectStore} />  
-      <Stack.Screen name="LoginScreenn" component={LoginScreenn} options={{gestureEnabled: false}}/>
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
-      <Stack.Screen name="MyOrderDetailScreen" component={MyOrderDetailScreen} />
-      <Stack.Screen name="PartyScreen" component={PartyScreen} />
-      <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
-      <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
-      <Stack.Screen name="ZaloPaymentScreen" component={ZaloPaymentScreen} />
-      <Stack.Screen name="ZaloPaymentSuccessScreen" component={ZaloPaymentSuccessScreen} />
-      <Stack.Screen name="AddFoodMenu" component={AddFoodMenu} />
-    </Stack.Navigator>
+    <Provider>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          ...TransitionPresets.SlideFromRightIOS,
+          gestureDirection: "horizontal",
+          headerTitleAlign: "center",
+        }}
+      >
+        <Stack.Screen name="TabNaviHome" component={TabNavigator} />
+        <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="SelectStore" component={SelectStore} />
+        <Stack.Screen
+          name="LoginScreenn"
+          component={LoginScreenn}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen
+          name="MyOrderDetailScreen"
+          component={MyOrderDetailScreen}
+        />
+        <Stack.Screen name="PartyScreen" component={PartyScreen} />
+        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+        <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+        <Stack.Screen name="ZaloPaymentScreen" component={ZaloPaymentScreen} />
+        <Stack.Screen
+          name="ZaloPaymentSuccessScreen"
+          component={ZaloPaymentSuccessScreen}
+        />
+        <Stack.Screen name="AddFoodMenu" component={AddFoodMenu} />
+        <Stack.Screen name="EditPartyScreen" component={EditPartyScreen} />
+      </Stack.Navigator>
+    </Provider>
   );
 };
 const HomeScreen = () => {
@@ -72,11 +85,17 @@ const HomeScreen = () => {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="Home" component={Home} options={{gestureEnabled: false}} />
-      <Stack.Screen name="FoodInformationScreen" component={FoodInformationScreen} />
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="FoodInformationScreen"
+        component={FoodInformationScreen}
+      />
       <Stack.Screen name="CartScreen" component={CartScreen} />
       <Stack.Screen name="MoreScreen" component={MoreScreen} />
-
     </Stack.Navigator>
   );
 };
@@ -89,41 +108,47 @@ const TabNavigator = () => {
       shifting={true}
       initialRouteName="HomeScreen"
       barStyle={{ backgroundColor: "white", paddingTop: 0 }}
-      tabBarOptions={{ color: "white"}}
+      tabBarOptions={{ color: "white" }}
       tabBarLabelStyle={{ fontFamily: "Quicksand-Bold" }}
-      screenOptions={({     
+      screenOptions={{
         headerShown: false,
-      })}
-      
-      
+      }}
     >
       <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Trang chủ</Text>,
-          tabBarIcon: ({ color }) => (
-            <Home2 size={26}  color={color}/>
+          tabBarLabel: (
+            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+              Trang chủ
+            </Text>
           ),
+          tabBarIcon: ({ color }) => <Home2 size={26} color={color} />,
         }}
       />
       <Tab.Screen
         name="OrderScreen"
         component={OrderScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Đơn hàng</Text>,
-          tabBarIcon: ({ color }) => (
-          <Note size={26}  color={color}/>
+          tabBarLabel: (
+            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+              Đơn hàng
+            </Text>
           ),
+          tabBarIcon: ({ color }) => <Note size={26} color={color} />,
         }}
       />
       <Tab.Screen
         name="NotiScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 14}}>Thông báo</Text>,
+          tabBarLabel: (
+            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 14 }}>
+              Thông báo
+            </Text>
+          ),
           tabBarIcon: ({ color }) => (
-            <NotificationBing size={26}  color={color}/>
+            <NotificationBing size={26} color={color} />
           ),
         }}
       />
@@ -131,10 +156,12 @@ const TabNavigator = () => {
         name="MoreScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: <Text style={{fontFamily: "Quicksand-SemiBold", fontSize: 12}}>Thông tin</Text>,
-          tabBarIcon: ({ color }) => (
-            <User size={26}  color={color}/>
+          tabBarLabel: (
+            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+              Thông tin
+            </Text>
           ),
+          tabBarIcon: ({ color }) => <User size={26} color={color} />,
         }}
       />
     </Tab.Navigator>

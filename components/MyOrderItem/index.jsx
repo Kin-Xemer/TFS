@@ -8,6 +8,7 @@ import { Box, Flex, Spacer, Text } from "native-base";
 import FoodOrderItem from "../FoodOrderItem/index";
 import { convertPrice } from "../../Utils/convertPrice";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import PartyOrderDetail from "../PartyOrderDetail";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const MyOrderItem = (props) => {
@@ -17,7 +18,7 @@ const MyOrderItem = (props) => {
     <View style={styles.container}>
       <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
       <View style={{ marginBottom: 5 }}>
-        <Text fontFamily={FONT.BOLD} fontSize={18} color={"#8c8c8c"}>
+        <Text fontFamily={FONT.BOLD} fontSize={18} mb={2} color={"#8c8c8c"}>
           MÓN ĂN
         </Text>
         {order.itemList.map((item, index) => {
@@ -29,10 +30,20 @@ const MyOrderItem = (props) => {
         })}
       </View>
 
+      {order.party ? (
+        <View>
+          <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
+          <Text fontFamily={FONT.BOLD} fontSize={18} mb={2} color={"#8c8c8c"}>
+            THỰC ĐƠN BÀN TIỆC
+          </Text>
+          <PartyOrderDetail party={order.party} />
+        </View>
+      ) : null}
+
       {order.serviceList.length > 0 ? (
         <View>
           <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
-          <Text fontFamily={FONT.BOLD} fontSize={18} color={"#8c8c8c"}>
+          <Text fontFamily={FONT.BOLD} fontSize={18} mb={2} color={"#8c8c8c"}>
             DỊCH VỤ
           </Text>
         </View>
