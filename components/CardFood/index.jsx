@@ -21,9 +21,9 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CardFood = (props) => {
   let { food, isLogin, itemWith, mh, mr } = props;
   const dispatch = useDispatch();
-  const username = useSelector(
-    (state) => state.account.account.theAccount.accountId
-  );
+  // const username = useSelector(
+  //   (state) => state.account.account.theAccount.accountId
+  // );
   const navigation = useNavigation();
   const addToCart = async (food, quantity) => {
     await dispatch({ type: "ADD_CART", payload: food, quantity });

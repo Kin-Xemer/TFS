@@ -149,7 +149,7 @@ android {
         versionCode 1
         versionName '1.0.0'
         buildConfigField 'boolean', 'IS_NEW_ARCHITECTURE_ENABLED', isNewArchitectureEnabled().toString()
-
+        multiDexEnabled true
         if (isNewArchitectureEnabled()) {
             // We configure the NDK build only if you decide to opt-in for the New Architecture.
             externalNativeBuild {
@@ -299,7 +299,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:20.0.0"
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-
+implementation 'com.android.support:multidex:2.0.1'
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: '') == 'true'
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: '') == 'true'
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: '') == 'true'
@@ -356,6 +356,9 @@ if (isNewArchitectureEnabled()) {
     // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
     // This will be applied to all the imported transtitive dependency.
     configurations.all {
+        resolutionStrategy {
+force 'com.facebook.react:react-native:0.69.6' //select Version you used
+}
         resolutionStrategy.dependencySubstitution {
             substitute(module('com.facebook.react:react-native'))
                     .using(project(':ReactAndroid'))

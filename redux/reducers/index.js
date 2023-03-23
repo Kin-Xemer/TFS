@@ -8,6 +8,7 @@ import orderStatusReducer from './orderStatusReducer';
 import localLocationReducer from './localLocationReducer';
 import serviceReducer from './serviceReducer';
 import partyReducer from "./partyReducer";
+import feedBackReducer from "./feedBackReducer";
 const rootReducer = combineReducers({
     cart: todoReducer,
     address: addressReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     status:orderStatusReducer,
     local: localLocationReducer,
     services: serviceReducer,
+    feedback: feedBackReducer,
     party: partyReducer
 })
 
