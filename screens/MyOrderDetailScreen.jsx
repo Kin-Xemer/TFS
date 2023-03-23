@@ -77,17 +77,32 @@ const MyOrderDetailScreen = (props) => {
                 }}
               />
             </View>
-            <View style={{ width: "49%" }}>
-              <TouchableOpacity
-                style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
-                activeOpacity={0.8}
-                onPress={() => {
-                  navigation.navigate("FeedbackScreen", {order: order})
-                }}
-              >
-                <Text style={styles.buttonText}>Đánh giá</Text>
-              </TouchableOpacity>
-            </View>
+            {!order.feedbackStatus ? (
+              <View style={{ width: "49%" }}>
+                <TouchableOpacity
+                  style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    navigation.navigate("FeedbackScreen", { order: order });
+                  }}
+                >
+                  <Text style={styles.buttonText}>Đánh giá</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={{ width: "49%" }}>
+                <TouchableOpacity
+                  style={[styles.buttonStyle, { backgroundColor: "#8c8c8c" }]}
+                  activeOpacity={0.8}
+                  disabled={true}
+                  onPress={() => {
+                    
+                  }}
+                >
+                  <Text style={styles.buttonText}>Đánh giá</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </Flex>
         ) : order.status === "deny" ? (
           <OrderButton
@@ -133,7 +148,8 @@ const styles = StyleSheet.create({
     fontFamily: FONT.BOLD,
     fontSize: 18,
     color: "#fff",
-  },buttonStyle: {
+  },
+  buttonStyle: {
     borderRadius: 15,
     backgroundColor: THEME_COLOR,
     height: 47,

@@ -1,3 +1,4 @@
+import { Flex, Spinner } from "native-base";
 import {
     Text,
     StyleSheet,
@@ -18,7 +19,10 @@ const ActionButton = (props) => {
       }}
       disabled={disabled ? disabled : false}
     >
-      <Text style={styles.buttonText}> {buttonText}</Text>
+     <Flex flexDirection={"row"} alignItems={"center"}>
+       {disabled ?  <Spinner size="sm" color={"white"} />:<></>}
+        <Text style={styles.buttonText}> {buttonText}</Text>
+      </Flex>
     </TouchableOpacity>
   );
 };

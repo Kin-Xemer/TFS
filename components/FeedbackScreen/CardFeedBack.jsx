@@ -7,52 +7,38 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
 import ActionButton from "../ActionButton";
+import { useIsFocused } from "@react-navigation/native";
 const CardFeedBack = (props) => {
+  const isFocused = useIsFocused();
   const { item, setListFeedback, listFeedBack } = props;
   const customerId = useSelector((state) => state.account.account.customerId);
   const avatarUrl = useSelector((state) => state.account.account.avatarURL);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(5);
   const [textArea, setTextArea] = useState("");
   const [isFinished, setIsFinished] = useState(false);
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    if (rating !== 0) {
-      setIsFinished(true);
+    if(isFocused){
+      let updatedList = listFeedBack.map((feedback) => {
+        if (feedback.foodId === item.id) {
+          return {
+            ...item,
+            foodId: item.id,
+            customerId: customerId,
+            avatarUrl: avatarUrl,
+            comment: textArea,
+            rate: rating,
+            status: true,
+          }; 
+        }
+        return feedback; // else return unmodified item
+      });
+      setListFeedback(updatedList);
+
     }
 
-    // setListFeedback(
-    //   listFeedBack.map((itemFeedback) =>
-    //     itemFeedback.food.id === item.id
-    //       ? {
-    //           ...item,
-    //           food:{id: item.id, name: item.name},
-    //           customerId: customerId,
-    //           avatarUrl: avatarUrl,
-    //           comment: textArea,
-    //           rate: rating,
-    //           status: true,
-    //         }
-    //       : item
-    //   )
-    // );
-    let updatedList = listFeedBack.map((feedback) => {
-      if (feedback.food.id === item.id) {
-        return {
-          ...item,
-          food: { id: item.id, name: item.name },
-          customerId: customerId,
-          avatarUrl: avatarUrl,
-          comment: textArea,
-          rate: rating,
-          status: true,
-        }; //gets everything that was already in item, and updates "done"
-      }
-      return feedback; // else return unmodified item
-    });
-    setListFeedback(updatedList);
-    console.log(updatedList)
-  }, [rating, textArea]);
+  }, [rating, textArea, isFocused]);
 
   return (
     <View style={styles.container}>
@@ -108,7 +94,6 @@ const CardFeedBack = (props) => {
           >
             {rating !== 0 ? <Text>{convertStarToText(rating)}</Text> : ""}
           </Text>
-          {showError ? <Text>áds</Text> : <></>}
         </View>
       </Flex>
       <Box mb={2}>

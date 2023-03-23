@@ -23,38 +23,87 @@ import {
   Box,
 } from "native-base";
 import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import ActionButton from "../components/ActionButton";
+import axios from "axios";
+import { BASE_URL } from "../services/baseURL";
+import { Toast } from "@ant-design/react-native";
 const FeedbackScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const { order } = route.params;
   const [listFeedBack, setListFeedback] = useState([]);
+  const [isDone, setIsDone] = useState(true);
+  const customerId = useSelector((state) => state.account.account.customerId);
+  const avatarUrl = useSelector((state) => state.account.account.avatarURL);
   useEffect(() => {
-    order.itemList.map((item, i) => {
-  
-      setListFeedback((arr) =>[
-        ...arr,
-        {
-          food: { id: item.id, name: item.name },
-          customerId: 0,
-          avatarUrl: "",
-          comment: "",
-          rate: 0,
-          status: true,
-        },
-      ]);
-    });
+    const setList = () => {
+      order.itemList.map((item, i) => {
+        setListFeedback((arr) => [
+          ...arr,
+          {
+            foodId: item.id,
+            customerId: customerId,
+            avatarUrl: avatarUrl,
+            comment: "",
+            rate: 5,
+            status: true,
+          },
+        ]);
+      });
+    };
+    setList();
   }, []);
   const onFinish = () => {
-    console.log("Rating is: ", listFeedBack);
-    console.log("Rating legnth: ", listFeedBack.length);
+    setIsDone(false);
+
+    // const data = { feedbackList: listFeedBack };
+    // // const config = {
+    // //   headers: { "Content-Type": "application/json" },
+    // // };
+    // console.log(data);
+    // console.log(
+    //   axios.getUri({ url: BASE_URL + "/feedbacks", method: "post", data: data })
+    // );
+    axios
+      .post(BASE_URL + "/feedbacks/pack", listFeedBack)
+      .then((response) => {
+        axios
+          .put(BASE_URL + "/orders/feedback/status", {
+            orderId: order.id,
+            feedbackStatus: true,
+          })
+          .then((response) => {
+            Toast.success("Đã gửi đánh giá thành công", 1);
+            navigation.navigate("Home");
+            setIsDone(true);
+          })
+          .catch((error) => {
+            if (error.response) {
+              setIsDone(true);
+              alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+              console.log(error.response.data.message);
+            }
+          });
+      })
+      .catch((error) => {
+        if (error.response) {
+          setIsDone(true);
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log(error.response.data.message);
+        }
+      });
   };
   return (
     <View style={styles.container}>
       {order.itemList.length > 0 ? (
         order.itemList.map((item, index) => (
           <View key={index}>
-            <CardFeedBack item={item} setListFeedback={setListFeedback} listFeedBack={listFeedBack} />
+            <CardFeedBack
+              item={item}
+              setListFeedback={setListFeedback}
+              listFeedBack={listFeedBack}
+            />
           </View>
         ))
       ) : (
@@ -62,12 +111,20 @@ const FeedbackScreen = () => {
       )}
       <Spacer />
       <View style={{ bottom: 0 }}>
-        <ActionButton
-          buttonText="Gửi"
-          onPress={() => {
-            onFinish();
-          }}
-        />
+        {isDone ? (
+          <ActionButton
+            buttonText="Gửi"
+            onPress={() => {
+              onFinish();
+            }}
+          />
+        ) : (
+          <ActionButton
+            buttonText="Đang gửi"
+            onPress={() => {}}
+            disabled={true}
+          />
+        )}
       </View>
     </View>
   );
