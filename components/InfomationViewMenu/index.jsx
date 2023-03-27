@@ -52,7 +52,7 @@ const InformationViewMenu = (props) => {
           })}
         </View>
       ) : filterFood.length === 0 ? (
-        <Text>assad</Text>
+        <Text>Không có món nào</Text>
       ) : (
         <View style={{ marginTop: 20, alignItems: "center" }}>
           <Spinner size={"sm"} />

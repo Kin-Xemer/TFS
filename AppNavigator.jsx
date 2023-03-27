@@ -32,6 +32,8 @@ import FeedbackScreen from "./screens/FeedbackScreen";
 import PartyScreen from "./screens/PartyScreen";
 import EditPartyScreen from "./screens/EditPartyScreen";
 import AddFoodMenu from "./screens/AddFoodMenu";
+import MyFeedbackScreen from "./screens/MyFeedbackScreen";
+import EditFeedbackScreen from "./screens/EditFeedbackScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
@@ -71,6 +73,8 @@ const AppNavigator = () => {
         />
         <Stack.Screen name="AddFoodMenu" component={AddFoodMenu} />
         <Stack.Screen name="EditPartyScreen" component={EditPartyScreen} />
+        <Stack.Screen name="MyFeedbackScreen" component={MyFeedbackScreen} />
+        <Stack.Screen name="EditFeedbackScreen" component={EditFeedbackScreen} />
       </Stack.Navigator>
     </Provider>
   );

@@ -2,12 +2,8 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import {
   View,
   StyleSheet,
-  ScrollView,
-  ImageBackground,
   Dimensions,
-  TouchableWithoutFeedback,
   Animated,
-  SafeAreaView,
   TouchableOpacity,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,16 +11,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, Setting4 } from "iconsax-react-native";
 import { Flex, Spacer, Text, Heading, Button, useToast } from "native-base";
-import { convertPrice } from "../Utils/convertPrice";
-import RatingBar from "../components/RatingBar";
-import Toast from "react-native-toast-message";
 import { THEME_COLOR } from "../Utils/themeColor";
 import InformationView from "../components/InformationView";
 import FilterView from "../components/FilterView";
 import SearchBar from "../components/SearchBar";
 import BottomSheet from "../components/BottomSheet";
-import axios from "axios";
-import { BASE_URL } from "../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const IMAGE_HEIGHT = (9 * screenWidth) / 16;
 const HEADER_MAX_HEIGHT = IMAGE_HEIGHT;

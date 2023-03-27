@@ -92,14 +92,14 @@ const MyOrderDetailScreen = (props) => {
             ) : (
               <View style={{ width: "49%" }}>
                 <TouchableOpacity
-                  style={[styles.buttonStyle, { backgroundColor: "#8c8c8c" }]}
+                  style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
                   activeOpacity={0.8}
-                  disabled={true}
+            
                   onPress={() => {
-                    
+                    navigation.navigate("MyFeedbackScreen", {id: customer.customerId});
                   }}
                 >
-                  <Text style={styles.buttonText}>Đánh giá</Text>
+                  <Text style={styles.buttonText}>Xem đánh giá</Text>
                 </TouchableOpacity>
               </View>
             )}
