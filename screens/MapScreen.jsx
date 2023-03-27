@@ -46,7 +46,6 @@ const MapScreen = (props) => {
   const [myLocation, setMyLocation] = useState(route.params.locateCoord);
   const [isDone, setIsDone] = useState(true);
   const [selectedCoord, setSeletedCoord] = useState(null);
-  const [initRe, saaaa] = useState("");
   const snapPoints = useMemo(() => ["23%", "40%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);

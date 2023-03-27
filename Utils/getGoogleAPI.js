@@ -1,1 +1,1 @@
-export const GOOGLE_MAPS_APIKEY = "AIzaSyDHS0vMzRvzGImN22OPtg2Q7rgAyuPR4H8"
+export const GOOGLE_MAPS_APIKEY = "AIzaSyCaD6QU4NCiBoAMzHYkTftXzak3DW_bPC4"

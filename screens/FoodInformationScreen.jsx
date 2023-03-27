@@ -1,4 +1,8 @@
-import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  useRoute,
+  useNavigation,
+  useIsFocused,
+} from "@react-navigation/native";
 import {
   View,
   StyleSheet,
@@ -7,18 +11,29 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Animated,
-  SafeAreaView,TouchableOpacity
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
-import {useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { AntDesign, Feather,Entypo } from "@expo/vector-icons";
+import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, MinusCirlce } from "iconsax-react-native";
-import { Flex, Spacer, Text, Heading, Button, useToast, Box } from "native-base";
+import {
+  Flex,
+  Spacer,
+  Text,
+  Heading,
+  Button,
+  useToast,
+  Box,
+} from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
+import axios from "axios";
+import { BASE_URL } from "../services/baseURL";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -26,17 +41,19 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const FoodInformationScreen = (props) => {
   const toast = useToast();
   const route = useRoute();
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [food, setFood] = useState(route.params.food);
   const [quantity, setQuantity] = useState(1);
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
-  
+  const [listFeedBack, setListFeedBack] = useState([]);
+
   const id = "test-toast";
 
   const addToCart = (food, quantity) => {
-    dispatch({ type: "ADD_CART", payload: food , quantity});
+    dispatch({ type: "ADD_CART", payload: food, quantity });
   };
 
   const addQuantity = () => {
@@ -49,6 +66,22 @@ const FoodInformationScreen = (props) => {
   useEffect(() => {
     setTotalPrice(food.price * quantity);
   }, [quantity]);
+
+  useEffect(() => {
+   
+      axios
+        .get(BASE_URL + "/feedbacks/food/" + food.id)
+        .then((response) => {
+          setListFeedBack(response.data)
+        })
+        .catch((error) => {
+          if (error.response) {
+            alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau")
+            console.log(error.response.data);
+          }
+        });
+    
+  }, []);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -97,7 +130,10 @@ const FoodInformationScreen = (props) => {
             },
           ]}
           source={{
-            uri: food.imgUrl !== "" ? food.imgUrl : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
+            uri:
+              food.imgUrl !== ""
+                ? food.imgUrl
+                : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
           }}
         />
       </Animated.View>
@@ -136,7 +172,7 @@ const FoodInformationScreen = (props) => {
       </Animated.View>
 
       <Animated.ScrollView
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
         }}
@@ -152,8 +188,10 @@ const FoodInformationScreen = (props) => {
       >
         <View style={styles.inforView}>
           <Flex style={styles.titleBox}>
-            <Heading style={[styles.textStyle, { fontSize: 25 }]}>
-              {food.foodName}
+            <Heading>
+              <Text style={[styles.textStyle, { fontSize: 25 }]}>
+                {food.foodName}
+              </Text>
             </Heading>
           </Flex>
           <Flex style={styles.contentBox}>
@@ -179,8 +217,10 @@ const FoodInformationScreen = (props) => {
               direction="row"
               style={{ alignItems: "center", marginTop: 4 }}
             >
-              <Heading style={[styles.textFoodContent, styles.priceText]}>
-                {convertPrice(food.price)} đ
+              <Heading>
+                <Text style={[styles.textFoodContent, styles.priceText]}>
+                  {convertPrice(food.price)} đ
+                </Text>
               </Heading>
               <Spacer />
               <Flex direction="row" style={{ alignItems: "center" }}>
@@ -218,7 +258,11 @@ const FoodInformationScreen = (props) => {
                   }}
                 >
                   <View>
-                    <AddCircle size="25" color={THEME_COLOR} variant="Outline" />
+                    <AddCircle
+                      size="25"
+                      color={THEME_COLOR}
+                      variant="Outline"
+                    />
                   </View>
                 </TouchableWithoutFeedback>
               </Flex>
@@ -248,139 +292,40 @@ const FoodInformationScreen = (props) => {
             <View style={styles.ratingPointField}>
               <Flex direction="row">
                 <View>
-                  <RatingBar progress={0.76} number="5"/>               
-                  <RatingBar progress={0.23} number="4"/>               
-                  <RatingBar progress={0.12} number="3"/>               
-                  <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>                            
+                  <RatingBar progress={0.76} number="5" />
+                  <RatingBar progress={0.23} number="4" />
+                  <RatingBar progress={0.12} number="3" />
+                  <RatingBar progress={0.1} number="2" />
+                  <RatingBar progress={0.06} number="1" />
                 </View>
               </Flex>
             </View>
           </Flex>
-          <Flex p={2} direction="row" style={styles.ratingContainer}>
-            <View style={styles.ratingPointField}>
-              <Flex>
-                <Flex direction="row">
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                </Flex>
-              </Flex>
-            </View>
-            <Spacer />
-            <View style={styles.ratingPointField}>
-              <Flex direction="row">
-                <View>
-                  <RatingBar progress={0.76} number="5"/>               
-                  <RatingBar progress={0.23} number="4"/>               
-                  <RatingBar progress={0.12} number="3"/>               
-                  <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>                            
-                </View>
-              </Flex>
-            </View>
-          </Flex>
-          <Flex p={2} direction="row" style={styles.ratingContainer}>
-            <View style={styles.ratingPointField}>
-              <Flex>
-                <Flex direction="row">
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                </Flex>
-              </Flex>
-            </View>
-            <Spacer />
-            <View style={styles.ratingPointField}>
-              <Flex direction="row">
-                <View>
-                  <RatingBar progress={0.76} number="5"/>               
-                  <RatingBar progress={0.23} number="4"/>               
-                  <RatingBar progress={0.12} number="3"/>               
-                  <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>                            
-                </View>
-              </Flex>
-            </View>
-          </Flex>
-          <Flex p={2} direction="row" style={styles.ratingContainer}>
-            <View style={styles.ratingPointField}>
-              <Flex>
-                <Flex direction="row">
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                </Flex>
-              </Flex>
-            </View>
-            <Spacer />
-            <View style={styles.ratingPointField}>
-              <Flex direction="row">
-                <View>
-                  <RatingBar progress={0.76} number="5"/>               
-                  <RatingBar progress={0.23} number="4"/>               
-                  <RatingBar progress={0.12} number="3"/>               
-                  <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>                            
-                </View>
-              </Flex>
-            </View>
-          </Flex>
-          <Flex p={2} direction="row" style={styles.ratingContainer}>
-            <View style={styles.ratingPointField}>
-              <Flex>
-                <Flex direction="row">
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                </Flex>
-              </Flex>
-            </View>
-            <Spacer />
-            <View style={styles.ratingPointField}>
-              <Flex direction="row">
-                <View>
-                  <RatingBar progress={0.76} number="5"/>               
-                  <RatingBar progress={0.23} number="4"/>               
-                  <RatingBar progress={0.12} number="3"/>               
-                  <RatingBar progress={0.1} number="2"/>               
-                  <RatingBar progress={0.06} number="1"/>                            
-                </View>
-              </Flex>
-            </View>
-          </Flex>
-
+         
         </View>
       </Animated.ScrollView>
-      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>   
-        <TouchableOpacity style={styles.buttonStyle}
-        activeOpacity={0.8}
-        onPress={() =>{
-          addToCart(food, quantity);
-          if (!toast.isActive(id)) {
-            toast.show({
-              id,
-              duration: 2000,
-              placement:"top",
-              render: () => {
-                return (
-                  <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
-                    Đã thêm vào giỏ hàng
-                  </Box>
-                );
-              },
-            });
-          }
-          navigation.goBack();
-        }}
+      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          activeOpacity={0.8}
+          onPress={() => {
+            addToCart(food, quantity);
+            if (!toast.isActive(id)) {
+              toast.show({
+                id,
+                duration: 2000,
+                placement: "top",
+                render: () => {
+                  return (
+                    <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
+                      Đã thêm vào giỏ hàng
+                    </Box>
+                  );
+                },
+              });
+            }
+            navigation.goBack();
+          }}
         >
           <Text style={styles.buttonText}>
             Thêm - {convertPrice(totalPrice)} đ
@@ -397,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   textStyle: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     fontSize: 14,
   },
 
@@ -409,7 +354,7 @@ const styles = StyleSheet.create({
     paddingTop: 26,
   },
   textFoodContent: {
-    fontFamily: "Quicksand-SemiBold",
+    fontFamily: FONT.SEMI,
     fontSize: 12,
     color: "#6E798C",
   },
@@ -418,13 +363,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     height: 42,
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 25, color: THEME_COLOR },
+  priceText: { fontFamily: FONT.BOLD, fontSize: 25, color: THEME_COLOR },
   textDescription: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     fontSize: 15,
   },
   textDesDetail: {
-    fontFamily: "Quicksand-Regular",
+    fontFamily: FONT.REGULAR,
     fontSize: 14,
     color: "#A4A4A4",
   },
@@ -477,7 +422,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    fontFamily:FONT.BOLD,
+    fontFamily: FONT.BOLD,
     fontSize: 18,
     color: "#fff",
   },
