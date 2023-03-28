@@ -1,6 +1,6 @@
 import { Flex, Image, Text, Stack, Box, Spacer, TextArea } from "native-base";
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -16,6 +16,9 @@ import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
 import { Toast } from "@ant-design/react-native";
+import { CloseSquare } from "iconsax-react-native";
+import { THEME_COLOR } from "../Utils/themeColor";
+import ConfirmDelete from "../components/ConfirmDelete";
 
 const EditFeedbackScreen = () => {
   const isFocused = useIsFocused();
@@ -26,29 +29,67 @@ const EditFeedbackScreen = () => {
   const avatarUrl = useSelector((state) => state.account.account.avatarURL);
   const [rating, setRating] = useState(feedback.rate);
   const [isDone, setIsDone] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [textArea, setTextArea] = useState(feedback.comment);
 
+  const onDelete = () => {
+    setIsDone(false);
+    setIsOpen(false);
+    let url = `${BASE_URL}/feedbacks/${feedback.id}`;
+    axios
+      .delete(url)
+      .then(() => {
+        setIsDone(true);
+        Toast.success("Xoá đánh giá thành công", 1);
+        navigation.goBack();
+      })
+      .catch((err) => {
+        if (err.response) {
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log(err.response.data);
+        }
+      });
+  };
+
   const onUpdate = () => {
+    setIsDone(false);
     const updatedFeedback = {
       ...feedback,
       rate: rating,
       comment: textArea,
     };
     let url = BASE_URL + "/feedbacks";
-    console.log(updatedFeedback)
-    axios.put(url, updatedFeedback).then((response) => {
-      Toast.success("Cập nhật thành công", 1);
-      navigation.goBack()
-    }).catch((error) => {
-      if (error.response){
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau")
-        console.log(error.response.data);
-      }
-    })
+    console.log(updatedFeedback);
+    axios
+      .put(url, updatedFeedback)
+      .then((response) => {
+        setIsDone(true);
+        Toast.success("Cập nhật thành công", 1);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        if (error.response) {
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log(error.response.data);
+        }
+      });
   };
   return (
     <View style={styles.container}>
       <TopBar title="SỬA ĐÁNH GIÁ" />
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          right: 0,
+          marginRight: 16,
+          marginTop: 55,
+        }}
+        onPress={() => {
+          setIsOpen(true);
+        }}
+      >
+        <CloseSquare size="28" color={THEME_COLOR} />
+      </TouchableOpacity>
       <View style={{ padding: 16 }}>
         <Flex flexDirection="row" alignItems={"center"}>
           <Image
@@ -132,12 +173,35 @@ const EditFeedbackScreen = () => {
             />
           </View>
         </Box>
-        <ActionButton
-          buttonText="Cập nhật"
-          onPress={() => {
-            onUpdate();
-          }}
+        <ConfirmDelete
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onDelete={onDelete}
+          title={
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 18 }}>
+              Xoá đánh giá
+            </Text>
+          }
+          content="Bạn có muốn xoá đánh giá này ?   Thao tác của bạn sẽ không được hoàn tác"
+          cancelText="Huỷ"
+          deleteText="Xoá"
         />
+        {isDone ? (
+          <ActionButton
+            buttonText="Cập nhật"
+            onPress={() => {
+              onUpdate();
+            }}
+          />
+        ) : (
+          <ActionButton
+            // onPress={() => {
+            //   handleAddMenuToCart();
+            // }}
+            disabled={true}
+            buttonText="Đang cập nhật..."
+          />
+        )}
       </View>
     </View>
   );

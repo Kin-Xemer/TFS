@@ -17,7 +17,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
-import { AddCircle, MinusCirlce } from "iconsax-react-native";
+import { AddCircle, Message, MinusCirlce } from "iconsax-react-native";
 import {
   Flex,
   Spacer,
@@ -26,6 +26,7 @@ import {
   Button,
   useToast,
   Box,
+  Divider,
 } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
@@ -34,6 +35,7 @@ import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
+import { getListPercentRating } from "../Utils/getListPercentRating";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -49,6 +51,14 @@ const FoodInformationScreen = (props) => {
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
   const [listFeedBack, setListFeedBack] = useState([]);
+  const [countRating, setCountRating] = useState({});
+  let listPercent = [
+    { rate: "1", value: 0 },
+    { rate: "2", value: 0 },
+    { rate: "3", value: 0 },
+    { rate: "4", value: 0 },
+    { rate: "5", value: 0 },
+  ];
 
   const id = "test-toast";
 
@@ -68,20 +78,25 @@ const FoodInformationScreen = (props) => {
   }, [quantity]);
 
   useEffect(() => {
-   
+    if (isFocused) {
       axios
-        .get(BASE_URL + "/feedbacks/food/" + food.id)
+        .get(BASE_URL + "/feedbacks/allbyfood/" + food.id)
         .then((response) => {
-          setListFeedBack(response.data)
+          let arr = response.data.map((item) => {
+            return item.rate;
+          });
+          setListFeedBack(response.data);
+          console.log("have data");
+          setCountRating(getListPercentRating(arr));
         })
         .catch((error) => {
           if (error.response) {
-            alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau")
+            alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
             console.log(error.response.data);
           }
         });
-    
-  }, []);
+    }
+  }, [isFocused]);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -292,16 +307,51 @@ const FoodInformationScreen = (props) => {
             <View style={styles.ratingPointField}>
               <Flex direction="row">
                 <View>
-                  <RatingBar progress={0.76} number="5" />
+                  {/* {listPercent.map((item) => {
+                    Object.keys(countRating).map((key, index) => {
+                      if (key === item.rate) {
+                        return (
+                          <RatingBar
+                            key={index}
+                            progress={countRating[key] / listFeedBack.length}
+                            number={key}
+                          />
+                        );
+                      } else {
+                        return <RatingBar progress={0} number={item.rate} />;
+                      }
+                    });
+                  })} */}
+
+                  {/*                  
                   <RatingBar progress={0.23} number="4" />
                   <RatingBar progress={0.12} number="3" />
                   <RatingBar progress={0.1} number="2" />
-                  <RatingBar progress={0.06} number="1" />
+                  <RatingBar progress={0.06} number="1" /> */}
                 </View>
               </Flex>
             </View>
           </Flex>
-         
+          <Divider my={3} />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{ flexDirection: "row", alignItems: "center" }}
+            onPress={() => {
+              navigation.navigate("FeedbackDetailScreen", {
+                foodId: food.id,
+              });
+            }}
+          >
+            <Message size="32" color="black" />
+            <Text
+              style={{ fontFamily: FONT.BOLD, fontSize: 18, marginStart: 8 }}
+            >
+              Xem đánh giá
+            </Text>
+            <Spacer />
+            <Entypo name="chevron-right" size={36} />
+          </TouchableOpacity>
+          <Divider my={3} />
         </View>
       </Animated.ScrollView>
       <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
