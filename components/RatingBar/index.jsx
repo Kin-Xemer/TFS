@@ -21,6 +21,7 @@ const RatingBar = (props) => {
             unfilledColor="#D9D9D9"
             color="gold"
           />
+
           </View>
         </Flex>
     );

@@ -53,11 +53,11 @@ const FoodInformationScreen = (props) => {
   const [listFeedBack, setListFeedBack] = useState([]);
   const [countRating, setCountRating] = useState({});
   let listPercent = [
-    { rate: "1", value: 0 },
-    { rate: "2", value: 0 },
-    { rate: "3", value: 0 },
-    { rate: "4", value: 0 },
     { rate: "5", value: 0 },
+    { rate: "4", value: 0 },
+    { rate: "3", value: 0 },
+    { rate: "2", value: 0 },
+    { rate: "1", value: 0 },
   ];
 
   const id = "test-toast";
@@ -307,9 +307,9 @@ const FoodInformationScreen = (props) => {
             <View style={styles.ratingPointField}>
               <Flex direction="row">
                 <View>
-                  {/* {listPercent.map((item) => {
+                  {
                     Object.keys(countRating).map((key, index) => {
-                      if (key === item.rate) {
+                   
                         return (
                           <RatingBar
                             key={index}
@@ -317,11 +317,19 @@ const FoodInformationScreen = (props) => {
                             number={key}
                           />
                         );
-                      } else {
-                        return <RatingBar progress={0} number={item.rate} />;
-                      }
-                    });
-                  })} */}
+                      
+                    })
+                }
+
+                  {/* {
+                    listPercent.map((item,index) => {
+                      return  <RatingBar
+                      key={index}
+                      progress={0.2}
+                      number={item.rate}
+                    />
+                    })
+                  } */}
 
                   {/*                  
                   <RatingBar progress={0.23} number="4" />
