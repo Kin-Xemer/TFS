@@ -27,7 +27,7 @@ const FeedbackDetail = (props) => {
 
         <Stack style={styles.infor} space={1}>
           <Text style={{ fontFamily: FONT.MEDIUM }}>
-            {feedback.customerId}
+            {feedback.customerName}
           </Text>
 
           {/* <AirbnbRating

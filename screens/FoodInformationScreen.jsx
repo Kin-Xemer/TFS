@@ -27,6 +27,7 @@ import {
   useToast,
   Box,
   Divider,
+  Spinner,
 } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
@@ -35,7 +36,11 @@ import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
-import { getListPercentRating } from "../Utils/getListPercentRating";
+import {
+  getAverageRating,
+  getListPercentRating,
+} from "../Utils/getListPercentRating";
+import StarRating from "react-native-star-rating-widget";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
@@ -52,14 +57,8 @@ const FoodInformationScreen = (props) => {
   const [totalPrice, setTotalPrice] = useState();
   const [listFeedBack, setListFeedBack] = useState([]);
   const [countRating, setCountRating] = useState({});
-  let listPercent = [
-    { rate: "5", value: 0 },
-    { rate: "4", value: 0 },
-    { rate: "3", value: 0 },
-    { rate: "2", value: 0 },
-    { rate: "1", value: 0 },
-  ];
-
+  const [ratingAvg, setRatingAvg] = useState(0);
+  const [isDone, setIsDone] = useState(true);
   const id = "test-toast";
 
   const addToCart = (food, quantity) => {
@@ -79,15 +78,18 @@ const FoodInformationScreen = (props) => {
 
   useEffect(() => {
     if (isFocused) {
+      setIsDone(false);
       axios
         .get(BASE_URL + "/feedbacks/allbyfood/" + food.id)
         .then((response) => {
           let arr = response.data.map((item) => {
             return item.rate;
           });
+          setIsDone(true);
           setListFeedBack(response.data);
-          console.log("have data");
-          setCountRating(getListPercentRating(arr));
+          const array = getListPercentRating(arr);
+          setRatingAvg(arr.length !== 0 ? getAverageRating(arr) : 0);
+          setCountRating(array);
         })
         .catch((error) => {
           if (error.response) {
@@ -128,269 +130,297 @@ const FoodInformationScreen = (props) => {
     extrapolate: "clamp",
   });
   return (
-    <Flex style={styles.container}>
-      <View style={{ height: 36 }}></View>
-      <Animated.View
-        style={[
-          styles.header,
-          { transform: [{ translateY: headerTranslateY }] },
-        ]}
-      >
-        <Animated.Image
-          style={[
-            styles.headerBackground,
-            {
-              opacity: imageOpacity,
-              transform: [{ translateY: imageTranslateY }],
-            },
-          ]}
-          source={{
-            uri:
-              food.imgUrl !== ""
-                ? food.imgUrl
-                : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
-          }}
-        />
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.topBar,
-          {
-            transform: [{ scale: titleScale }, { translateY: titleTranslateY }],
-          },
-        ]}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <View>
-            {contentOffset > 200 ? (
-              <Flex direction="row">
-                <Entypo name="chevron-left" size={36} color="black" />
-                {contentOffset > 330 ? (
-                  <View style={{ justifyContent: "center" }}>
-                    <Text style={[styles.textStyle, { fontSize: 18 }]}>
-                      {food.foodName}
-                    </Text>
-                  </View>
+    <>
+      {isDone ? (
+        <Flex style={styles.container}>
+          <View style={{ height: 36 }}></View>
+          <Animated.View
+            style={[
+              styles.header,
+              { transform: [{ translateY: headerTranslateY }] },
+            ]}
+          >
+            <Animated.Image
+              style={[
+                styles.headerBackground,
+                {
+                  opacity: imageOpacity,
+                  transform: [{ translateY: imageTranslateY }],
+                },
+              ]}
+              source={{
+                uri:
+                  food.imgUrl !== ""
+                    ? food.imgUrl
+                    : "https://live.staticflickr.com/65535/52706105979_db43d57386.jpg",
+              }}
+            />
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.topBar,
+              {
+                transform: [
+                  { scale: titleScale },
+                  { translateY: titleTranslateY },
+                ],
+              },
+            ]}
+          >
+            <TouchableWithoutFeedback
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <View>
+                {contentOffset > 200 ? (
+                  <Flex direction="row">
+                    <Entypo name="chevron-left" size={36} color="black" />
+                    {contentOffset > 330 ? (
+                      <View style={{ justifyContent: "center" }}>
+                        <Text style={[styles.textStyle, { fontSize: 18 }]}>
+                          {food.foodName}
+                        </Text>
+                      </View>
+                    ) : (
+                      ""
+                    )}
+                  </Flex>
                 ) : (
-                  ""
+                  <Entypo name="chevron-left" size={36} color="white" />
                 )}
-              </Flex>
-            ) : (
-              <Entypo name="chevron-left" size={36} color="white" />
-            )}
-          </View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Animated.View>
 
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
-        }}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-            listener: (event) =>
-              setContentOffset(event.nativeEvent.contentOffset.y),
-          }
-        )}
-      >
-        <View style={styles.inforView}>
-          <Flex style={styles.titleBox}>
-            <Heading>
-              <Text style={[styles.textStyle, { fontSize: 25 }]}>
-                {food.foodName}
-              </Text>
-            </Heading>
-          </Flex>
-          <Flex style={styles.contentBox}>
-            <Flex
-              direction="row"
-              style={{ alignItems: "center", marginTop: 4 }}
-            >
-              <AntDesign name="star" size={24} color="gold" />
-              <Text pl={1} style={styles.textFoodContent}>
-                {food.rating} (120 đánh giá)
-              </Text>
-            </Flex>
-            <Flex
-              direction="row"
-              style={{ alignItems: "center", marginTop: 4 }}
-            >
-              <Feather name="shopping-cart" size={24} color="#6E798C" />
-              <Text pl={1} style={styles.textFoodContent}>
-                {food.orderedAmount} lượt đặt
-              </Text>
-            </Flex>
-            <Flex
-              direction="row"
-              style={{ alignItems: "center", marginTop: 4 }}
-            >
-              <Heading>
-                <Text style={[styles.textFoodContent, styles.priceText]}>
-                  {convertPrice(food.price)} đ
-                </Text>
-              </Heading>
-              <Spacer />
-              <Flex direction="row" style={{ alignItems: "center" }}>
-                {quantity !== 1 ? (
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      minusQuantity();
-                    }}
-                  >
-                    <View>
-                      <MinusCirlce
-                        size="25"
-                        color={THEME_COLOR}
-                        variant="Outline"
-                      />
+          <Animated.ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT,
+            }}
+            scrollEventThrottle={16}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              {
+                useNativeDriver: true,
+                listener: (event) =>
+                  setContentOffset(event.nativeEvent.contentOffset.y),
+              }
+            )}
+          >
+            <View style={styles.inforView}>
+              <Flex style={styles.titleBox}>
+                <Heading>
+                  <Text style={[styles.textStyle, { fontSize: 25 }]}>
+                    {food.foodName}
+                  </Text>
+                </Heading>
+              </Flex>
+              <Flex style={styles.contentBox}>
+                <Flex
+                  direction="row"
+                  style={{ alignItems: "center", marginTop: 4 }}
+                >
+                  <AntDesign name="star" size={24} color="gold" />
+                  <Text pl={1} style={styles.textFoodContent}>
+                    {ratingAvg} ({food.ratingNum} đánh giá)
+                  </Text>
+                </Flex>
+                <Flex
+                  direction="row"
+                  style={{ alignItems: "center", marginTop: 4 }}
+                >
+                  <Feather name="shopping-cart" size={24} color="#6E798C" />
+                  <Text pl={1} style={styles.textFoodContent}>
+                    {food.purchaseNum} lượt đặt
+                  </Text>
+                </Flex>
+                <Flex
+                  direction="row"
+                  style={{ alignItems: "center", marginTop: 4 }}
+                >
+                  <Heading>
+                    <Text style={[styles.textFoodContent, styles.priceText]}>
+                      {convertPrice(food.price)} đ
+                    </Text>
+                  </Heading>
+                  <Spacer />
+                  <Flex direction="row" style={{ alignItems: "center" }}>
+                    {quantity !== 1 ? (
+                      <TouchableWithoutFeedback
+                        onPress={() => {
+                          minusQuantity();
+                        }}
+                      >
+                        <View>
+                          <MinusCirlce
+                            size="25"
+                            color={THEME_COLOR}
+                            variant="Outline"
+                          />
+                        </View>
+                      </TouchableWithoutFeedback>
+                    ) : (
+                      <TouchableWithoutFeedback>
+                        <View>
+                          <MinusCirlce
+                            size="25"
+                            color={THEME_COLOR}
+                            variant="Outline"
+                          />
+                        </View>
+                      </TouchableWithoutFeedback>
+                    )}
+                    <View style={{ width: 30, alignItems: "center" }}>
+                      <Text>{quantity}</Text>
                     </View>
-                  </TouchableWithoutFeedback>
-                ) : (
-                  <TouchableWithoutFeedback>
-                    <View>
-                      <MinusCirlce
-                        size="25"
-                        color={THEME_COLOR}
-                        variant="Outline"
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                )}
-                <View style={{ width: 30, alignItems: "center" }}>
-                  <Text>{quantity}</Text>
+                    <TouchableWithoutFeedback
+                      onPress={() => {
+                        addQuantity();
+                      }}
+                    >
+                      <View>
+                        <AddCircle
+                          size="25"
+                          color={THEME_COLOR}
+                          variant="Outline"
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </Flex>
+                </Flex>
+                <View style={styles.description}>
+                  <Text style={[styles.textDescription]}>Mô tả</Text>
+                  <Text style={[styles.textDesDetail]}>{food.description}</Text>
                 </View>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    addQuantity();
+              </Flex>
+              <Text style={[styles.textDescription, { marginTop: 15 }]}>
+                Đánh giá
+              </Text>
+
+              {listFeedBack.length > 0 ? (
+                <Flex p={2} direction="row" style={styles.ratingContainer}>
+                  <View style={styles.ratingPointField}>
+                    <Flex justifyContent={"center"} alignItems="center">
+                      <StarRating
+                        rating={ratingAvg}
+                        color={"#ffd000"}
+                        onChange={(rating) => {}}
+                        enableSwiping={false}
+                        enableHalfStar={false}
+                        starSize={30}
+                        starStyle={{
+                          marginRight: -5,
+                        }}
+                        emptyColor="#8c8c8c"
+                        style={{ marginLeft: -5 }}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: FONT.BOLD,
+                          color: THEME_COLOR,
+                          fontSize: 25,
+                          paddingTop: 12,
+                        }}
+                      >
+                        {ratingAvg}
+                        <Text style={{ fontSize: 16, color: "black" }}>/5</Text>
+                      </Text>
+                    </Flex>
+                  </View>
+                  <Spacer />
+                  <View style={styles.ratingPointField}>
+                    <Flex direction="row">
+                      <View>
+                        {Object.keys(countRating)
+                          .reverse()
+                          .map((key, index) => {
+                            return (
+                              <RatingBar
+                                key={index}
+                                progress={
+                                  listFeedBack.length !== 0
+                                    ? countRating[key] / listFeedBack.length
+                                    : 0
+                                }
+                                number={key}
+                              />
+                            );
+                          })}
+                      </View>
+                    </Flex>
+                  </View>
+                </Flex>
+              ) : (
+                <Flex p={2} direction="row" style={styles.ratingContainer}>
+                  <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 18 }}>
+                    Hiện chưa có đánh giá
+                  </Text>
+                </Flex>
+              )}
+              <Divider my={3} />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{ flexDirection: "row", alignItems: "center" }}
+                onPress={() => {
+                  navigation.navigate("FeedbackDetailScreen", {
+                    foodId: food.id,
+                  });
+                }}
+              >
+                <Message size="32" color="black" />
+                <Text
+                  style={{
+                    fontFamily: FONT.BOLD,
+                    fontSize: 18,
+                    marginStart: 8,
                   }}
                 >
-                  <View>
-                    <AddCircle
-                      size="25"
-                      color={THEME_COLOR}
-                      variant="Outline"
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-              </Flex>
-            </Flex>
-            <View style={styles.description}>
-              <Text style={[styles.textDescription]}>Mô tả</Text>
-              <Text style={[styles.textDesDetail]}>{food.description}</Text>
+                  Xem đánh giá
+                </Text>
+                <Spacer />
+                <Entypo name="chevron-right" size={36} />
+              </TouchableOpacity>
+              <Divider my={3} />
             </View>
-          </Flex>
-          <Text style={[styles.textDescription, { marginTop: 15 }]}>
-            Đánh giá
-          </Text>
-
-          <Flex p={2} direction="row" style={styles.ratingContainer}>
-            <View style={styles.ratingPointField}>
-              <Flex>
-                <Flex direction="row">
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                  <AntDesign name="star" size={24} color="gold" />
-                </Flex>
-              </Flex>
-            </View>
-            <Spacer />
-            <View style={styles.ratingPointField}>
-              <Flex direction="row">
-                <View>
-                  {
-                    Object.keys(countRating).map((key, index) => {
-                   
-                        return (
-                          <RatingBar
-                            key={index}
-                            progress={countRating[key] / listFeedBack.length}
-                            number={key}
-                          />
-                        );
-                      
-                    })
-                }
-
-                  {/* {
-                    listPercent.map((item,index) => {
-                      return  <RatingBar
-                      key={index}
-                      progress={0.2}
-                      number={item.rate}
-                    />
-                    })
-                  } */}
-
-                  {/*                  
-                  <RatingBar progress={0.23} number="4" />
-                  <RatingBar progress={0.12} number="3" />
-                  <RatingBar progress={0.1} number="2" />
-                  <RatingBar progress={0.06} number="1" /> */}
-                </View>
-              </Flex>
-            </View>
-          </Flex>
-          <Divider my={3} />
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{ flexDirection: "row", alignItems: "center" }}
-            onPress={() => {
-              navigation.navigate("FeedbackDetailScreen", {
-                foodId: food.id,
-              });
-            }}
+          </Animated.ScrollView>
+          <View
+            style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}
           >
-            <Message size="32" color="black" />
-            <Text
-              style={{ fontFamily: FONT.BOLD, fontSize: 18, marginStart: 8 }}
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              activeOpacity={0.8}
+              onPress={() => {
+                addToCart(food, quantity);
+                if (!toast.isActive(id)) {
+                  toast.show({
+                    id,
+                    duration: 2000,
+                    placement: "top",
+                    render: () => {
+                      return (
+                        <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
+                          Đã thêm vào giỏ hàng
+                        </Box>
+                      );
+                    },
+                  });
+                }
+                navigation.goBack();
+              }}
             >
-              Xem đánh giá
-            </Text>
-            <Spacer />
-            <Entypo name="chevron-right" size={36} />
-          </TouchableOpacity>
-          <Divider my={3} />
+              <Text style={styles.buttonText}>
+                Thêm - {convertPrice(totalPrice)} đ
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Flex>
+      ) : (
+        <View style={{ marginTop: 20, alignItems: "center" }}>
+          <Spinner size={"sm"} />
         </View>
-      </Animated.ScrollView>
-      <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          activeOpacity={0.8}
-          onPress={() => {
-            addToCart(food, quantity);
-            if (!toast.isActive(id)) {
-              toast.show({
-                id,
-                duration: 2000,
-                placement: "top",
-                render: () => {
-                  return (
-                    <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
-                      Đã thêm vào giỏ hàng
-                    </Box>
-                  );
-                },
-              });
-            }
-            navigation.goBack();
-          }}
-        >
-          <Text style={styles.buttonText}>
-            Thêm - {convertPrice(totalPrice)} đ
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </Flex>
+      )}
+    </>
   );
 };
 const styles = StyleSheet.create({
@@ -435,10 +465,10 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   ratingContainer: {
-    width: "100%",
-    height: 135,
+    marginTop: 8,
     borderRadius: 15,
-    backgroundColor: "#F4F3F3",
+    backgroundColor: "#f6f6f6",
+    paddingHorizontal: 20,
   },
   header: {
     position: "absolute",
@@ -468,8 +498,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   ratingPointField: {
-    width: "45%",
-    height: "100%",
     justifyContent: "center",
   },
   buttonStyle: {

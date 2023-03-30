@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { LogBox } from "react-native";
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
@@ -40,7 +40,7 @@ export default function App() {
         <NavigationContainer>
           <StatusBar
             animated={true}
-            backgroundColor="white"
+            backgroundColor="transparent"
             barStyle="default"
           />
           <NativeBaseProvider>

@@ -29,24 +29,10 @@ const FeedBackItem = (props) => {
           <Text style={{ fontFamily: FONT.MEDIUM }}>
             {customer.theAccount.accountId}
           </Text>
-
-          {/* <AirbnbRating
-            count={5}
-            defaultRating={convertStar(feedback.rate)}
-            size={15}
-            isDisabled={true}
-            showRating={false}
-            starContainerStyle={{
-              marginLeft: -20,
-              justifyContent: "flex-start",
-            }}
-          /> */}
           <StarRating
             rating={feedback.rate}
             color={"#ffd000"}
             onChange={(rating) => {
-              // setRating(rating);
-              // console.log(rating);
             }}
             enableSwiping={false}
             enableHalfStar={false}
