@@ -63,6 +63,7 @@ const ListCart = (props) => {
   const [textAreaCount, setTextAreaCount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isVisible, setIsVisible] = useState(false);
+  const [openPicker, setOpenPicker] = useState(false);
   const refRBSheet = useRef();
 
   let list = [];
@@ -149,6 +150,9 @@ const ListCart = (props) => {
 
   const toggleModal = () => {
     setIsVisible(!isVisible);
+  };
+  const togglePicker = () => {
+    setOpenPicker(!openPicker);
   };
 
   const handleCheckout = () => {
@@ -250,6 +254,8 @@ const ListCart = (props) => {
             showsVerticalScrollIndicator={false}
             ListFooterComponent={
               <FooterComponent
+                togglePicker={togglePicker}
+                currentDate={new Date()}
                 service={service}
                 discount={discount}
                 totalCart={totalCart}
