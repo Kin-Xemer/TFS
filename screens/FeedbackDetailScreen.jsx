@@ -9,8 +9,6 @@ import TopBar from "../components/TopBar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../services/baseURL";
-import { FONT } from "../Utils/themeFont";
-import FeedBackItem from "../components/FeedbackScreen/FeedBackItem";
 import FeedbackDetail from "../components/FeedbackScreen/FeedbackDetail";
 
 const FeedbackDetailScreen = () => {

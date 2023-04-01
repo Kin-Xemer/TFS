@@ -6,15 +6,14 @@ import {
 import {
   View,
   StyleSheet,
-  ScrollView,
-  ImageBackground,
   Dimensions,
   TouchableWithoutFeedback,
   Animated,
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { Toast } from "@ant-design/react-native";
+import {  useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, Message, MinusCirlce } from "iconsax-react-native";
@@ -23,15 +22,11 @@ import {
   Spacer,
   Text,
   Heading,
-  Button,
-  useToast,
-  Box,
   Divider,
   Spinner,
 } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
-import Toast from "react-native-toast-message";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import axios from "axios";
@@ -46,7 +41,6 @@ const HEADER_MAX_HEIGHT = screenHeight * 0.42;
 const HEADER_MIN_HEIGHT = 114;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 const FoodInformationScreen = (props) => {
-  const toast = useToast();
   const route = useRoute();
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -59,7 +53,6 @@ const FoodInformationScreen = (props) => {
   const [countRating, setCountRating] = useState({});
   const [ratingAvg, setRatingAvg] = useState(0);
   const [isDone, setIsDone] = useState(true);
-  const id = "test-toast";
 
   const addToCart = (food, quantity) => {
     dispatch({ type: "ADD_CART", payload: food, quantity });
@@ -392,20 +385,7 @@ const FoodInformationScreen = (props) => {
               activeOpacity={0.8}
               onPress={() => {
                 addToCart(food, quantity);
-                if (!toast.isActive(id)) {
-                  toast.show({
-                    id,
-                    duration: 2000,
-                    placement: "top",
-                    render: () => {
-                      return (
-                        <Box bg="#e5e5e5" px="2" py="1" rounded="sm" mt={5}>
-                          Đã thêm vào giỏ hàng
-                        </Box>
-                      );
-                    },
-                  });
-                }
+                Toast.success("Đã thêm vào giỏ hàng", 0.5);
                 navigation.goBack();
               }}
             >

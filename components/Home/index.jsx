@@ -265,7 +265,7 @@ const Home = (props) => {
             }}
             onPress={() => {
               isLogin
-                ? navigation.navigate("CartScreen")
+                ? navigation.navigate("CartScreen", { locateCoord: myLocation })
                 : navigation.navigate("LoginScreenn");
             }}
           >
@@ -339,7 +339,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods}
+          data={foods.slice(0, 15)}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity

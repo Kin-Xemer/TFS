@@ -21,12 +21,9 @@ import { THEME_COLOR } from "../Utils/themeColor";
 import ConfirmDelete from "../components/ConfirmDelete";
 
 const EditFeedbackScreen = () => {
-  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const route = useRoute();
   const { feedback } = route.params;
-  const customerId = useSelector((state) => state.account.account.customerId);
-  const avatarUrl = useSelector((state) => state.account.account.avatarURL);
   const [rating, setRating] = useState(feedback.rate);
   const [isDone, setIsDone] = useState(true);
   const [isOpen, setIsOpen] = useState(false);

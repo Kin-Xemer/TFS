@@ -31,8 +31,6 @@ const PartyScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const menuRef = useRef();
-  const items = useSelector((state) => state.party);
-  const [quantity, setQuantity] = useState(0);
   const [isDone, setIsDone] = useState(true);
   const [events, setEvents] = useState();
   const [regions, setRegions] = useState();
