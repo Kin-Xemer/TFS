@@ -30,6 +30,7 @@ import ImageLogin from "../ImageLogin/ImageLogin";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Lock, Mobile, User } from "iconsax-react-native";
 import { BASE_URL } from "../../services/baseURL";
+import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
@@ -58,7 +59,7 @@ const LoginForm = () => {
   };
 
   const handleLogin = () => {
-    let url = BASE_URL + "/user/login"
+    let url = BASE_URL + "/user/login";
     axios
       .post(url, { username: username, password: password })
       .then(function (response) {
@@ -87,106 +88,108 @@ const LoginForm = () => {
   };
 
   return (
-
-      <View style={styles.container}>
-        <View>
-          <Text style={{ fontFamily: FONT.BOLD, fontSize: 28 }}>Đăng Nhập</Text>
-        </View>
-        <View style={{ marginTop: 16 }}>
-          <Text style={{ fontFamily: FONT.SEMI, fontSize: 18, color: "gray" }}>
-            Đăng nhập để tiếp tục!{" "}
-          </Text>
-        </View>
-        <Flex flexDirection={"row"}>
-          <ImageLogin
-            imageURL={"https://cdn-icons-png.flaticon.com/512/2702/2702602.png"}
-          />
-          <ImageLogin
-            imageURL={"https://cdn-icons-png.flaticon.com/512/145/145802.png"}
-          />
-          <ImageLogin
-            imageURL={"https://cdn-icons-png.flaticon.com/512/3670/3670151.png"}
-          />
-        </Flex>
-        <Stack space={4} w="100%" alignItems="center">
-          <Input
-            // keyboardType="numeric"
-            type=""
-            fontFamily={FONT.MEDIUM}
-            fontSize={15}
-            ref={inputUserRef}
-            backgroundColor={"#ffff"}
-            focusOutlineColor={COLOR}
-            borderRadius={BORDER_RADIUS}
-            borderWidth="1.5"
-            h={HEIGHT}
-            InputLeftElement={<Icon as={<Mobile size="24" />} ml="4" />}
-            placeholder="Số điện thoại"
-            onChangeText={(e) => {
-              handleChangeUsername(e);
-            }}
-          />
-          <Input
-            ref={passwordRef}
-            fontFamily={FONT.MEDIUM}
-            fontSize={15}
-            backgroundColor={"#ffff"}
-            focusOutlineColor={COLOR}
-            borderRadius={BORDER_RADIUS}
-            borderWidth="1.5"
-            h={HEIGHT}
-            type={show ? "text" : "password"}
-            InputRightElement={
-              <Pressable onPress={() => setShow(!show)}>
-                <Icon
-                  as={
-                    <MaterialIcons
-                      name={show ? "visibility" : "visibility-off"}
-                    />
-                  }
-                  size={5}
-                  mr="4"
-                  color="muted.400"
-                />
-              </Pressable>
-            }
-            InputLeftElement={<Icon as={<Lock size="23" />} ml="4" />}
-            placeholder="Mật khẩu"
-            onChangeText={(e) => {
-              handleChangePassword(e);
-            }}
-          />
-          <Button
-            _pressed={{
-              backgroundColor: "red",
-            }}
-            h={HEIGHT}
-            w="100%"
-            py="3"
-            onPress={() => {
-              handleLogin();
-            }}
-            bg={COLOR}
-            borderRadius={BORDER_RADIUS}
-          >
-            <Text
-              style={{ fontFamily: FONT.BOLD, fontSize: 20, color: "white" }}
-            >
-              ĐĂNG NHẬP
-            </Text>
-          </Button>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("RegisterScreen");
-            }}
-          >
-            <View>
-              <Text>I'm a new user</Text>
-            </View>
-          </TouchableOpacity>
-        </Stack>
+    <View style={styles.container}>
+      <View>
+        <Text style={{ fontFamily: FONT.BOLD, fontSize: 28 }}>Đăng Nhập</Text>
       </View>
-
+      <View style={{ marginTop: 16 }}>
+        <Text style={{ fontFamily: FONT.SEMI, fontSize: 18, color: "gray" }}>
+          Đăng nhập để tiếp tục!{" "}
+        </Text>
+      </View>
+      <Flex flexDirection={"row"}>
+        <ImageLogin
+          imageURL={"https://cdn-icons-png.flaticon.com/512/2702/2702602.png"}
+        />
+        <ImageLogin
+          imageURL={"https://cdn-icons-png.flaticon.com/512/145/145802.png"}
+        />
+        <ImageLogin
+          imageURL={"https://cdn-icons-png.flaticon.com/512/3670/3670151.png"}
+        />
+      </Flex>
+      <Stack space={4} w="100%" alignItems="center">
+        <Input
+          // keyboardType="numeric"
+          type=""
+          fontFamily={FONT.MEDIUM}
+          fontSize={15}
+          ref={inputUserRef}
+          backgroundColor={"#ffff"}
+          focusOutlineColor={COLOR}
+          borderRadius={BORDER_RADIUS}
+          borderWidth="1.5"
+          h={HEIGHT}
+          InputLeftElement={<Icon as={<Mobile size="24" />} ml="4" />}
+          placeholder="Số điện thoại"
+          onChangeText={(e) => {
+            handleChangeUsername(e);
+          }}
+        />
+        <Input
+          ref={passwordRef}
+          fontFamily={FONT.MEDIUM}
+          fontSize={15}
+          backgroundColor={"#ffff"}
+          focusOutlineColor={COLOR}
+          borderRadius={BORDER_RADIUS}
+          borderWidth="1.5"
+          h={HEIGHT}
+          type={show ? "text" : "password"}
+          InputRightElement={
+            <Pressable onPress={() => setShow(!show)}>
+              <Icon
+                as={
+                  <MaterialIcons
+                    name={show ? "visibility" : "visibility-off"}
+                  />
+                }
+                size={5}
+                mr="4"
+                color="muted.400"
+              />
+            </Pressable>
+          }
+          InputLeftElement={<Icon as={<Lock size="23" />} ml="4" />}
+          placeholder="Mật khẩu"
+          onChangeText={(e) => {
+            handleChangePassword(e);
+          }}
+        />
+        <Button
+          _pressed={{
+            backgroundColor: "red",
+          }}
+          h={HEIGHT}
+          w="100%"
+          py="3"
+          onPress={() => {
+            handleLogin();
+          }}
+          bg={COLOR}
+          borderRadius={BORDER_RADIUS}
+        >
+          <Text style={{ fontFamily: FONT.BOLD, fontSize: 20, color: "white" }}>
+            ĐĂNG NHẬP
+          </Text>
+        </Button>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => {
+            navigation.navigate("RegisterScreen");
+          }}
+        >
+          <View>
+            <Text style={{ fontFamily: FONT.REGULAR }}>
+              Bạn chưa có tài khoản?{"   "}
+              <Text style={{ fontFamily: FONT.REGULAR, color: THEME_COLOR }}>
+                Đăng ký
+              </Text>
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Stack>
+    </View>
   );
 };
 const styles = StyleSheet.create({

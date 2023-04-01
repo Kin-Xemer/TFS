@@ -95,7 +95,7 @@ const ZaloPaymentScreen = () => {
 
   useEffect(() => {
     if (isFocused) {
-      // getCartById()(dispatch,account);
+      console.log(paymentObject)
     }
   }, [isFocused]);
 

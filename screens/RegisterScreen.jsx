@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaViewBase,
+  TextInput,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,6 +29,8 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { FONT } from "../Utils/themeFont";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Lock, Mobile, User } from "iconsax-react-native";
+import { THEME_COLOR } from "../Utils/themeColor";
+import { BASE_URL } from "../services/baseURL";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
@@ -35,23 +38,48 @@ const COLOR = "#FFDB89";
 const RegisterScreen = () => {
   const [show, setShow] = useState(false);
   const [username, setUserName] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState(0);
+  const [email, setEmail] = useState("");
   const [userFocus, setuserFocus] = useState(true);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const inputUserRef = useRef();
   const passwordRef = useRef();
   const navigation = useNavigation();
-  const handleChangeUsername = (e) => {
-    setUserName(e);
+  const handleChangePhone = (e) => {
+    setPhone(e);
   };
   const handleChangePassword = (e) => {
     setPassword(e);
+  };
+  const handleRegister = () => {
+    let phoneInput = {
+      phoneNumber: phone,
+    };
+    console.log(phoneInput);
+    axios({
+      method: "post",
+      url: BASE_URL + "/sms/registerOTP",
+      headers:{'Content-Type': 'application/json'},
+      data: phoneInput,
+    })
+      .then((response) => {
+        console.log(response.data)
+        navigation.navigate("OTPScreen", {otp: response.data})
+      })
+      .catch((error) => {
+        alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
+        console.log(error.response.data);
+      });
+    // navigation.navigate("OTPScreen")
   };
   return (
     <View style={styles.container}>
       <Stack space={4} w="100%" alignItems="center">
         <Input
-          type=""
+          keyboardType="numeric"
+          maxLength={10}
           fontFamily={FONT.MEDIUM}
           fontSize={15}
           ref={inputUserRef}
@@ -63,7 +91,7 @@ const RegisterScreen = () => {
           InputLeftElement={<Icon as={<Mobile size="24" />} ml="4" />}
           placeholder="Số điện thoại"
           onChangeText={(e) => {
-            handleChangeUsername(e);
+            handleChangePhone(e);
           }}
         />
         <Input
@@ -104,8 +132,8 @@ const RegisterScreen = () => {
           w="100%"
           py="3"
           onPress={() => {
-            handleLogin();
-            console.log(username + "" + password);
+            handleRegister();
+            // console.log(username + "" + password);
           }}
           bg={COLOR}
           borderRadius={BORDER_RADIUS}
@@ -116,11 +144,16 @@ const RegisterScreen = () => {
         </Button>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("RegisterScreen");
+            navigation.navigate("LoginScreenn");
           }}
         >
           <View>
-            <Text>I'm a new user</Text>
+            <Text style={{ fontFamily: FONT.REGULAR }}>
+              Bạn đã có tài khoản?{"   "}
+              <Text style={{ fontFamily: FONT.REGULAR, color: THEME_COLOR }}>
+                Đăng nhập
+              </Text>
+            </Text>
           </View>
         </TouchableOpacity>
       </Stack>
@@ -134,6 +167,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flex: 1,
     paddingHorizontal: 16,
+  },
+  input: {
+    height: HEIGHT,
   },
 });
 export default RegisterScreen;
