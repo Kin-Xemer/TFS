@@ -16,10 +16,13 @@ import { getAverageRating, getListPercentRating } from "../../Utils/getListPerce
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  let { food, isLogin, itemWith, mh, mr } = props;
+  let { food,  itemWith, mh, mr } = props;
   const dispatch = useDispatch();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
+  );
+  const isLogin = useSelector(
+    (state) => state.account.isLogin
   );
   const navigation = useNavigation();
   const [listFeedBack, setListFeedBack] = useState([]);
@@ -44,9 +47,9 @@ const CardFood = (props) => {
         }
       });
   }, []);
-  const addToCart = async (food, quantity) => {
-    await dispatch({ type: "ADD_CART", payload: food, quantity });
-    await getCartById()(dispatch, username);
+  const addToCart =  (food, quantity) => {
+     dispatch({ type: "ADD_CART", payload: food, quantity });
+    //  getCartById()(dispatch, username);
   };
 
   return (

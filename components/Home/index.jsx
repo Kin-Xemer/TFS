@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Flex,
   Spacer,
@@ -45,7 +45,6 @@ const Home = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   // const [foods, setFood] = useState([]);
-  const [isLogin, setIsLogin] = useState(false);
   const [cusName, setCusName] = useState("");
   const [locateCoord, setLocateCoord] = useState(null);
   const [events, setEvents] = useState();
@@ -55,6 +54,7 @@ const Home = (props) => {
   const [isFindDone, setIsFindDone] = useState(false);
   const numberCart = useSelector((state) => state.cart.numberCart);
   const cart = useSelector((state) => state.cart.cart);
+  const isLogin = useSelector((state) => state.account.isLogin);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
@@ -98,7 +98,6 @@ const Home = (props) => {
           type: "SET_ORDER_STATUS",
           payload: null,
         });
-        setIsLogin(true);
         setCusName(cusName);
       } else {
         dispatch({
@@ -125,9 +124,8 @@ const Home = (props) => {
         payload: "",
       });
       await AsyncStorage.removeItem("customer");
-
-      setIsLogin(false);
       dispatch({ type: "LOGOUT" });
+      dispatch({ type: "SET_LOGIN_STATUS_LOGOUT" });
       navigation.navigate("LoginScreenn");
     } catch (e) {
       alert("Failed to clear the async storage.");
@@ -195,14 +193,13 @@ const Home = (props) => {
   };
 
   const handlePressParty = () => {
-    if(cart.party !== null){
+    if (cart.party !== null) {
       navigation.navigate("EditPartyScreen", {
-        party: cart.party
-      })
-    }else{
-      navigation.navigate("PartyScreen")
+        party: cart.party,
+      });
+    } else {
+      navigation.navigate("PartyScreen");
     }
-    
   };
   return foods.length > 0 ? (
     <Flex style={styles.container}>
@@ -267,7 +264,9 @@ const Home = (props) => {
               padding: 4,
             }}
             onPress={() => {
-              navigation.navigate("CartScreen", { locateCoord: myLocation });
+              isLogin
+                ? navigation.navigate("CartScreen")
+                : navigation.navigate("LoginScreenn");
             }}
           >
             <View>
@@ -298,8 +297,14 @@ const Home = (props) => {
           regions={regions}
           handlePressParty={handlePressParty}
         />
-        <Title textTitle="Món chính" />
+        <Title textTitle="Món ngon nổi bật" />
         <FlatList
+          initialNumToRender={15}
+          windowSize={5}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={30}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -323,8 +328,14 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
-        <Title textTitle="Bán chạy" />
-        {/* <FlatList
+        <Title textTitle="Ẩm thực cổ truyền" />
+        <FlatList
+          initialNumToRender={15}
+          windowSize={5}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={30}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -337,12 +348,17 @@ const Home = (props) => {
                   navigation.navigate("FoodInformationScreen", { food: item })
                 }
               >
-                <CardFood addToCart={addToCart} isLogin={isLogin} itemWith={170} mr={15} food={item} />
+                <CardFood
+                  isLogin={isLogin}
+                  itemWith={170}
+                  mr={15}
+                  food={item}
+                />
               </TouchableOpacity>
             </Flex>
           )}
-          keyExtractor={item=> item.id}
-        /> */}
+          keyExtractor={(item) => item.id}
+        />
         <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
           <ActionButton
             onPress={() => {
@@ -354,7 +370,6 @@ const Home = (props) => {
             onPress={() => {
               navigation.navigate("FeedbackScreen");
             }}
-            
             buttonText=" Check button"
           />
         </View>

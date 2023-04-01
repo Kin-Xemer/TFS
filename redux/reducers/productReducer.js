@@ -15,7 +15,9 @@ const initCart = {
   serviceListObject: [],
   itemList:[],
   partyTotalPrice:0,
-  comboList:[]
+  comboList:[],
+  cartId: 0,
+  party:null
 };
 
 const saveCart = (state) => {
@@ -31,19 +33,21 @@ const saveCart = (state) => {
 
   const newCart = {
     ...state.cart,
+    id:state.cartId,
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
     comboList: [],
   };
   initCart.numberCart = sum;
-  console.log("new cart", newCart)
+console.log("cart id: ", newCart.id)
+
   axios
     .put(BASE_URL + "/carts", newCart)
     .then((res) => {})
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
-      console.log("Error", err)
+      console.log("Error", err.response.data)
     });
 };
 
@@ -130,6 +134,8 @@ function todoProduct(state = initCart, action) {
         cartsItem: action.payload,
         cart: action.cart,
         numberCart: action.numberCart,
+        cartId:action.cart.id,
+        party: action.cart.party
       };
     case "SET_CARTITEM":
       return {
@@ -158,6 +164,8 @@ function todoProduct(state = initCart, action) {
         itemList:[],
         comboList:[],
         serviceListObject: [],
+        cartId:0,
+        party: null
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;

@@ -46,6 +46,7 @@ const FooterComponent = (props) => {
   } = props;
   const navigation = useNavigation();
   const cart = useSelector((state) => state.cart.cart);
+  const party = useSelector((state) => state.cart.party);
   const [payment, setPayment] = useState("cash");
 
   // const [selectedDate,setSelectedDate] = useState(new Date().format("DD-MM-yyyy"));
@@ -80,7 +81,7 @@ const FooterComponent = (props) => {
     >
       <View style={{ backgroundColor: "white", paddingHorizontal: 16 }}>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
-        {cart.party ? (
+        {party ? (
           <View>
             <Text
               style={{
@@ -121,7 +122,6 @@ const FooterComponent = (props) => {
                   marginVertical: 2,
                   fontSize: 16,
                   fontFamily: FONT.SEMI,
-           
                   borderColor: "#8c8c8c",
                   borderWidth: 1,
                   borderRadius: 8,

@@ -7,9 +7,8 @@ import { getCartById } from '../Utils/api/getCart';
 import { BASE_URL } from "../services/baseURL";
 import axios from "axios";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-const CartScreen = (props) => {
+const CartScreen = () => {
   const isFocused = useIsFocused()
-  const { food } = props;
   const [service, setService] = useState();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId

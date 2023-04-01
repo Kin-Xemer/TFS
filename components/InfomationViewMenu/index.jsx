@@ -46,7 +46,7 @@ const InformationViewMenu = (props) => {
                 // }
                 key={index}
               >
-                <CardFoodMenu style={styles.item} mh={7} food={item} />
+                <CardFoodMenu  style={styles.item} mh={7} food={item} />
               </TouchableOpacity>
             );
           })}
