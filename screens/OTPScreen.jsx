@@ -26,7 +26,8 @@ const OTPScreen = () => {
   }, []);
   const handleCheckOtp = () => {
     inputRef.current.clear();
-    if (otp === textOTP) {
+    console.log(textOTP.toString())
+    if (otp.otp === textOTP.toString()) {
       const cus = {
         address: "",
         avatarURL: "",
@@ -40,6 +41,7 @@ const OTPScreen = () => {
           status: true,
         },
       };
+      console.log(cus)
     } else {
       setIsOpen(true);
     }
