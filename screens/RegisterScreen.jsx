@@ -124,12 +124,15 @@ const RegisterScreen = () => {
     validatePassword(password) ? setPasswordErr("") : setIsDone(true);
     if (phone.length > 0) {
       validatePhone(phone)
-        ? checkExistUser(phoneInput)
+        ? setError("")
         : setError("Số điện thoại không đúng");
       setIsDone(true);
     } else {
       setError("Số điện thoại không được để trống");
     }
+    validateConfirm() && validatePassword(password) && validatePhone(phone)
+      ? checkExistUser(phoneInput)
+      : null;
     // navigation.navigate("OTPScreen")
   };
   return (

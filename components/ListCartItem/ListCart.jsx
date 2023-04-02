@@ -89,15 +89,15 @@ const ListCart = (props) => {
     setNote(value);
   };
 
-  function convertUTCDateToLocalDate(date) {
-    var newDate = new Date(
-      date.getTime() + date.getTimezoneOffset() * 60 * 1000
-    );
-    var offset = date.getTimezoneOffset() / 60;
-    var hours = date.getHours();
-    newDate.setHours(hours - offset);
-    return newDate;
-  }
+  // function convertUTCDateToLocalDate(date) {
+  //   var newDate = new Date(
+  //     date.getTime() + date.getTimezoneOffset() * 60 * 1000
+  //   );
+  //   var offset = date.getTimezoneOffset() / 60;
+  //   var hours = date.getHours();
+  //   newDate.setHours(hours - offset);
+  //   return newDate;
+  // }
 
   // const convertDateTime = () => {
   //   let dt = new Date();
@@ -138,7 +138,9 @@ const ListCart = (props) => {
         })
         .catch((err) => {
           setIsDone(true);
-          alert("Create Order: ", err.message);
+          console.log(orders)
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log("Create order zalo",err.response.data)
         });
     }
   };
@@ -163,7 +165,6 @@ const ListCart = (props) => {
         let maxId = Math.max(...res.data.map((item) => item.id));
         let date = new Date().toISOString().slice(2, 10).split("-").join("");
         let url = BASE_URL + "/customers/cart/" + username;
-        console.log(username);
         axios
           .get(url)
           .then((response) => {
@@ -193,13 +194,13 @@ const ListCart = (props) => {
           .catch((error) => {
             setIsDone(true);
             alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-            console.log("getCart fromdb", error);
+            console.log("getCart fromdb", error.response.data);
           });
       })
       .catch((error) => {
         setIsDone(true);
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-        console.log("get all order  fromdb", error);
+        console.log("get all order  fromdb", error.response.data);
       });
     // navigation.goBack();
   };

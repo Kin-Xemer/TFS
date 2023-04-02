@@ -23,7 +23,7 @@
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@kienchothiec1/TFS"/>
     <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB3B-qeM_9_M03zvNdk30jWnCOVQJOeL8k" />
+            android:value="AIzaSyDKtXz-xTlxHCF52X7gcvFCXqaKP2xcJnE" />
     <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
