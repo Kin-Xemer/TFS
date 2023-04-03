@@ -24,7 +24,7 @@ const CartScreen = () => {
   useEffect(() => {
     if (isFocused) {
       getService();
-      getCartById()(dispatch,username);
+      // getCartById()(dispatch,username);
     }
   }, [isFocused]);
   return (
