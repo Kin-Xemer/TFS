@@ -164,7 +164,7 @@ const ZaloPaymentSuccessScreen = (props) => {
         </Flex>
       </View>
       <ActionButton onPress={() => {
-        navigation.navigate("HomeScreen")
+        navigation.navigate("Home")
       }} buttonText="Tiếp tục mua hàng" />
     </View>
   );

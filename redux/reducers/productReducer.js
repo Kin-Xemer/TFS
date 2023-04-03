@@ -40,7 +40,6 @@ const saveCart = (state) => {
     comboList: [],
   };
   initCart.numberCart = sum;
-console.log("cart id: ", newCart.id)
 
   axios
     .put(BASE_URL + "/carts", newCart)
@@ -165,7 +164,8 @@ function todoProduct(state = initCart, action) {
         comboList:[],
         serviceListObject: [],
         cartId:0,
-        party: null
+        party: null,
+        partyTotalPrice:0
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;

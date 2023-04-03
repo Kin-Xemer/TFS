@@ -9,8 +9,7 @@ import { convertPrice } from "../../Utils/convertPrice";
 
 const Party = (props) => {
   const navigation = useNavigation();
-  const cart = useSelector((state) => state.cart.cart);
-  const party = cart.party;
+  const {party} = props;
   let arrParty = party.itemList
     .map((party) => {
       return party.foodName;

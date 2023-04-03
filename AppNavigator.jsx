@@ -34,7 +34,9 @@ import EditPartyScreen from "./screens/EditPartyScreen";
 import AddFoodMenu from "./screens/AddFoodMenu";
 import MyFeedbackScreen from "./screens/MyFeedbackScreen";
 import EditFeedbackScreen from "./screens/EditFeedbackScreen";
+import ProfileScreens from "./screens/ProfileScreens";
 import FeedbackDetailScreen from "./screens/FeedbackDetailScreen";
+import NotiScreen from "./screens/NotiScreen";
 import OTPScreen from "./screens/OTPScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
@@ -154,7 +156,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="NotiScreen"
-        component={HomeScreen}
+        component={NotiScreen}
         options={{
           tabBarLabel: (
             <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 14 }}>
@@ -168,7 +170,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="MoreScreen"
-        component={HomeScreen}
+        component={ProfileScreens}
         options={{
           tabBarLabel: (
             <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>

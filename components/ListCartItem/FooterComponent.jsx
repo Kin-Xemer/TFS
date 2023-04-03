@@ -45,7 +45,6 @@ const FooterComponent = (props) => {
     currentDate
   } = props;
   const navigation = useNavigation();
-  const cart = useSelector((state) => state.cart.cart);
   const party = useSelector((state) => state.cart.party);
   const [payment, setPayment] = useState("cash");
 
@@ -93,7 +92,7 @@ const FooterComponent = (props) => {
             >
               THỰC ĐƠN
             </Text>
-            <Party />
+            <Party party ={party} />
          
             <Flex
               flexDirection={"row"}
