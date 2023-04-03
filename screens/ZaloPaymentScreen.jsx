@@ -207,7 +207,9 @@ const ZaloPaymentScreen = () => {
       <TouchableOpacity
         style={{ position: "absolute", marginTop: 50 }}
         onPress={() => {
+          if (navigation.canGoBack()) {
           navigation.goBack();
+        }
         }}
         activeOpacity={0.7}
       >

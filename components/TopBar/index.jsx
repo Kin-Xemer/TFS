@@ -27,7 +27,11 @@ const TopBar = (props) => {
         activeOpacity={0.7}
         style={styles.backButton}
         onPress={()=>{
-            navigation.goBack();
+          if (navigation.canGoBack()) {
+            if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+          }
         }}
       >
         <Entypo name="chevron-left" size={38} color={THEME_COLOR} />

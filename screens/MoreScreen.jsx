@@ -200,7 +200,9 @@ const FoodInformationScreen = (props) => {
             >
               <TouchableOpacity
                 onPress={() => {
-                  navigation.goBack();
+                  if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
                 }}
                 
               >
@@ -222,7 +224,9 @@ const FoodInformationScreen = (props) => {
           ) : (
             <TouchableOpacity
               onPress={() => {
-                navigation.goBack();
+                if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
               }}
               style={{ width: "10%"}}
             >

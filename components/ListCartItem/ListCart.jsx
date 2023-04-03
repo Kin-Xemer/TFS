@@ -425,7 +425,11 @@ const ListCart = (props) => {
       <TouchableOpacity
         style={{ position: "absolute" }}
         onPress={() => {
+          if (navigation.canGoBack()) {
+            if (navigation.canGoBack()) {
           navigation.goBack();
+        }
+          }
         }}
         activeOpacity={0.7}
       >

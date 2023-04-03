@@ -159,7 +159,11 @@ const AddFoodMenu = (props) => {
           <View style={{ alignItems: "center", flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => {
-                navigation.goBack();
+                if (navigation.canGoBack()) {
+                  if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+                }
               }}
             >
               <Entypo name="chevron-left" size={38} color={THEME_COLOR} />

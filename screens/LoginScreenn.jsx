@@ -24,7 +24,9 @@ const LoginScreenn = (props) => {
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => {
+          if (navigation.canGoBack()) {
           navigation.goBack();
+        }
         }}
       >
         <View>

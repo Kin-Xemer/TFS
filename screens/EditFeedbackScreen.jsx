@@ -38,7 +38,11 @@ const EditFeedbackScreen = () => {
       .then(() => {
         setIsDone(true);
         Toast.success("Xoá đánh giá thành công", 1);
-        navigation.goBack();
+        if (navigation.canGoBack()) {
+          if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+        }
       })
       .catch((err) => {
         if (err.response) {
@@ -62,7 +66,11 @@ const EditFeedbackScreen = () => {
       .then((response) => {
         setIsDone(true);
         Toast.success("Cập nhật thành công", 1);
-        navigation.goBack();
+        if (navigation.canGoBack()) {
+          if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+        }
       })
       .catch((error) => {
         if (error.response) {

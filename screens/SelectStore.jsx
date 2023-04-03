@@ -294,7 +294,9 @@ const SelectStore = (props) => {
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.goBack();
+            if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
           }}
           activeOpacity={1}
         >

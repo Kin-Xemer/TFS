@@ -218,7 +218,11 @@ const FooterComponent = (props) => {
           <Spacer />
           <TouchableWithoutFeedback
             onPress={() => {
-              navigation.goBack();
+              if (navigation.canGoBack()) {
+                if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+              }
             }}
           >
             <View style={styles.changeButton}>

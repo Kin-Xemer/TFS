@@ -224,7 +224,9 @@ const MapScreen = (props) => {
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.goBack();
+            if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
           }}
           activeOpacity={1}
         >
@@ -293,7 +295,9 @@ const MapScreen = (props) => {
               backgroundColor: THEME_COLOR,
             }}
             onPress={() => {
-              navigation.goBack();
+              if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
               dispatch({
                 type: "SET_STRING_ADDRESS",
                 payload: stringAddress,

@@ -35,7 +35,9 @@ import AddFoodMenu from "./screens/AddFoodMenu";
 import MyFeedbackScreen from "./screens/MyFeedbackScreen";
 import EditFeedbackScreen from "./screens/EditFeedbackScreen";
 import ProfileScreens from "./screens/ProfileScreens";
+import ProfileInfoScreen from "./screens/ProfileInfoScreen";
 import FeedbackDetailScreen from "./screens/FeedbackDetailScreen";
+import ProfileEditScreen from "./screens/ProfileEditScreen";
 import NotiScreen from "./screens/NotiScreen";
 import OTPScreen from "./screens/OTPScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
@@ -87,6 +89,8 @@ const AppNavigator = () => {
           component={FeedbackDetailScreen}
         />
         <Stack.Screen name="OTPScreen" component={OTPScreen} />
+        <Stack.Screen name="ProfileInfoScreen" component={ProfileInfoScreen} />
+        <Stack.Screen name="ProfileEditScreen" component={ProfileEditScreen} />
       </Stack.Navigator>
     </Provider>
   );
@@ -129,6 +133,7 @@ const TabNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}
+      backBehavior="history"
     >
       <Tab.Screen
         name="HomeScreen"

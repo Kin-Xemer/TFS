@@ -162,7 +162,11 @@ const FoodInformationScreen = (props) => {
           >
             <TouchableWithoutFeedback
               onPress={() => {
-                navigation.goBack();
+                if (navigation.canGoBack()) {
+                  if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
+                }
               }}
             >
               <View>
@@ -386,7 +390,9 @@ const FoodInformationScreen = (props) => {
               onPress={() => {
                 addToCart(food, quantity);
                 Toast.success("Đã thêm vào giỏ hàng", 0.5);
-                navigation.goBack();
+                if (navigation.canGoBack()) {
+          navigation.goBack();
+        }
               }}
             >
               <Text style={styles.buttonText}>
