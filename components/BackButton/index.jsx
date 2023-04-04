@@ -11,8 +11,8 @@ const BackButton = () => {
       onPress={() => {
         if (navigation.canGoBack()) {
           if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+            navigation.goBack();
+          }
         }
       }}
       activeOpacity={0.7}

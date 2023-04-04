@@ -44,7 +44,7 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
         })
         .catch((err) => {
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          console.log("Error get nearly: ", err);
+          console.log("Error get nearly: ", err.response.data);
         });
     })
     .catch((err) => {
