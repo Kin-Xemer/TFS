@@ -25,15 +25,17 @@ import {
   Edit2,
   InfoCircle,
   Logout,
+  Message,
   ProfileCircle,
   Setting2,
 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const ProfileScreens = () => {
   const route = useRoute();
   const navigation = useNavigation();
-
+  const dispatch = useDispatch();
   const [listFeedBack, setListFeedback] = useState([]);
   const [isDone, setIsDone] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -57,6 +59,21 @@ const ProfileScreens = () => {
       alert("Upload failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      dispatch({
+        type: "SET_ORDER_STATUS",
+        payload: "",
+      });
+      await AsyncStorage.removeItem("customer");
+      dispatch({ type: "LOGOUT" });
+      dispatch({ type: "SET_LOGIN_STATUS_LOGOUT" });
+      navigation.navigate("LoginScreenn");
+    } catch (e) {
+      alert("Failed to clear the async storage.");
     }
   };
 
@@ -162,7 +179,7 @@ const ProfileScreens = () => {
           <Spacer />
           <Entypo name="chevron-right" size={28} color="black" />
         </Flex>
-        <Flex
+        <TouchableOpacity
           style={{
             backgroundColor: "#eeeeee",
             padding: 16,
@@ -171,8 +188,12 @@ const ProfileScreens = () => {
             marginBottom: 30,
             flexDirection: "row",
           }}
+          activeOpacity={0.7}
+          onPress={() => {
+            navigation.navigate("MyFeedbackScreen", {id: customer.customerId});
+          }}
         >
-          <InfoCircle color={THEME_COLOR} size={24} variant="Bold" />
+          <Message color={THEME_COLOR} size={24} variant="Bold" />
           <Text
             style={{
               fontFamily: FONT.MEDIUM,
@@ -181,20 +202,24 @@ const ProfileScreens = () => {
               marginLeft: 8,
             }}
           >
-            Về TFS
+            Đánh giá của tôi
           </Text>
           <Spacer />
           <Entypo name="chevron-right" size={28} color="black" />
-        </Flex>
-        <Flex
-          style={{
-            backgroundColor: "#eeeeee",
-            padding: 16,
-            borderRadius: 15,
-            alignItems: "center",
-            marginBottom: 30,
-            flexDirection: "row",
-          }}
+        </TouchableOpacity>
+        <TouchableOpacity
+         style={{
+          backgroundColor: "#eeeeee",
+          padding: 16,
+          borderRadius: 15,
+          alignItems: "center",
+          marginBottom: 30,
+          flexDirection: "row",
+        }}
+        activeOpacity={0.7}
+        onPress={() => {
+          handleLogout()
+        }}
         >
           <Logout color={THEME_COLOR} size={24} variant="Bold" />
           <Text
@@ -209,7 +234,7 @@ const ProfileScreens = () => {
           </Text>
           <Spacer />
           <Entypo name="chevron-right" size={28} color="black" />
-        </Flex>
+        </TouchableOpacity>
       </View>
     </View>
   );

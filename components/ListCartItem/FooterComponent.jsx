@@ -128,6 +128,8 @@ const FooterComponent = (props) => {
                   width: 100,
                   padding: 4,
                 }}
+                
+                editable = {false}
                 defaultValue={selectedDate}
               />
             </Flex>

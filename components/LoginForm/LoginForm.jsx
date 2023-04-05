@@ -77,7 +77,7 @@ const LoginForm = () => {
             console.log("Save storage", e);
           }
         };
-        navigation.navigate("HomeScreen");
+        navigation.navigate("Home");
         saveData();
       })
       .catch(function (error) {
