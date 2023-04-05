@@ -329,7 +329,7 @@ const MapScreen = (props) => {
               style={{
                 fontSize: 17,
                 color: "white",
-                fontFamily: "Quicksand-Bold",
+                fontFamily: FONT.BOLD,
               }}
             >
               Tiếp tục
