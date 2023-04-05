@@ -6,8 +6,8 @@ const LATITUDE_DELTA = 0.009;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 export const convertLatLng = (lat, lng) => {
   return {
-    latitude: lat,
-    longitude: lng,
+    latitude: parseFloat(lat),
+    longitude: parseFloat(lng),
     latitudeDelta: LATITUDE_DELTA,
     longitudeDelta: LONGITUDE_DELTA,
   };

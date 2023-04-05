@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { Shop } from "iconsax-react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +19,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { useState, useMemo, useRef, useCallback } from "react";
 import axios from "axios";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet,{ BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
@@ -49,12 +50,12 @@ const SelectStore = (props) => {
   }, []);
   var timesRunModal = 0;
   useEffect(() => {
-    if(isFocused){
-      onLoadAddress()
+    if (isFocused) {
+      onLoadAddress();
       const interval = setInterval(() => {
         timesRunModal += 1;
         if (timesRunModal === 1) {
-          onLoadAddress()
+          onLoadAddress();
           clearInterval(interval);
         }
       }, 1);
@@ -64,10 +65,8 @@ const SelectStore = (props) => {
   const handleSelectedStore = (item) => {
     setSelectedStore(item.restaurantLocation);
     setIndex(1);
-    mapRef.current.animateToRegion(
-      convertLatLng(item.latitude, item.longitude),
-      DURATION
-    );
+    const destination = convertLatLng(item.latitude, item.longitude);
+    mapRef.current.animateToRegion(destination, DURATION);
   };
 
   const handleOnPressMarker = (e, item) => {
@@ -82,12 +81,11 @@ const SelectStore = (props) => {
     mapRef.current.animateToRegion(destination, DURATION - 500);
   };
   const onLoadAddress = () => {
-  
     const lat = nearlyRes.latitude;
     const lng = nearlyRes.longitude;
-    setSelectedStore(nearlyRes.restaurantLocation)
+    setSelectedStore(nearlyRes.restaurantLocation);
     const destination = convertLatLng(lat, lng);
-    console.log(destination)
+    console.log(destination);
     mapRef.current.animateToRegion(destination, DURATION);
   };
 
@@ -122,7 +120,7 @@ const SelectStore = (props) => {
           };
           return (
             <Marker
-            title={item.restaurantName}
+              title={item.restaurantName}
               onPress={(e) => {
                 handleOnPressMarker(e, item);
               }}
@@ -170,75 +168,124 @@ const SelectStore = (props) => {
         onChange={handleSheetChanges}
         style={{
           paddingHorizontal: 16,
+          flex:1
         }}
       >
-        <View style={{ backgroundColor: "white", flex: placeFlexIndex }}>
-          {/* {isDone === true ? (
-            <Text>{stringAddress}</Text>
-          ) : (
-            <Spinner accessibilityLabel="Loading posts" />
-          )} */}
-          <View>
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 90 }}
-              onScroll={() => {
-                setIndex(1);
+        <BottomSheetFlatList
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 90 }}
+          onScroll={() => {
+            setIndex(1);
+          }}
+          scrollEventThrottle={16}
+          data={restaurant}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => {
+                handleSelectedStore(item);
               }}
-              scrollEventThrottle={16}
             >
-              {restaurant.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                      handleSelectedStore(item);
-                    }}
-                    key={index}
-                  >
-                    <View
+              <View
+                style={
+                  item.restaurantLocation === selectedStore
+                    ? styles.storeItemSelected
+                    : styles.storeItem
+                }
+              >
+                <Flex
+                  flexDirection="row"
+                  w={"100%"}
+                  style={{ alignItems: "center" }}
+                >
+                  <Shop size="28" color={THEME_COLOR} />
+                  <View style={{ marginLeft: 8, paddingRight: 16 }}>
+                    <Text
                       style={
                         item.restaurantLocation === selectedStore
-                          ? styles.storeItemSelected
-                          : styles.storeItem
+                          ? styles.textActive
+                          : styles.textInActive
                       }
                     >
-                      <Flex
-                        flexDirection="row"
-                        w={"100%"}
-                        style={{ alignItems: "center" }}
+                      {item.restaurantName}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      style={
+                        item.restaurantLocation === selectedStore
+                          ? styles.addressActive
+                          : styles.addressInActive
+                      }
+                    >
+                      {item.restaurantLocation}
+                    </Text>
+                  </View>
+                </Flex>
+              </View>
+            </TouchableOpacity>
+  )}
+          keyExtractor={(item) => item.restaurantId}
+        />
+
+        {/* <ScrollView
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 90 }}
+          onScroll={() => {
+            setIndex(1);
+          }}
+          scrollEventThrottle={16}
+        >
+          {restaurant.map((item, index) => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  handleSelectedStore(item);
+                }}
+                key={index}
+              >
+                <View
+                  style={
+                    item.restaurantLocation === selectedStore
+                      ? styles.storeItemSelected
+                      : styles.storeItem
+                  }
+                >
+                  <Flex
+                    flexDirection="row"
+                    w={"100%"}
+                    style={{ alignItems: "center" }}
+                  >
+                    <Shop size="28" color={THEME_COLOR} />
+                    <View style={{ marginLeft: 8, paddingRight: 16 }}>
+                      <Text
+                        style={
+                          item.restaurantLocation === selectedStore
+                            ? styles.textActive
+                            : styles.textInActive
+                        }
                       >
-                        <Shop size="28" color={THEME_COLOR} />
-                        <View style={{ marginLeft: 8, paddingRight: 16 }}>
-                          <Text
-                            style={
-                              item.restaurantLocation === selectedStore
-                                ? styles.textActive
-                                : styles.textInActive
-                            }
-                          >
-                            {item.restaurantName}
-                          </Text>
-                          <Text
-                            numberOfLines={1}
-                            style={
-                              item.restaurantLocation === selectedStore
-                                ? styles.addressActive
-                                : styles.addressInActive
-                            }
-                          >
-                            {item.restaurantLocation}
-                          </Text>
-                        </View>
-                      </Flex>
+                        {item.restaurantName}
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        style={
+                          item.restaurantLocation === selectedStore
+                            ? styles.addressActive
+                            : styles.addressInActive
+                        }
+                      >
+                        {item.restaurantLocation}
+                      </Text>
                     </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-        </View>
+                  </Flex>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView> */}
       </BottomSheet>
 
       <View style={styles.selectedButton}>
@@ -295,23 +342,14 @@ const SelectStore = (props) => {
         <TouchableOpacity
           onPress={() => {
             if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+              navigation.goBack();
+            }
           }}
           activeOpacity={1}
         >
           <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
         </TouchableOpacity>
         <Spacer />
-        <TouchableOpacity
-          style={styles.myLocationButton}
-          onPress={() => {
-            onHandleMyLocation();
-          }}
-          activeOpacity={1}
-        >
-          <MaterialIcons name="my-location" size={25} color="#494949" />
-        </TouchableOpacity>
       </Flex>
 
       {/* {!isSelectedAddress ? (
