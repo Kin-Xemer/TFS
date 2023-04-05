@@ -88,18 +88,22 @@ const FoodInformationScreen = (props) => {
   };
 
   const filterSelectedPrice = (array) => {
-    if (priceProps ==="") {
+    if (priceProps === "") {
       return array;
-    }else{
-      if (priceProps === "min"){
-        let minArray = array.sort((a,b) => parseFloat(a.price) - parseFloat(b.price)) 
-        return minArray
-      }else if (priceProps === "max"){
-        let maxArray = array.sort((a,b) => parseFloat(b.price) - parseFloat(a.price))
-        return maxArray
-      } 
+    } else {
+      if (priceProps === "min") {
+        let minArray = array.sort(
+          (a, b) => parseFloat(a.price) - parseFloat(b.price)
+        );
+        return minArray;
+      } else if (priceProps === "max") {
+        let maxArray = array.sort(
+          (a, b) => parseFloat(b.price) - parseFloat(a.price)
+        );
+        return maxArray;
+      }
     }
-  }
+  };
 
   const handleFilter = (regions, events, price) => {
     if (regions === "" && events === "" && price === "") {
@@ -117,7 +121,7 @@ const FoodInformationScreen = (props) => {
     result = filterSelectedRegions(result);
     result = filterSelectedCategory(result);
     result = filterSelectedEvents(result);
-  filterSelectedPrice(result);
+    filterSelectedPrice(result);
     // filterSelectedPrice();
     setFilterFood(result);
   }, [regionProps, eventProps, priceProps, filterSelected]);
@@ -201,10 +205,9 @@ const FoodInformationScreen = (props) => {
               <TouchableOpacity
                 onPress={() => {
                   if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                    navigation.goBack();
+                  }
                 }}
-                
               >
                 <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
               </TouchableOpacity>
@@ -225,10 +228,10 @@ const FoodInformationScreen = (props) => {
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                  navigation.goBack();
+                }
               }}
-              style={{ width: "10%"}}
+              style={{ width: "10%" }}
             >
               <Entypo name="chevron-left" size={36} color="white" />
             </TouchableOpacity>

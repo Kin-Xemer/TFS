@@ -28,6 +28,7 @@ import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
 import { Toast } from "@ant-design/react-native";
+import TopBar from "../components/TopBar";
 const FeedbackScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -96,43 +97,49 @@ const FeedbackScreen = () => {
   };
   return (
     <View style={styles.container}>
-      {order.itemList.length > 0 ? (
-        order.itemList.map((item, index) => (
-          <View key={index}>
-            <CardFeedBack
-              item={item}
-              setListFeedback={setListFeedback}
-              listFeedBack={listFeedBack}
-            />
-          </View>
-        ))
-      ) : (
-        <></>
-      )}
-      <Spacer />
-      <View style={{ bottom: 0 }}>
-        {isDone ? (
-          <ActionButton
-            buttonText="Gửi"
-            onPress={() => {
-              onFinish();
-            }}
-          />
+      <TopBar title="Đánh giá"/>
+      <ScrollView
+      style={{marginTop: 10}}
+      showsVerticalScrollIndicator={false}
+      >
+        {order.itemList.length > 0 ? (
+          order.itemList.map((item, index) => (
+            <View key={index}>
+              <CardFeedBack
+                item={item}
+                setListFeedback={setListFeedback}
+                listFeedBack={listFeedBack}
+              />
+            </View>
+          ))
         ) : (
-          <ActionButton
-            buttonText="Đang gửi"
-            onPress={() => {}}
-            disabled={true}
-          />
+          <></>
         )}
-      </View>
+        
+      </ScrollView>
+      <Spacer />
+        <View style={{ bottom: 0 }}>
+          {isDone ? (
+            <ActionButton
+              buttonText="Gửi"
+              onPress={() => {
+                onFinish();
+              }}
+            />
+          ) : (
+            <ActionButton
+              buttonText="Đang gửi"
+              onPress={() => {}}
+              disabled={true}
+            />
+          )}
+        </View>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
     backgroundColor: "white",
     paddingHorizontal: 16,
     paddingBottom: 16,

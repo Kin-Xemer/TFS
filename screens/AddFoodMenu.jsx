@@ -235,7 +235,7 @@ const AddFoodMenu = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 55,
+    paddingTop: 35,
     backgroundColor: "white",
   },
   textStyle: {

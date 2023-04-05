@@ -206,7 +206,7 @@ const EditPartyScreen = () => {
       <TouchableOpacity
         style={{
           position: "absolute",
-          marginTop: 50,
+          marginTop: 40,
           right: 0,
           marginRight: 16,
         }}
@@ -477,7 +477,7 @@ const EditPartyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
+    paddingTop: 30,
     backgroundColor: "white",
     paddingHorizontal: 16,
     paddingBottom: 10,

@@ -198,7 +198,7 @@ const ProfileEditScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: 35,
     backgroundColor: "white",
     paddingHorizontal: 16,
     paddingBottom: 16,

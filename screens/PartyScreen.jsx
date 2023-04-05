@@ -442,7 +442,7 @@ const PartyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
+    paddingTop: 30,
     backgroundColor: "white",
     paddingHorizontal: 16,
     paddingBottom: 10,

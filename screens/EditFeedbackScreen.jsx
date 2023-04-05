@@ -87,7 +87,7 @@ const EditFeedbackScreen = () => {
           position: "absolute",
           right: 0,
           marginRight: 16,
-          marginTop: 55,
+          marginTop: 40,
         }}
         onPress={() => {
           setIsOpen(true);

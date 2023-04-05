@@ -7,7 +7,7 @@ const BackButton = () => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
-      style={{ position: "absolute", marginTop: 44 }}
+      style={{ position: "absolute", marginTop: 35 }}
       onPress={() => {
         if (navigation.canGoBack()) {
           if (navigation.canGoBack()) {

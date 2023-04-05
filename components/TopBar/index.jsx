@@ -41,14 +41,13 @@ const TopBar = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    marginTop: 45,
-
+    marginTop: 30,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 10,
   },
   backButton: {
-    marginTop: 50,
+    marginTop: 35,
     position: "absolute",
   },
 });

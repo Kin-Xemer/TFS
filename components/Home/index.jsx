@@ -213,10 +213,12 @@ const Home = (props) => {
           </Flex>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("MapScreen", {
-                addresses: stringAddress === "" ? address : stringAddress,
-                locateCoord: myLocation,
-              });
+              isFindDone
+                ? navigation.navigate("MapScreen", {
+                    addresses: stringAddress === "" ? address : stringAddress,
+                    locateCoord: myLocation,
+                  })
+                : console.log("none");
             }}
           >
             <Flex direction="row">

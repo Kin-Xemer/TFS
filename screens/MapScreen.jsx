@@ -11,7 +11,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import { Shop } from "iconsax-react-native";
+import { CloseCircle, Shop } from "iconsax-react-native";
 import { useSelector, useDispatch } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -45,19 +45,20 @@ const MapScreen = (props) => {
   const [resultAddress, setResultAddress] = useState();
   const [myLocation, setMyLocation] = useState(route.params.locateCoord);
   const [isDone, setIsDone] = useState(true);
+  const [placeFocus, setPlaceFocus] = useState(false);
   const [selectedCoord, setSeletedCoord] = useState(null);
-  const snapPoints = useMemo(() => ["23%", "40%"], []);
+  const snapPoints = useMemo(() => ["18%", "65%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
   var timesRunModal = 0;
   useEffect(() => {
-    if(isFocused){
-      onLoadAddress()
+    if (isFocused) {
+      onLoadAddress();
       const interval = setInterval(() => {
         timesRunModal += 1;
         if (timesRunModal === 1) {
-          onLoadAddress()
+          onLoadAddress();
           clearInterval(interval);
         }
       }, 1);
@@ -66,7 +67,7 @@ const MapScreen = (props) => {
 
   const handleFocusText = (text) => {
     if (text.length === 0) {
-      setIndex(0);
+
       setIsSelectedAddress(false);
       setSeletedCoord(null);
     } else {
@@ -80,19 +81,18 @@ const MapScreen = (props) => {
     const lat = addressCoord.geometry.location.lat;
     const lng = addressCoord.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
-    console.log("isfocues")
-      
-      mapRef.current.animateToRegion(destination);
-    
-  };
+    console.log("isfocues");
 
-  const onHandleMyLocation = () => {
-    const lat = myLocation.coords.latitude;
-    const lng = myLocation.coords.longitude;
-    const destination = convertLatLng(lat, lng);
-    placeRef.current.blur();
     mapRef.current.animateToRegion(destination);
   };
+
+  // const onHandleMyLocation = () => {
+  //   const lat = myLocation.coords.latitude;
+  //   const lng = myLocation.coords.longitude;
+  //   const destination = convertLatLng(lat, lng);
+  //   placeRef.current.blur();
+  //   mapRef.current.animateToRegion(destination);
+  // };
 
   const onRegionChange = (result) => {
     const lat = result.latitude;
@@ -127,7 +127,7 @@ const MapScreen = (props) => {
     const lng = resultAddress.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
-    console.log("Mapscrressn ", stringAddress)
+    console.log("Mapscrressn ", stringAddress);
     getNearlyRestaurant(stringAddress, dispatch);
     placeRef.current?.setAddressText(stringAddress);
     placeRef.current?.blur();
@@ -153,7 +153,9 @@ const MapScreen = (props) => {
         ref={mapRef}
         mapType="standard"
         userLocationCalloutEnabled={true}
-        onPress={() => {}}
+        onPress={() => {
+          placeRef.current?.blur();
+        }}
       >
         {selectedCoord ? (
           <Marker
@@ -185,7 +187,7 @@ const MapScreen = (props) => {
           </View>
           <Spacer />
         </Flex>
-        <View style={{ backgroundColor: "white", flex: 1 }}>
+        <View style={{ backgroundColor: "white", flex: 1, flexDirection: "row" }}>
           {/* {isDone === true ? (
             <Text>{stringAddress}</Text>
           ) : (
@@ -193,9 +195,19 @@ const MapScreen = (props) => {
           )} */}
           <GooglePlacesAutocomplete
             textInputProps={{
+              clearButtonMode:"while-editing",
               onChangeText: (text) => {
                 handleFocusText(text);
               },
+              onFocus: () => {
+                setIndex(1)
+                setPlaceFocus(true)
+              },
+              onBlur: () => {
+                setIndex(0)
+                setPlaceFocus(false)
+              },
+              underlineColorAndroid:"transparent",
               style: styles.textInputStyle,
             }}
             placeholder="Nhập địa chỉ của bạn "
@@ -211,6 +223,14 @@ const MapScreen = (props) => {
               components: "country:vn",
             }}
           />
+          <TouchableOpacity
+          onPress={()=>{
+            placeRef.current?.setAddressText("");
+          }}
+          style={{marginTop: 20}}
+          >
+          <CloseCircle color="#8c8c8c"/>
+          </TouchableOpacity>
         </View>
       </BottomSheet>
 
@@ -225,15 +245,15 @@ const MapScreen = (props) => {
         <TouchableOpacity
           onPress={() => {
             if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+              navigation.goBack();
+            }
           }}
           activeOpacity={1}
         >
           <Entypo name="chevron-left" size={36} color={THEME_COLOR} />
         </TouchableOpacity>
         <Spacer />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.myLocationButton}
           onPress={() => {
             onHandleMyLocation();
@@ -241,7 +261,7 @@ const MapScreen = (props) => {
           activeOpacity={1}
         >
           <MaterialIcons name="my-location" size={25} color="#494949" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </Flex>
 
       {!isSelectedAddress ? (
@@ -253,12 +273,13 @@ const MapScreen = (props) => {
           }}
         >
           {/* <FontAwesome5 name="map-pin" size={30} color={THEME_COLOR} /> */}
-          <Image
+          {placeFocus ? <></>:<Image
             alt="check"
             h={8}
             w={8}
             source={require("../assets/icons/restaurant.png")}
-          />
+          />}
+          
         </View>
       ) : (
         ""
@@ -296,8 +317,8 @@ const MapScreen = (props) => {
             }}
             onPress={() => {
               if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                navigation.goBack();
+              }
               dispatch({
                 type: "SET_STRING_ADDRESS",
                 payload: stringAddress,
@@ -333,6 +354,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   textInputStyle: {
+    flex: 1,
+
     borderColor: "silver",
     borderWidth: 0.5,
     height: 44,
@@ -363,7 +386,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignSelf: "center",
     width: width,
-    paddingBottom: 44,
+    paddingBottom: 10,
     paddingHorizontal: 16,
   },
 });

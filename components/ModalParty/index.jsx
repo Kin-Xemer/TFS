@@ -136,7 +136,7 @@ const ModalParty = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 44,
+    paddingTop: 30,
     backgroundColor: "white",
   },
 });
