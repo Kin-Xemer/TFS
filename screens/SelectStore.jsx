@@ -85,7 +85,6 @@ const SelectStore = (props) => {
     const lng = nearlyRes.longitude;
     setSelectedStore(nearlyRes.restaurantLocation);
     const destination = convertLatLng(lat, lng);
-    console.log(destination);
     mapRef.current.animateToRegion(destination, DURATION);
   };
 
@@ -174,7 +173,7 @@ const SelectStore = (props) => {
         <BottomSheetFlatList
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 90 }}
+          contentContainerStyle={{ paddingBottom: 60 }}
           onScroll={() => {
             setIndex(1);
           }}
@@ -417,7 +416,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignSelf: "center",
     width: width,
-    paddingBottom: 44,
+    paddingBottom: 10,
     paddingHorizontal: 16,
   },
   storeItem: {

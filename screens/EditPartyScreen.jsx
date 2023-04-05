@@ -60,7 +60,7 @@ const EditPartyScreen = () => {
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
-  const cart = useSelector((state) => state.cart.cart);
+  const cart = useSelector((state) => state.cart);
   const foods = useSelector((state) => state.food.food);
   const itemParty = useSelector((state) => state.cart.itemList);
   // const [itemParty, setItemParty] = useState(route.params.party.itemList);
@@ -117,9 +117,10 @@ const EditPartyScreen = () => {
   const onDeleteMenu = () => {
     setIsOpen(false);
     let deleteItem = {
-      cartId: cart.id,
+      cartId: cart.cartId,
       partyId: party.id,
     };
+    console.log(deleteItem)
     axios
       .post(BASE_URL + "/carts/removeparty", deleteItem)
       .then((response) => {
@@ -129,7 +130,7 @@ const EditPartyScreen = () => {
       })
       .catch((error) => {
         alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
-        console.log("delete menu", error);
+        console.log("delete menu", error.response.data);
       });
   };
   const handleAddMenuToCart = () => {
@@ -148,7 +149,7 @@ const EditPartyScreen = () => {
       .put(BASE_URL + "/carts", {
         cartItems: cart.cartItems,
         party: newParty,
-        id: cart.id,
+        id: cart.cartId,
         totalPrice: cart.totalPrice + newParty.totalPrice,
       })
       .then((response) => {
@@ -163,7 +164,7 @@ const EditPartyScreen = () => {
       })
       .catch((error) => {
         alert("Đã xảy ra lỗi , vui lòng thử lại sau");
-        console.log(error);
+        console.log(error.response.data);
       });
   };
   return (

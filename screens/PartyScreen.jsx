@@ -42,7 +42,7 @@ const PartyScreen = () => {
   const party = useSelector((state) => state.party);
   const subTotal = useSelector((state) => state.party.subTotal);
   const totalPrice = useSelector((state) => state.party.totalPrice);
-  const cart = useSelector((state) => state.cart.cart);
+  const cart = useSelector((state) => state.cart);
 
   useEffect(() => {
 
@@ -100,13 +100,13 @@ const PartyScreen = () => {
     // });
 
     axios
-      .post(BASE_URL + "/carts/party/new/" + cart.id, party)
+      .post(BASE_URL + "/carts/party/new/" + cart.cartId, party)
       .then((response) => {
         axios
           .put(BASE_URL + "/carts", {
             cartItems: cart.cartItems,
             party: party,
-            id: cart.id,
+            id: cart.cartId,
             totalPrice: cart.totalPrice + party.totalPrice,
           })
           .then(() => {
@@ -119,7 +119,7 @@ const PartyScreen = () => {
       .catch((error) => {
         alert("Đã xảy ra lỗi , vui lòng thử lại sau");
         setIsDone(true);
-        console.log("Error create parrty ", error);
+        console.log("Error create parrty ", error.response.data);
       });
 
     // axios

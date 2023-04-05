@@ -57,7 +57,6 @@ const ZaloPaymentSuccessScreen = (props) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.cart);
   const username = useSelector((state) => state.account.account.customerName);
   const paymentObject = route.params.paymentObject;
   const order = route.params.order;

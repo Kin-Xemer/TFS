@@ -53,7 +53,7 @@ const Home = (props) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [isFindDone, setIsFindDone] = useState(false);
   const numberCart = useSelector((state) => state.cart.numberCart);
-  const cart = useSelector((state) => state.cart.cart);
+  const party = useSelector((state) => state.cart.party);
   const isLogin = useSelector((state) => state.account.isLogin);
   const address = useSelector(
     (state) => state.address.address.formatted_address
@@ -193,9 +193,9 @@ const Home = (props) => {
   };
 
   const handlePressParty = () => {
-    if (cart.party !== null) {
+    if (party !== null) {
       navigation.navigate("EditPartyScreen", {
-        party: cart.party,
+        party: party,
       });
     } else {
       navigation.navigate("PartyScreen");

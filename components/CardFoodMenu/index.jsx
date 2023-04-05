@@ -19,7 +19,7 @@ const CardFoodMenu = (props) => {
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
-  const cart = useSelector((state) => state.cart.cart);
+  const party = useSelector((state) => state.cart.party);
   const itemParty = useSelector((state) => state.party.itemList);
   const itemPartyEdit = useSelector((state) => state.cart.itemList);
   const navigation = useNavigation();
@@ -28,7 +28,7 @@ const CardFoodMenu = (props) => {
     // await getCartById()(dispatch, username);
   };
   const addMenu = () => {
-    if (cart.party !== null) {
+    if (party !== null) {
       if (itemPartyEdit.some((item) => item.foodId === food.id)) {
         Toast.fail("Món này đã có trong thực đơn", 1);
       } else {

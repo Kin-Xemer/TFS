@@ -33,7 +33,6 @@ const ListCart = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
   const items = useSelector((state) => state.cart);
-  const cart = useSelector((state) => state.cart.cart);
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [isDone, setIsDone] = useState(true);
   const customerId = useSelector((state) => state.account.account.customerId);

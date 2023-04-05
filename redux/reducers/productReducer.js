@@ -17,7 +17,8 @@ const initCart = {
   partyTotalPrice:0,
   comboList:[],
   cartId: 0,
-  party:null
+  party:null,
+  totalPrice:0
 };
 
 const saveCart = (state) => {
@@ -127,14 +128,14 @@ function todoProduct(state = initCart, action) {
         updateCart: saveCart(state),
       };
     case "SET_CART":
-      action.numberCart;
       return {
         ...state,
         cartsItem: action.payload,
         cart: action.cart,
         numberCart: action.numberCart,
         cartId:action.cart.id,
-        party: action.cart.party
+        party: action.cart.party,
+        totalPrice:action.cart.totalPrice,
       };
     case "SET_CARTITEM":
       return {
@@ -165,7 +166,8 @@ function todoProduct(state = initCart, action) {
         serviceListObject: [],
         cartId:0,
         party: null,
-        partyTotalPrice:0
+        partyTotalPrice:0,
+        totalPrice:0,
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;
