@@ -21,6 +21,7 @@ import {
   ScrollView,
   PermissionsAndroid,
   Linking,
+  ImageBackground,
 } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,6 +43,7 @@ import { getServices } from "../../Utils/api/getServices";
 import ActionButton from "../ActionButton";
 import notifee, { AndroidColor } from "@notifee/react-native";
 import { GetFCMToken, requestNotiPermission } from "../../Helper/pushNoti";
+import { FONT } from "../../Utils/themeFont";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -64,7 +66,6 @@ const Home = (props) => {
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
-
 
   const getRegion = () => {
     axios
@@ -141,7 +142,7 @@ const Home = (props) => {
     getRegion();
     getEvent();
     getServices(dispatch);
-    console.log("number cart",numberCart)
+    console.log("number cart", numberCart);
   }, []);
   useEffect(() => {
     if (isFocused) {
@@ -334,6 +335,40 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
+       <TouchableOpacity
+       onPress={()=>{
+        console.log("check")
+       }}
+       activeOpacity={0.7}
+       >
+       <ImageBackground
+          source={{
+            uri: "https://live.staticflickr.com/65535/52783059166_a951518a8d_h.jpg",
+          }}
+          resizeMethod="auto"
+          style={{
+            height: 180,
+            paddingHorizontal: 8,
+
+          }}
+ 
+        >
+          <Spacer />
+          <Flex flexDirection={"row"} alignItems="flex-end">
+            <Spacer />
+            <Text
+              style={{
+                fontFamily: FONT.MEDIUM,
+                color: "white",
+                marginBottom: 4,
+              }}
+            >
+              xem theem
+            </Text>
+            <Entypo name="chevron-right" color={"white"} size={20} />
+          </Flex>
+        </ImageBackground>
+       </TouchableOpacity>
         <Title textTitle="Ẩm thực cổ truyền" />
         <FlatList
           initialNumToRender={15}
@@ -415,7 +450,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   cardFoodView: {
-    marginBottom: 4,
+    marginBottom: 25,
   },
   locationHeader: {
     marginVertical: 4,

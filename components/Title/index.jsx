@@ -30,8 +30,8 @@ const Title = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    marginTop: 14,
-    marginBottom: 4,
+    marginTop: 18,
+    marginBottom: 10,
     width: "100%",
     alignItems: "flex-end",
     paddingHorizontal: 16,
@@ -39,18 +39,6 @@ const styles = StyleSheet.create({
   textStyle: {
     fontFamily: "Quicksand-Bold",
     fontSize: 20,
-  },
-  addressText: {
-    fontFamily: "Quicksand-Bold",
-    marginLeft: 2,
-  },
-  textInputContainer: {
-    paddingLeft: 16,
-    borderWidth: 0.5,
-    borderColor: "#AFACAC",
-    alignItems: "center",
-    borderRadius: 30,
-    width: "100%",
   },
   moreText: {
     fontSize: 12,

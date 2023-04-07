@@ -20,7 +20,7 @@ const ImageTitle = (props) => {
         BASE_URL + "/events"
       )
       .then((response) => {
-        setListEvent(response.data.slice(0,5));
+        setListEvent(response.data.slice(0,8));
       })
       .catch((err) => {
         console.log("ImageTitle", err);
