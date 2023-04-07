@@ -8,6 +8,7 @@ import {
   Animated,
   SafeAreaView,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
@@ -15,7 +16,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { Flex, Spacer, Text, Heading, Button, Box, Avatar } from "native-base";
 import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
-import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+  createNavigationContainerRef
+} from "@react-navigation/native";
 import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
@@ -31,7 +37,7 @@ import {
 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import notifee ,{ AndroidColor }from '@notifee/react-native';
+import notifee,  { EventType } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const ProfileScreens = () => {
   const route = useRoute();
@@ -68,33 +74,72 @@ const ProfileScreens = () => {
   const [data, setData] = useState([]);
   const [prev, setPrev] = useState(0);
   const [cur, setCur] = useState(0);
-  const isLogin = useSelector((state)=> state.account.isLogin)
+  const isLogin = useSelector((state) => state.account.isLogin);
+  const navigationRef = createNavigationContainerRef();
+
+  
+  useEffect(() => {
+    const unsubscribe = notifee.onBackgroundEvent(async ({ type, detail }) => {
+      const { notification, pressAction } = detail;
+
+      if (type === EventType.PRESS) {
+        if (pressAction.id === 'default') {
+            console.log('User pressed the default action');
+
+            console.log('Điều hướng đến màn hình Home');
+            navigation.navigate('NotiScreen');
+          }
+      }
+      await notifee.cancelNotification(notification.id);
+      console.log("background-event");
+    });
+
+    return () => {
+      unsubscribe
+    };
+  }, []);
+
+
+
+
+
+  
   useEffect(() => {
     setCur(list.length);
     if (prev !== cur) {
-      if(prev !== 0 || cur === 1) {
-        pushNotifications(list[0])
+      if (prev !== 0 || cur === 1) {
+        pushNotifications(list[0]);
       }
     }
     const interval = setInterval(() => {
-      fetchData()
+      fetchData();
       setCount((prevCount) => prevCount + 1);
       setPrev(list.length);
     }, 1000);
     console.log(count);
     if (!isLogin) {
-      clearInterval(interval)
+      clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [count]);
   useEffect(() => {
-  if(isFocused){
-    setCount(90);
-    console.log("start")
-  }
+    if (isFocused) {
+      setCount(90);
+      console.log("start");
+    }
   }, [isFocused]);
-
-  const pushNotifications = async(noti) => {
+// const actions = [
+//   {
+//     id: 'default',
+//     title: 'View',
+//   },
+//   {
+//     id: 'navigateToHome',
+//     title: 'Go to Home',
+//   },
+// ];
+  const pushNotifications = async (noti) => {
+    const deepLink = "demozpdk://notisceen";
     const channelId = await notifee.createChannel({
       id: "default",
       name: "Default Channel",
@@ -105,27 +150,27 @@ const ProfileScreens = () => {
       body: noti.message,
       android: {
         channelId,
-
         // pressAction is needed if you want the notification to open the app when pressed
         pressAction: {
           id: "default",
         },
       },
     });
-  }
+  };
 
   const fetchData = () => {
     axios
-    .get(BASE_URL + "//notifications/byaccount/" + customer.theAccount.accountId)
-    .then((res) => {
-      setList(res.data);
-    })
-    .catch((err) => {
-      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      console.log(err.response.data);
-    });
-  
-  }
+      .get(
+        BASE_URL + "//notifications/byaccount/" + customer.theAccount.accountId
+      )
+      .then((res) => {
+        setList(res.data);
+      })
+      .catch((err) => {
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        console.log(err.response.data);
+      });
+  };
   const handleLogout = async () => {
     try {
       dispatch({
@@ -219,7 +264,7 @@ const ProfileScreens = () => {
           <Spacer />
           <Entypo name="chevron-right" size={28} color="black" />
         </TouchableOpacity>
-        <Flex
+        <TouchableOpacity
           style={{
             backgroundColor: "#eeeeee",
             padding: 16,
@@ -227,6 +272,9 @@ const ProfileScreens = () => {
             alignItems: "center",
             marginBottom: 30,
             flexDirection: "row",
+          }}
+          onPress={()=>{
+            pushNotifications(list[0]);
           }}
         >
           <Setting2 color={THEME_COLOR} size={24} variant="Bold" />
@@ -242,7 +290,7 @@ const ProfileScreens = () => {
           </Text>
           <Spacer />
           <Entypo name="chevron-right" size={28} color="black" />
-        </Flex>
+        </TouchableOpacity>
         <TouchableOpacity
           style={{
             backgroundColor: "#eeeeee",
@@ -254,7 +302,9 @@ const ProfileScreens = () => {
           }}
           activeOpacity={0.7}
           onPress={() => {
-            navigation.navigate("MyFeedbackScreen", {id: customer.customerId});
+            navigation.navigate("MyFeedbackScreen", {
+              id: customer.customerId,
+            });
           }}
         >
           <Message color={THEME_COLOR} size={24} variant="Bold" />
@@ -272,18 +322,18 @@ const ProfileScreens = () => {
           <Entypo name="chevron-right" size={28} color="black" />
         </TouchableOpacity>
         <TouchableOpacity
-         style={{
-          backgroundColor: "#eeeeee",
-          padding: 16,
-          borderRadius: 15,
-          alignItems: "center",
-          marginBottom: 30,
-          flexDirection: "row",
-        }}
-        activeOpacity={0.7}
-        onPress={() => {
-          handleLogout()
-        }}
+          style={{
+            backgroundColor: "#eeeeee",
+            padding: 16,
+            borderRadius: 15,
+            alignItems: "center",
+            marginBottom: 30,
+            flexDirection: "row",
+          }}
+          activeOpacity={0.7}
+          onPress={() => {
+            handleLogout();
+          }}
         >
           <Logout color={THEME_COLOR} size={24} variant="Bold" />
           <Text

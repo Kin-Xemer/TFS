@@ -66,6 +66,7 @@ const NotiScreen = () => {
       <TopBar title="Thông báo"/>
       <Text style={{ fontFamily: FONT.BOLD, marginBottom: 15 }}>Mới</Text>
       <FlatList
+      showsVerticalScrollIndicator={false}
         data={listNoti}
         renderItem={({ item }) => (
           <Flex
@@ -107,10 +108,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
-    paddingHorizontal: 16,
+ 
   },
   workerLabel: {
-    marginHorizontal: -16,
+
     padding: 16,
   },
 });

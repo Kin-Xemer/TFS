@@ -409,7 +409,7 @@ const Home = (props) => {
           />
           <ActionButton
             onPress={() => {
-              check();
+              Linking.openURL("demozpdk://notiscreen")
             }}
             buttonText=" Check button"
           />
