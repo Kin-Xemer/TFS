@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -296,8 +296,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(name:'zpdk-release-V3', ext:'aar')
-    implementation "com.google.firebase:firebase-messaging:20.0.0"
+   implementation platform('com.google.firebase:firebase-bom:31.3.0')
     //noinspection GradleDynamicVersion
+    implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.facebook.react:react-native:+'  // From node_modules
 implementation 'com.android.support:multidex:2.0.1'
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: '') == 'true'

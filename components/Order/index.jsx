@@ -75,9 +75,9 @@ const Order = (props) => {
       colorText = "#FFB302";
     }
     return (
-      <Flex flexDirection={"row"}>
+      <Flex flexDirection={"row"} alignItems="center">
         <Image w={21} h={21} alt="pending" source={statusIcon} />
-        <Text style={{ fontFamily: FONT.BOLD, fontSize: 18, color: colorText }}>
+        <Text style={{ fontFamily: FONT.BOLD, fontSize: 18, color: colorText, marginBottom: 2 }}>
           {" "}
           {statusText}
         </Text>
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   orderItemContainer: {
     backgroundColor: "white",
-    padding: 8,
+    padding: 10,
     borderRadius: 15,
     marginVertical: 6,
     borderWidth: 1,

@@ -25,7 +25,7 @@ import {
   Divider,
 } from "native-base";
 import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
@@ -43,10 +43,10 @@ import { Entypo, MaterialIcons } from "@expo/vector-icons";
 const ProfileInfoScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-
   const [listFeedBack, setListFeedback] = useState([]);
   const [isDone, setIsDone] = useState(true);
   const customer = useSelector((state) => state.account.account);
+
 
   return (
     <View style={styles.container}>

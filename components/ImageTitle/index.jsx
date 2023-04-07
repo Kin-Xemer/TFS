@@ -20,7 +20,7 @@ const ImageTitle = (props) => {
         BASE_URL + "/events"
       )
       .then((response) => {
-        setListEvent(response.data);
+        setListEvent(response.data.slice(0,5));
       })
       .catch((err) => {
         console.log("ImageTitle", err);
@@ -92,7 +92,7 @@ const ImageTitle = (props) => {
         inactiveDotOpacity={0.4}
         inactiveDotScale={0.8}
         carouselRef={carousel}
-        tappableDots={!!carousel}
+     
       />
       </View>
     </View>

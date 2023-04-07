@@ -20,6 +20,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   PermissionsAndroid,
+  Linking,
 } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -39,6 +40,8 @@ import { BASE_URL } from "../../services/baseURL";
 import Geolocation from "react-native-geolocation-service";
 import { getServices } from "../../Utils/api/getServices";
 import ActionButton from "../ActionButton";
+import notifee, { AndroidColor } from "@notifee/react-native";
+import { GetFCMToken, requestNotiPermission } from "../../Helper/pushNoti";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -61,9 +64,7 @@ const Home = (props) => {
   const restaurant = useSelector((state) => state.restaurant.restaurant);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
-  const handleLogout = () => {
-    clearStorage();
-  };
+
 
   const getRegion = () => {
     axios
@@ -117,7 +118,7 @@ const Home = (props) => {
     }
   };
 
-  const clearStorage = async () => {
+  const handleLogout = async () => {
     try {
       dispatch({
         type: "SET_ORDER_STATUS",
@@ -133,11 +134,14 @@ const Home = (props) => {
   };
 
   useEffect(() => {
+    requestNotiPermission();
+    // GetFCMToken();
     getLocation();
     getRestaurant()(dispatch);
     getRegion();
     getEvent();
     getServices(dispatch);
+    console.log("number cart",numberCart)
   }, []);
   useEffect(() => {
     if (isFocused) {
@@ -341,7 +345,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods.slice(0, 15)}
+          data={foods.slice(16, 30)}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -370,7 +374,7 @@ const Home = (props) => {
           />
           <ActionButton
             onPress={() => {
-              navigation.navigate("FeedbackScreen");
+              check();
             }}
             buttonText=" Check button"
           />

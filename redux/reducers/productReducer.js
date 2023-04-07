@@ -13,12 +13,12 @@ const initCart = {
   cart: {},
   serviceList: [],
   serviceListObject: [],
-  itemList:[],
-  partyTotalPrice:0,
-  comboList:[],
+  itemList: [],
+  partyTotalPrice: 0,
+  comboList: [],
   cartId: 0,
-  party:null,
-  totalPrice:0
+  party: null,
+  totalPrice: 0,
 };
 
 const saveCart = (state) => {
@@ -34,7 +34,7 @@ const saveCart = (state) => {
 
   const newCart = {
     ...state.cart,
-    id:state.cartId,
+    id: state.cartId,
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
@@ -47,7 +47,7 @@ const saveCart = (state) => {
     .then((res) => {})
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
-      console.log("Error", err.response.data)
+      console.log("Error", err.response.data);
     });
 };
 
@@ -132,10 +132,10 @@ function todoProduct(state = initCart, action) {
         ...state,
         cartsItem: action.payload,
         cart: action.cart,
-        numberCart: action.numberCart,
-        cartId:action.cart.id,
+        numberCart: action.numberCart ? action.numberCart : 0,
+        cartId: action.cart.id,
         party: action.cart.party,
-        totalPrice:action.cart.totalPrice,
+        totalPrice: action.cart.totalPrice,
       };
     case "SET_CARTITEM":
       return {
@@ -161,13 +161,13 @@ function todoProduct(state = initCart, action) {
         cart: {},
         account: {},
         serviceList: [],
-        itemList:[],
-        comboList:[],
+        itemList: [],
+        comboList: [],
         serviceListObject: [],
-        cartId:0,
+        cartId: 0,
         party: null,
-        partyTotalPrice:0,
-        totalPrice:0,
+        partyTotalPrice: 0,
+        totalPrice: 0,
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;
@@ -179,7 +179,7 @@ function todoProduct(state = initCart, action) {
     case "SET_LIST_ITEM_EDIT":
       return {
         ...state,
-        itemList: action.payload
+        itemList: action.payload,
       };
     case "PUSH_LIST_ITEM_EDIT":
       let item = {
@@ -192,17 +192,17 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
       };
-      case "DELETE_MENU_ITEM_EDIT":
+    case "DELETE_MENU_ITEM_EDIT":
       return {
         ...state,
         itemList: state.itemList.filter(
           (item) => item.foodId !== action.payload
         ),
       };
-      case "SET_PARTY_TOTAL_PRICE":
+    case "SET_PARTY_TOTAL_PRICE":
       return {
         ...state,
-        partyTotalPrice: action.payload
+        partyTotalPrice: action.payload,
       };
     default:
       return state;

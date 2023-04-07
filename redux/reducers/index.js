@@ -9,6 +9,7 @@ import localLocationReducer from './localLocationReducer';
 import serviceReducer from './serviceReducer';
 import partyReducer from "./partyReducer";
 import feedBackReducer from "./feedBackReducer";
+import notiReducer from "./notiReducer";
 const rootReducer = combineReducers({
     cart: todoReducer,
     address: addressReducer,
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
     local: localLocationReducer,
     services: serviceReducer,
     feedback: feedBackReducer,
-    party: partyReducer
+    party: partyReducer,
+    noti: notiReducer,
 })
 
 export default rootReducer;

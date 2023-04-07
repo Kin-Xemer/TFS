@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   backButton: {
     marginTop: 35,
     position: "absolute",
+   marginLeft: -10,
   },
 });
 export default TopBar;

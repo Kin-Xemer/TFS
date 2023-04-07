@@ -1,5 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { LogBox } from "react-native";
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
@@ -9,9 +15,11 @@ import { NativeBaseProvider } from "native-base";
 import stores from "./redux/stores";
 import { Provider } from "react-redux";
 import AppNavigator from "./AppNavigator";
+import * as Linking from "expo-linking";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { THEME_COLOR } from "./Utils/themeColor";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import messaging from "@react-native-firebase/messaging";
 LogBox.ignoreLogs([
   "expo-app-loading is deprecated in favor of expo-splash-screen:",
 ]);
@@ -20,9 +28,41 @@ LogBox.ignoreLogs([
 ]);
 LogBox.ignoreLogs([
   "We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320",
-  ]);
+]);
+
 export default function App() {
   const [IsReady, SetIsReady] = useState(false);
+  const deepLinksConf = {
+    screens: {
+      TabNaviHome: {
+        screens: {
+          NotiScreen: { path: "notiscreen" },
+        },
+      },
+      MyFeedbackScreen:{
+        path:"feed"
+      }
+    },
+  };
+  const linking = {
+    prefixes: ["demozpdk://","https://app.tfs.com"],
+    config: deepLinksConf,
+    async getInitialURL() {
+      // Check if app was opened from a deep link
+      const url = await Linking.getInitialURL();
+
+      if (url != null) {
+        return url;
+      }
+
+      // Check if there is an initial firebase notification
+      const message = await messaging().getInitialNotification();
+
+      // Get the `url` property from the notification which corresponds to a screen
+      // This property needs to be set on the notification payload when sending it
+      return message?.data?.url;
+    },
+  };
   const LoadFonts = async () => {
     await useFonts();
   };
@@ -37,7 +77,10 @@ export default function App() {
   } else
     return (
       <Provider store={stores}>
-        <NavigationContainer>
+        <NavigationContainer
+          linking={linking}
+          fallback={<ActivityIndicator size="large" />}
+        >
           <StatusBar
             animated={true}
             backgroundColor="transparent"
