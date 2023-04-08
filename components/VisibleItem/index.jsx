@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import {
   View,
@@ -27,15 +27,14 @@ const VisibleItem = (props) => {
     (state) => state.cart.cartsItems
   );
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const [check, setCheck] = useState(false);
   const { data, onDelete } = props;
-  const increaseQuantity = () => {
-    
+  const increaseQuantity = useCallback(() => {
     dispatch({ type: "INCREASE_QUANTITY", payload: data.item.id });
-  };
-  const decreaseQuantity = () =>
+  }, [dispatch, data.item.id]);
+  
+  const decreaseQuantity = useCallback(() => {
     dispatch({ type: "DECREASE_QUANTITY", payload: data.item.id });
+  }, [dispatch, data.item.id]);
   return (
     <View style={[styles.rowFront]}>
       <TouchableHighlight

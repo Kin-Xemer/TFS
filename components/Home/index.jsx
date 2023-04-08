@@ -23,6 +23,7 @@ import {
   Linking,
   ImageBackground,
 } from "react-native";
+import once from "lodash/once";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageTitle from "../ImageTitle/index";
@@ -49,7 +50,6 @@ const Home = (props) => {
   const { isFocused } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  // const [foods, setFood] = useState([]);
   const [cusName, setCusName] = useState("");
   const [locateCoord, setLocateCoord] = useState(null);
   const [events, setEvents] = useState();
@@ -67,24 +67,54 @@ const Home = (props) => {
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
 
-  const getRegion = () => {
-    axios
-      .get(BASE_URL + "/regions")
-      .then((response) => {
-        setRegions(response.data);
-      })
-      .catch((error) => {
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-        if (error.response) {
-          console.log(error.response.data.message);
-        }
+  const initializeAppOnce = once((dispatch) => {
+    requestNotiPermission();
+    getLocation();
+    getRestaurant()(dispatch);
+    getRegion();
+    getEvent();
+    getServices(dispatch);
+  });
+  const memoizedFoodList = useMemo(() => foods.slice(0, 15), [foods]);
+  useEffect(() => {
+    initializeAppOnce(dispatch);
+    fetchData()(dispatch);
+  }, []);
+  useEffect(() => {
+    if (isFocused) {
+
+      checkLogin();
+    }
+  }, [isFocused]);
+  useEffect(() => {
+    if (cusName) {
+      getCartById()(dispatch, cusName);
+    }
+  }, [cusName]);
+  const getRegion = useMemo(() => {
+    return () => {
+      axios
+        .get(BASE_URL + "/regions")
+        .then((response) => {
+          setRegions(response.data);
+        })
+        .catch((error) => {
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          if (error.response) {
+            console.log(error.response.data.message);
+          }
+        });
+    };
+  }, []);
+
+  const getEvent = useMemo(() => {
+    return () => {
+      axios.get(BASE_URL + "/events").then((response) => {
+        setEvents(response.data);
       });
-  };
-  const getEvent = () => {
-    axios.get(BASE_URL + "/events").then((response) => {
-      setEvents(response.data);
-    });
-  };
+    };
+  }, []);
+
   const checkLogin = async () => {
     try {
       const cus = await AsyncStorage.getItem("customer");
@@ -96,23 +126,10 @@ const Home = (props) => {
           type: "SET_ACCOUNT",
           payload: customerParsed,
         });
-        dispatch({
-          type: "SET_ORDER_STATUS",
-          payload: null,
-        });
         setCusName(cusName);
       } else {
-        dispatch({
-          type: "SET_ORDER_STATUS",
-          payload: "",
-        });
         setCusName("");
       }
-      // if (cusName !== null) {
-      //   setIsLogin(true);
-      //   setCusName(cusName);
-      //   dispatch({ type: "GET_ACCOUNT", cusName });
-      // }
     } catch (e) {
       console.log(e);
       console.log("Failed to fetch the data from storage");
@@ -134,30 +151,6 @@ const Home = (props) => {
     }
   };
 
-  useEffect(() => {
-    requestNotiPermission();
-    // GetFCMToken();
-    getLocation();
-    getRestaurant()(dispatch);
-    getRegion();
-    getEvent();
-    getServices(dispatch);
-    console.log("number cart", numberCart);
-  }, []);
-  useEffect(() => {
-    if (isFocused) {
-      fetchData()(dispatch);
-      checkLogin();
-    }
-  }, [isFocused]);
-  //setinterval
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     fetchData()(dispatch);
-  //   }, 500);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const getLocation = async () => {
     setIsFindDone(false);
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -165,36 +158,26 @@ const Home = (props) => {
       alert("Permission to access location was denied");
       return;
     }
-    let location = await Location.getCurrentPositionAsync({});
-    console.log("get success");
-    dispatch({
-      type: "SET_LOCAL",
-      payload: location,
-    });
-    axios
-      .get(
-        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-          location.coords.latitude +
-          "," +
-          location.coords.longitude +
-          "&key=" +
-          GOOGLE_MAPS_APIKEY
-      )
-      .then((response) => {
-        console.log("find done");
-        setIsFindDone(true);
-        dispatch({
-          type: "SET_ADDRESS",
-          payload: response.data.results[0],
-        });
-        getNearlyRestaurant(
-          response.data.results[0].formatted_address,
-          dispatch
-        );
-      })
-      .catch((err) => {
-        console.log("Get Location", err);
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      dispatch({
+        type: "SET_LOCAL",
+        payload: location,
       });
+
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_MAPS_APIKEY}`
+      );
+
+      setIsFindDone(true);
+      dispatch({
+        type: "SET_ADDRESS",
+        payload: response.data.results[0],
+      });
+      getNearlyRestaurant(response.data.results[0].formatted_address, dispatch);
+    } catch (err) {
+      console.log("Error getting location or address: ", err);
+    }
   };
 
   const handlePressParty = () => {
@@ -315,7 +298,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods.slice(0, 15)}
+          data={memoizedFoodList}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -335,40 +318,38 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
-       <TouchableOpacity
-       onPress={()=>{
-        console.log("check")
-       }}
-       activeOpacity={0.7}
-       >
-       <ImageBackground
-          source={{
-            uri: "https://live.staticflickr.com/65535/52783059166_a951518a8d_h.jpg",
+        <TouchableOpacity
+          onPress={() => {
+            console.log("check");
           }}
-          resizeMethod="auto"
-          style={{
-            height: 180,
-            paddingHorizontal: 8,
-
-          }}
- 
+          activeOpacity={0.7}
         >
-          <Spacer />
-          <Flex flexDirection={"row"} alignItems="flex-end">
+          <ImageBackground
+            source={{
+              uri: "https://live.staticflickr.com/65535/52783059166_a951518a8d_h.jpg",
+            }}
+            resizeMethod="auto"
+            style={{
+              height: 180,
+              paddingHorizontal: 8,
+            }}
+          >
             <Spacer />
-            <Text
-              style={{
-                fontFamily: FONT.MEDIUM,
-                color: "white",
-                marginBottom: 4,
-              }}
-            >
-              xem theem
-            </Text>
-            <Entypo name="chevron-right" color={"white"} size={20} />
-          </Flex>
-        </ImageBackground>
-       </TouchableOpacity>
+            <Flex flexDirection={"row"} alignItems="flex-end">
+              <Spacer />
+              <Text
+                style={{
+                  fontFamily: FONT.MEDIUM,
+                  color: "white",
+                  marginBottom: 4,
+                }}
+              >
+                xem theem
+              </Text>
+              <Entypo name="chevron-right" color={"white"} size={20} />
+            </Flex>
+          </ImageBackground>
+        </TouchableOpacity>
         <Title textTitle="Ẩm thực cổ truyền" />
         <FlatList
           initialNumToRender={15}
@@ -380,7 +361,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={foods.slice(16, 30)}
+          data={memoizedFoodList}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -409,7 +390,7 @@ const Home = (props) => {
           />
           <ActionButton
             onPress={() => {
-              Linking.openURL("demozpdk://notiscreen")
+              Linking.openURL("demozpdk://notiscreen");
             }}
             buttonText=" Check button"
           />

@@ -14,7 +14,7 @@ import {
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Flex,
   Spacer,
@@ -45,60 +45,70 @@ const NotiScreen = () => {
   const [listFeedBack, setListFeedback] = useState([]);
   const [isDone, setIsDone] = useState(true);
   const customer = useSelector((state) => state.account.account);
-  
+
   useEffect(() => {
-    if(isFocused) {
+    if (isFocused) {
       axios
-      .get(BASE_URL + "//notifications/byaccount/" + customer.theAccount.accountId)
-      .then((res) => {
-        setListNoti(res.data.slice(0,15));
-      })
-      .catch((err) => {
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-        console.log(err.response.data);
-      });
+        .get(
+          BASE_URL + "/notifications/byaccount/" + customer.theAccount.accountId
+        )
+        .then((res) => {
+          setListNoti(res.data.slice(0, 15));
+        })
+        .catch((err) => {
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log(err.response.data);
+        });
     }
   }, [isFocused]);
 
-  
+  const NotificationItem = ({ message, createdAt }) => {
+    return (
+      <Flex
+        backgroundColor="white"
+        direction="row"
+        style={styles.workerLabel}
+      >
+        <View style={styles.iconStyle}>
+          <Image
+            size={10}
+            resizeMode={"contain"}
+            borderRadius={300}
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/1154/1154468.png",
+            }}
+            alt="Alternate Text"
+          />
+        </View>
+        <View style={{ marginLeft: 8, flex: 1, justifyContent: "center" }}>
+          <Text style={{ fontFamily: FONT.BOLD }}>Thông báo</Text>
+          <Text style={{ fontFamily: FONT.REGULAR }}>{message}</Text>
+          <Text
+            style={{
+              fontFamily: "OpenSans-Regular",
+              fontSize: 13,
+              color: "gray",
+            }}
+          >
+            {convertDate(createdAt)}
+          </Text>
+        </View>
+      </Flex>
+    );
+  };
+
+  const MemoizedNotificationItem = React.memo(NotificationItem);
   return (
     <View style={styles.container}>
-      <TopBar title="Thông báo"/>
-      <Text style={{ fontFamily: FONT.BOLD, marginBottom: 15 }}>Mới</Text>
+      <TopBar title="THÔNG BÁO" />
       <FlatList
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         data={listNoti}
         renderItem={({ item }) => (
-          <Flex
-            backgroundColor="#e8fafa"
-            direction="row"
-            style={styles.workerLabel}
-          >
-            <View style={styles.iconStyle}>
-              <Image
-                size={10}
-                resizeMode={"contain"}
-                borderRadius={300}
-                source={{
-                  uri: "https://cdn-icons-png.flaticon.com/512/1154/1154468.png",
-                }}
-                alt="Alternate Text"
-              />
-            </View>
-            <View style={{ marginLeft: 8, flex: 1, justifyContent: "center" }}>
-              <Text style={{ fontFamily: FONT.BOLD }}>Thông báo</Text>
-              <Text style={{ fontFamily: FONT.REGULAR }}>{item.message}</Text>
-              <Text
-                style={{
-                  fontFamily: "OpenSans-Regular",
-                  fontSize: 13,
-                  color: "gray",
-                }}
-              >
-                {convertDate(item.createdAt)}
-              </Text>
-            </View>
-          </Flex>
+          <MemoizedNotificationItem
+            message={item.message}
+            createdAt={item.createdAt}
+          />
         )}
       />
     </View>
@@ -108,10 +118,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
- 
   },
   workerLabel: {
-
     padding: 16,
   },
 });

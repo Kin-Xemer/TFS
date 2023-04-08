@@ -31,7 +31,15 @@ const InformationViewMenu = (props) => {
       }
     }, 1);
   }, [filterFood]);
-
+  
+  const navigateToFoodInformationScreen = useCallback(
+    (food) => {
+      navigation.navigate("FoodInformationScreen", { food });
+    },
+    [navigation]
+  );
+  
+  const MemoizedCardFoodMenu = React.memo(CardFoodMenu);
   return (
     <View>
       {isDone && filterFood && filterFood.length > 0 ? (
@@ -46,7 +54,7 @@ const InformationViewMenu = (props) => {
                 // }
                 key={index}
               >
-                <CardFoodMenu  style={styles.item} mh={7} food={item} />
+                <MemoizedCardFoodMenu style={styles.item} mh={7} food={item} />
               </TouchableOpacity>
             );
           })}

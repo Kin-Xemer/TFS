@@ -7,50 +7,74 @@ import { connect, useSelector, useDispatch } from "react-redux";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { getCartById } from "../../Utils/api/getCart";
 import { BASE_URL } from "../../services/baseURL";
-import { getAverageRating, getListPercentRating } from "../../Utils/getListPercentRating";
+import {
+  getAverageRating,
+  getListPercentRating,
+} from "../../Utils/getListPercentRating";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const CardFood = (props) => {
-  let { food,  itemWith, mh, mr } = props;
+  let { food, itemWith, mh, mr } = props;
   const dispatch = useDispatch();
   const username = useSelector(
     (state) => state.account.account.theAccount.accountId
   );
-  const isLogin = useSelector(
-    (state) => state.account.isLogin
-  );
+  const isLogin = useSelector((state) => state.account.isLogin);
   const navigation = useNavigation();
   const [listFeedBack, setListFeedBack] = useState([]);
   const [countRating, setCountRating] = useState({});
   const [ratingAvg, setRatingAvg] = useState(0);
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/feedbacks/allbyfood/" + food.id)
-      .then((response) => {
-        let arr = response.data.map((item) => {
-          return item.rate;
-        });
-        setListFeedBack(response.data);
-        const array = getListPercentRating(arr);
-        setRatingAvg(arr.length !== 0 ? getAverageRating(arr) : 0);
-        setCountRating(array);
-      })
-      .catch((error) => {
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  const fetchFeedbacks = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        BASE_URL + "/feedbacks/allbyfood/" + food.id,
+        {
+          cancelToken: new axios.CancelToken((cancel) => {
+            // Set up a cancel function that will be called if the component unmounts before the request completes
+            cancel;
+          }),
+        }
+      );
+
+      const arr = response.data.map((item) => {
+        return item.rate;
+      });
+      const array = getListPercentRating(arr);
+
+      setListFeedBack(response.data);
+      setCountRating(array);
+      setRatingAvg(arr.length !== 0 ? getAverageRating(arr) : 0);
+    } catch (error) {
+      if (!axios.isCancel(error)) {
         if (error.response) {
           alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
           console.log(error.response.data);
         }
-      });
-  }, []);
-  const addToCart =  (food, quantity) => {
-     dispatch({ type: "ADD_CART", payload: food, quantity });
-    //  getCartById()(dispatch, username);
-  };
+      }
+    }
+  }, [food.id]);
+
+  useEffect(() => {
+    fetchFeedbacks();
+    return () => {
+      // Hủy request khi component unmounted
+      source.cancel("Component unmounted");
+    };
+  }, [fetchFeedbacks]);
+
+  const addToCart = useCallback(
+    (food, quantity) => {
+      dispatch({ type: "ADD_CART", payload: food, quantity });
+    },
+    [dispatch]
+  );
 
   return (
     <Box

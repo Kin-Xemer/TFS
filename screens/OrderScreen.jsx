@@ -8,7 +8,7 @@ import { Provider } from "@ant-design/react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Home from "../components/Home/index.jsx";
 import { Box, Flex } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
@@ -39,10 +39,6 @@ const OrderScreen = (props) => {
     },
     { label: "Đã xác nhận", value: "accept" },
     {
-      label: "Chờ thanh toán",
-      value: "waiting",
-    },
-    {
       label: "Đang giao hàng",
       value: "delivery",
     },
@@ -56,7 +52,8 @@ const OrderScreen = (props) => {
   const handleSelectedItem = (item) => {
     if (status !== "") {
       if (item !== "all") {
-        setFilterOrder(orders.filter((orders) => orders.status === item));
+        const filteredOrders = orders.filter((order) => order.status === item);
+        setFilterOrder(filteredOrders);
         dispatch({
           type: "SET_ORDER_STATUS",
           payload: orders.filter((orders) => orders.status === item),
@@ -67,30 +64,29 @@ const OrderScreen = (props) => {
       }
     }
   };
-  const getAllOrder = () => {
+  const getAllOrder = useCallback(async () => {
     setFilterOrder([]);
     setIsDone(false);
     let url = BASE_URL + "/orders/customer/" + customerId;
-    axios
-      .get(url)
-      .then((res) => {
-        setIsDone(true);
-        res.data.sort(
-          (item) =>
-            new Date(item.orderDate).getTime() - new Date().getTime() < 0
-        );
-        setOrders(res.data);
-        if (status === null && status !== "") {
-          setFilterOrder(res.data);
-          setValue("all");
-        } else if (status === "") {
-          setFilterOrder([]);
-        }
-      })
-      .catch((error) => {
-        console.log("OrderScreen", error);
-      });
-  };
+    try {
+      const res = await axios.get(url);
+      setIsDone(true);
+      res.data?.sort(
+        (item) =>
+          new Date(item.orderDate).getTime() - new Date().getTime() < 0
+      );
+      setOrders(res.data);
+  
+      if (status === null && status !== "") {
+        setFilterOrder(res.data);
+        setValue("all");
+      } else if (status === "") {
+        setFilterOrder([]);
+      }
+    } catch (error) {
+      console.log("OrderScreen", error);
+    }
+  }, [customerId, status, setValue]);
   useEffect(() => {
     if (isFocused) {
       getAllOrder();

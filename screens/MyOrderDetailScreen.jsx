@@ -27,6 +27,7 @@ import OrderButton from "../components/OrderButton/index";
 import ActionButton from "../components/ActionButton/index.jsx";
 import BackButton from "../components/BackButton/index.jsx";
 import { FONT } from "../Utils/themeFont.js";
+import { useCallback } from "react";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -37,7 +38,13 @@ const MyOrderDetailScreen = (props) => {
   const customer = useSelector((state) => state.account.account);
   const restaurantList = useSelector((state) => state.restaurant.restaurant);
   const order = route.params.orders;
-  const handleButton = () => {};
+  const handleCancelOrder = useCallback(() => {
+    if (order.paymentMethod === "cash") {
+      console.log("cancel done cash");
+    } else {
+      console.log("cancel done zalo");
+    }
+  }, []);
   useEffect(() => {
     restaurantList.map((item) => {
       if (item.restaurantId === order.restaurantId) {
@@ -94,9 +101,10 @@ const MyOrderDetailScreen = (props) => {
                 <TouchableOpacity
                   style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
                   activeOpacity={0.8}
-            
                   onPress={() => {
-                    navigation.navigate("MyFeedbackScreen", {id: customer.customerId});
+                    navigation.navigate("MyFeedbackScreen", {
+                      id: customer.customerId,
+                    });
                   }}
                 >
                   <Text style={styles.buttonText}>Xem đánh giá</Text>
@@ -117,7 +125,7 @@ const MyOrderDetailScreen = (props) => {
             bgColor={"#d9d9d9"}
             buttonText={"Xác nhận huỷ"}
             buttonHandler={() => {
-              console.log("press");
+              handleCancelOrder();
             }}
           />
         )}

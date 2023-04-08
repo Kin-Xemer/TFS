@@ -1,7 +1,7 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import { Text, useToast, Spinner } from "native-base";
 
@@ -32,13 +32,19 @@ const InformationView = (props) => {
   }, [filterFood]);
 
   useEffect(() => {
-    console.log("==============")
-    filterFood.map((food) =>{
-      console.log(food.price)
-    })
-    console.log("==============")
+    console.log("==============");
+    filterFood.map((food) => {
+      console.log(food.price);
+    });
+    console.log("==============");
   }, [filterFood]);
-
+  const navigateToFoodInformationScreen = useCallback(
+    (food) => {
+      navigation.navigate("FoodInformationScreen", { food: food });
+    },
+    [navigation]
+  );
+  const MemoizedCardFood = React.memo(CardFood);
   return (
     <View>
       {isDone && filterFood && filterFood.length > 0 ? (
@@ -48,18 +54,16 @@ const InformationView = (props) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={{ marginBottom: 50, width: "50%", marginTop: -25 }}
-                onPress={() =>
-                  navigation.navigate("FoodInformationScreen", { food: item })
-                }
+                onPress={() => navigateToFoodInformationScreen(item)}
                 key={index}
               >
-                <CardFood style={styles.item} mh={7} food={item} />
+                <MemoizedCardFood style={styles.item} mh={7} food={item} />
               </TouchableOpacity>
             );
           })}
         </View>
       ) : filterFood.length === 0 ? (
-        <Text>assad</Text>
+        <Text>không có</Text>
       ) : (
         <View style={{ marginTop: 20, alignItems: "center" }}>
           <Spinner size={"sm"} />

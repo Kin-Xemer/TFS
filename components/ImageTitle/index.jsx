@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { View, Dimensions, StyleSheet, Text } from "react-native";
 import { Image } from "native-base";
@@ -13,19 +13,16 @@ const ImageTitle = (props) => {
   const [listEvent,setListEvent] = useState([]);
   const carousel = useRef();
   const [slides,setSlides] = useState([]);
-
-  const getAllEvent = () => {
-    axios
-      .get(
-        BASE_URL + "/events"
-      )
+  
+  const getAllEvent = useCallback(() => {
+    axios.get(BASE_URL + "/events")
       .then((response) => {
         setListEvent(response.data.slice(0,8));
       })
       .catch((err) => {
         console.log("ImageTitle", err);
       });
-  };
+  }, []);
 
   useEffect(() => {
     getAllEvent();

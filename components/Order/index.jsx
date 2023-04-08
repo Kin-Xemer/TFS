@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+
 import {
   View,
   Text,
@@ -6,16 +6,11 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { Entypo } from "@expo/vector-icons";
 import { Stickynote } from "iconsax-react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import {
   Flex,
-  TextArea,
   Spacer,
-  Divider,
   Image,
   FlatList,
   Box,
@@ -24,8 +19,6 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
 import { convertPrice } from "../../Utils/convertPrice";
 import { convertDate } from '../../Utils/convertDate';
-import { BASE_URL } from "../../services/baseURL";
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Order = (props) => {
   const { orders, isFocused, isDone } = props;
   const navigation = useNavigation();
@@ -67,13 +60,6 @@ const Order = (props) => {
       statusText = "Đang làm";
       colorText = "#FFB302";
     }
-    else if (status === "waiting") {
-      statusIcon = {
-        uri: "https://live.staticflickr.com/65535/52721391003_e147a151f0_w.jpg",
-      };
-      statusText = "Chờ thanh toán";
-      colorText = "#FFB302";
-    }
     return (
       <Flex flexDirection={"row"} alignItems="center">
         <Image w={21} h={21} alt="pending" source={statusIcon} />
@@ -94,28 +80,9 @@ const Order = (props) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              if(item.status === "waiting"){
-                axios
-                .post(
-                  BASE_URL+ "/orders/zaloPay",
-                  item
-                )
-                .then((response) => {
-                  let url = BASE_URL + "/orders/checkPayment/" + response.data.apptransid;
-                  axios.get(url).then((res) => {
-                    navigation.navigate("ZaloPaymentScreen", {
-                      paymentResponse:  response.data,
-                      order: item,
-                      paymentStatus: res.data
-                    });
-                  });
-                })
-                .catch((err) => {
-                  alert(err.message);
-                });
-              }else{
+             
                 navigation.navigate("MyOrderDetailScreen", { orders: item });
-              }
+              
               
             }}
             activeOpacity={0.7}
