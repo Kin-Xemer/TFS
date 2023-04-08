@@ -28,23 +28,18 @@ import ActionButton from "../components/ActionButton/index.jsx";
 import BackButton from "../components/BackButton/index.jsx";
 import { FONT } from "../Utils/themeFont.js";
 import { useCallback } from "react";
+import CancelOrderModal from "../components/CancelOrderModal/index.jsx";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
   const [loginStatus, setLoginStatus] = useState();
   const [isDone, setIsDone] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
   const customer = useSelector((state) => state.account.account);
   const restaurantList = useSelector((state) => state.restaurant.restaurant);
   const order = route.params.orders;
-  const handleCancelOrder = useCallback(() => {
-    if (order.paymentMethod === "cash") {
-      console.log("cancel done cash");
-    } else {
-      console.log("cancel done zalo");
-    }
-  }, []);
   useEffect(() => {
     restaurantList.map((item) => {
       if (item.restaurantId === order.restaurantId) {
@@ -52,7 +47,19 @@ const MyOrderDetailScreen = (props) => {
       }
     });
   }, []);
-
+  const handleCancelOrder = useCallback(() => {
+    if (order.paymentMethod === "cash") {
+      setIsVisible(true)
+    } else {
+      setIsVisible(true)
+    }
+  }, []);
+  const onConfirm = () => {
+    console.log("confirm");
+  };
+  const toggleModal = () => {
+    setIsVisible(!isVisible)
+  };
   return (
     <View style={styles.container}>
       <Flex style={styles.topBar} direction="row">
@@ -131,6 +138,11 @@ const MyOrderDetailScreen = (props) => {
         )}
       </ScrollView>
       <BackButton />
+      <CancelOrderModal
+        isVisible={isVisible}
+        onCancel={toggleModal}
+        onConfirm={onConfirm}
+      />
     </View>
   );
 };
