@@ -9,12 +9,6 @@ const initState = {
           ...state,
           status: action.payload
         };
-        case "CLEAR_ORDER_STATUS":
-            state.status = ""
-            return {
-              ...state,
-            };
-      
       default:
         return state;
     }

@@ -140,7 +140,7 @@ const Home = (props) => {
     try {
       dispatch({
         type: "SET_ORDER_STATUS",
-        payload: "",
+        payload: null,
       });
       await AsyncStorage.removeItem("customer");
       dispatch({ type: "LOGOUT" });

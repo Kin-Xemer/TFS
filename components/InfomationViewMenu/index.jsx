@@ -1,7 +1,7 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import { Text, useToast, Spinner } from "native-base";
 

@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Home from "../components/Home/index.jsx";
-import { Box, Flex } from "native-base";
+import { Box, Flex, Spinner } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ArrowUp3, ArrowDown3 } from "iconsax-react-native";
@@ -30,6 +30,7 @@ const OrderScreen = (props) => {
   const [isDone, setIsDone] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
+  const isLogin = useSelector((state) => state.account.isLogin);
   const username = useSelector((state) => state.account.account);
   const [items, setItems] = useState([
     { label: "Tất cả", value: "all" },
@@ -72,11 +73,10 @@ const OrderScreen = (props) => {
       const res = await axios.get(url);
       setIsDone(true);
       res.data?.sort(
-        (item) =>
-          new Date(item.orderDate).getTime() - new Date().getTime() < 0
+        (item) => new Date(item.orderDate).getTime() - new Date().getTime() < 0
       );
       setOrders(res.data);
-  
+
       if (status === null && status !== "") {
         setFilterOrder(res.data);
         setValue("all");
@@ -140,7 +140,11 @@ const OrderScreen = (props) => {
             handleSelectedItem(item.value);
           }}
         />
-        <Order isFocused={isFocused} orders={filterOrder} isDone={isDone} />
+        {isLogin ? (
+          isDone ? <Order isFocused={isFocused} orders={filterOrder} isDone={isDone} />: <Spinner/>
+        ) : (
+          <Text>Đăng nhập để tiếp tục</Text>
+        )}
       </View>
     </View>
   );

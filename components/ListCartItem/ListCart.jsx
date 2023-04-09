@@ -29,26 +29,31 @@ import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
   let { deleteItem, isFocused, service } = props;
-  const {
-    cart,
-    account,
-    address,
-    services,
-    restaurant
-  } = useSelector((state) => state);
-  const { itemList, comboList, serviceList, serviceListObject } = cart;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
-  const [isDone, setIsDone] = useState(true);
   const items = useSelector((state) => state.cart);
-  const customerId = account.account.customerId;
-  const stringAddress = address.stringAddress;
-  const selectedService = serviceList;
-  const listSelectedService = serviceListObject;
-  const username = account.account.theAccount.accountId;
-  const nearlyRestaurant = restaurant.nearRestaurant;
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
+  const [isDone, setIsDone] = useState(true);
+  const customerId = useSelector((state) => state.account.account.customerId);
+  const stringAddress = useSelector((state) => state.address.stringAddress);
+  const listService = useSelector((state) => state.services.services);
+  const selectedService = useSelector((state) => state.cart.serviceList);
+  const listSelectedService = useSelector(
+    (state) => state.cart.serviceListObject
+  );
+  const itemList = useSelector((state) => state.cart.itemList);
+  const comboList = useSelector((state) => state.cart.comboList);
+  const address = useSelector(
+    (state) => state.address.address.formatted_address
+  );
+  const username = useSelector(
+    (state) => state.account.account.theAccount.accountId
+  );
+  const nearlyRestaurant = useSelector(
+    (state) => state.restaurant.nearRestaurant
+  );
+
   const [discount, setDiscount] = useState(0);
   const [deliveryFee, seyDeliveryFee] = useState(0);
   const [servicesFee, setServicesFee] = useState(0);
@@ -57,36 +62,49 @@ const ListCart = (props) => {
   const [textAreaCount, setTextAreaCount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isVisible, setIsVisible] = useState(false);
-  const listService = useSelector((state) => state.services.services);
   const [openPicker, setOpenPicker] = useState(false);
   const refRBSheet = useRef();
 
   let list = [];
   let totalCart = 0;
-  const listData = Object.keys(items.cartsItem).reduce((acc, item, index) => {
-    const cartItem = items.cartsItem[item];
-    totalCart += cartItem.quantity * cartItem.price;
-    acc.push({
-      id: `${index}`,
-      name: cartItem.name,
-      quantity: cartItem.quantity,
-      imgUrl: cartItem.image,
-      price: cartItem.price,
-    });
-    return acc;
-  }, []);
-   
-  totalCart += Object.keys(items.serviceListObject).reduce((acc, item) => {
-    return acc + items.serviceListObject[item].servicePrice;
-  }, 0);
-  
+  Object.keys(items.cartsItem).forEach(function (item) {
+    totalCart += items.cartsItem[item].quantity * items.cartsItem[item].price;
+    list.push(items.cartsItem[item]);
+  });
+
+  Object.keys(items.serviceListObject).forEach(function (item) {
+    totalCart += items.serviceListObject[item].servicePrice;
+  });
   totalCart += items.partyTotalPrice;
-  
+  const listData = list.map((item, index) => ({
+    id: `${index}`,
+    name: item.name,
+    quantity: item.quantity,
+    imgUrl: item.image,
+    price: item.price,
+  }));
   let handleOnChangeText = (value) => {
     setTextAreaCount(value.length);
     setNote(value);
   };
 
+  // function convertUTCDateToLocalDate(date) {
+  //   var newDate = new Date(
+  //     date.getTime() + date.getTimezoneOffset() * 60 * 1000
+  //   );
+  //   var offset = date.getTimezoneOffset() / 60;
+  //   var hours = date.getHours();
+  //   newDate.setHours(hours - offset);
+  //   return newDate;
+  // }
+
+  // const convertDateTime = () => {
+  //   let dt = new Date();
+  //   let date = convertUTCDateToLocalDate(dt).toISOString();
+  //   let day = date.slice(0, 10);
+  //   let time = date.slice(11, 22);
+  //   return time + " " + day;
+  // };
   const createOrder = (orders) => {
     if (orders.paymentMethod === "cash") {
       let url = BASE_URL + "/orders";
@@ -119,7 +137,6 @@ const ListCart = (props) => {
         })
         .catch((err) => {
           setIsDone(true);
-          console.log(orders)
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           console.log("Create order zalo",err.response.data)
         });
@@ -194,6 +211,9 @@ const ListCart = (props) => {
     );
   };
 
+  const showModal = () => {
+    setVisible(!visible);
+  };
 
   const renderHiddenItem = (data, rowMap) => {
     return (
