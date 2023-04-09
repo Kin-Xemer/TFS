@@ -33,14 +33,15 @@ const saveCart = (state) => {
   });
 
   const newCart = {
-    ...state.cart,
+    ...initCart,
     id: state.cartId,
     cartItems: state.cartsItem,
     numberCart: sum,
     totalPrice: totalPrice,
     comboList: [],
   };
-  initCart.numberCart = sum;
+  // initCart.numberCart = sum;
+  console.log("old cart", newCart.numberCart)
   axios
     .put(BASE_URL + "/carts", newCart)
     .then((res) => {
