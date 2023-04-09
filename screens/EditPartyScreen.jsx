@@ -145,9 +145,15 @@ const EditPartyScreen = () => {
       totalPrice: totalCart * menuQuantity,
     };
     setIsDone(false);
+    console.log({
+      cartItems: cart.cartsItem,
+      party: newParty,
+      id: cart.cartId,
+      totalPrice: cart.totalPrice + newParty.totalPrice,
+    })
     axios
       .put(BASE_URL + "/carts", {
-        cartItems: cart.cartItems,
+        cartItems: cart.cartsItem,
         party: newParty,
         id: cart.cartId,
         totalPrice: cart.totalPrice + newParty.totalPrice,

@@ -41,13 +41,22 @@ const saveCart = (state) => {
     comboList: [],
   };
   initCart.numberCart = sum;
-
   axios
     .put(BASE_URL + "/carts", newCart)
-    .then((res) => {})
+    .then((res) => {
+      initCart.cartId = res.data.id;
+      initCart.cartsItem = res.data.cartItems;
+      initCart.numberCart = res.data.numberCart;
+      initCart.totalPrice = res.data.totalPrice;
+      initCart.comboList = res.data.comboList;
+    })
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
-      console.log("Error", err.response.data);
+      if (err.response.data) {
+        console.log("Error", err.response.data);
+      } else {
+        console.log(err);
+      }
     });
 };
 

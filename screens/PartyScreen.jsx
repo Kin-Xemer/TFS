@@ -92,19 +92,13 @@ const PartyScreen = () => {
 
   const handleAddMenuToCart = () => {
     setIsDone(false);
-    // console.log("party", party);
-    // console.log("cart", {cartItems: cart.cartItems,
-    //   party: party,
-    //   id: cart.id,
-    //   totalPrice: cart.totalPrice + party.totalPrice,
-    // });
 
     axios
       .post(BASE_URL + "/carts/party/new/" + cart.cartId, party)
       .then((response) => {
         axios
           .put(BASE_URL + "/carts", {
-            cartItems: cart.cartItems,
+            cartItems: cart.cartsItem,
             party: party,
             id: cart.cartId,
             totalPrice: cart.totalPrice + party.totalPrice,
