@@ -20,7 +20,7 @@ import {
   useIsFocused,
   useNavigation,
   useRoute,
-  createNavigationContainerRef
+  createNavigationContainerRef,
 } from "@react-navigation/native";
 import ActionButton from "../components/ActionButton";
 import axios from "axios";
@@ -37,7 +37,7 @@ import {
 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import notifee,  { EventType } from "@notifee/react-native";
+import notifee, { EventType } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const ProfileScreens = () => {
   const route = useRoute();
@@ -77,33 +77,30 @@ const ProfileScreens = () => {
   const isLogin = useSelector((state) => state.account.isLogin);
   const navigationRef = createNavigationContainerRef();
 
-  
   useEffect(() => {
     const unsubscribe = notifee.onBackgroundEvent(async ({ type, detail }) => {
       const { notification, pressAction } = detail;
 
       if (type === EventType.PRESS) {
-        if (pressAction.id === 'default') {
-            console.log('User pressed the default action');
-
-            console.log('Điều hướng đến màn hình Home');
-            navigation.navigate('NotiScreen');
-          }
+        if (pressAction.id === "default") {
+          navigation.navigate("NotiScreen");
+        }else{
+          axios.get(BASE_URL + "/orders/" + pressAction.id).then((res)=>{
+            navigation.navigate("MyOrderDetailScreen", {orders: res.data})
+          })
+        
+        }
+        
       }
       await notifee.cancelNotification(notification.id);
       console.log("background-event");
     });
 
     return () => {
-      unsubscribe
+      unsubscribe;
     };
   }, []);
 
-
-
-
-
-  
   useEffect(() => {
     setCur(list.length);
     if (prev !== cur) {
@@ -116,7 +113,7 @@ const ProfileScreens = () => {
       setCount((prevCount) => prevCount + 1);
       setPrev(list.length);
     }, 1000);
-    console.log(count);
+    // console.log(count);
     if (!isLogin) {
       clearInterval(interval);
     }
@@ -128,18 +125,17 @@ const ProfileScreens = () => {
       console.log("start");
     }
   }, [isFocused]);
-// const actions = [
-//   {
-//     id: 'default',
-//     title: 'View',
-//   },
-//   {
-//     id: 'navigateToHome',
-//     title: 'Go to Home',
-//   },
-// ];
+  // const actions = [
+  //   {
+  //     id: 'default',
+  //     title: 'View',
+  //   },
+  //   {
+  //     id: 'navigateToHome',
+  //     title: 'Go to Home',
+  //   },
+  // ];
   const pushNotifications = async (noti) => {
-    const deepLink = "demozpdk://notisceen";
     const channelId = await notifee.createChannel({
       id: "default",
       name: "Default Channel",
@@ -147,13 +143,18 @@ const ProfileScreens = () => {
     // Display a notification
     await notifee.displayNotification({
       title: "Thông báo",
+      subtitle: '&#129395;',
       body: noti.message,
       android: {
         channelId,
+        
+        timestamp: Date.now(),
         // pressAction is needed if you want the notification to open the app when pressed
         pressAction: {
-          id: "default",
+          id: noti.message.slice(9,13),
         },
+        showTimestamp: true,
+
       },
     });
   };
@@ -273,7 +274,7 @@ const ProfileScreens = () => {
             marginBottom: 30,
             flexDirection: "row",
           }}
-          onPress={()=>{
+          onPress={() => {
             pushNotifications(list[0]);
           }}
         >
