@@ -8,7 +8,7 @@ import { Provider } from "@ant-design/react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Home from "../components/Home/index.jsx";
 import { Box, Flex, Spinner } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
@@ -23,6 +23,7 @@ const OrderScreen = (props) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const status = useSelector((state) => state.status.status);
+  const isLogin = useSelector((state) => state.account.isLogin);
   const customerId = useSelector((state) => state.account.account.customerId);
   const [loginStatus, setLoginStatus] = useState();
   const [orders, setOrders] = useState([]);
@@ -30,7 +31,6 @@ const OrderScreen = (props) => {
   const [isDone, setIsDone] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const isLogin = useSelector((state) => state.account.isLogin);
   const username = useSelector((state) => state.account.account);
   const [items, setItems] = useState([
     { label: "Tất cả", value: "all" },
@@ -53,8 +53,7 @@ const OrderScreen = (props) => {
   const handleSelectedItem = (item) => {
     if (status !== "") {
       if (item !== "all") {
-        const filteredOrders = orders.filter((order) => order.status === item);
-        setFilterOrder(filteredOrders);
+        setFilterOrder(orders.filter((orders) => orders.status === item));
         dispatch({
           type: "SET_ORDER_STATUS",
           payload: orders.filter((orders) => orders.status === item),
@@ -65,28 +64,30 @@ const OrderScreen = (props) => {
       }
     }
   };
-  const getAllOrder = useCallback(async () => {
+  const getAllOrder = () => {
     setFilterOrder([]);
     setIsDone(false);
     let url = BASE_URL + "/orders/customer/" + customerId;
-    try {
-      const res = await axios.get(url);
-      setIsDone(true);
-      res.data?.sort(
-        (item) => new Date(item.orderDate).getTime() - new Date().getTime() < 0
-      );
-      setOrders(res.data);
-
-      if (status === null && status !== "") {
-        setFilterOrder(res.data);
-        setValue("all");
-      } else if (status === "") {
-        setFilterOrder([]);
-      }
-    } catch (error) {
-      console.log("OrderScreen", error);
-    }
-  }, [customerId, status, setValue]);
+    axios
+      .get(url)
+      .then((res) => {
+        setIsDone(true);
+        res.data.sort(
+          (item) =>
+            new Date(item.orderDate).getTime() - new Date().getTime() < 0
+        );
+        setOrders(res.data);
+        if (status === null && status !== "") {
+          setFilterOrder(res.data);
+          setValue("all");
+        } else if (status === "") {
+          setFilterOrder([]);
+        }
+      })
+      .catch((error) => {
+        console.log("OrderScreen", error);
+      });
+  };
   useEffect(() => {
     if (isFocused) {
       getAllOrder();
@@ -140,7 +141,7 @@ const OrderScreen = (props) => {
             handleSelectedItem(item.value);
           }}
         />
-        {isLogin ? (
+      {isLogin ? (
           isDone ? <Order isFocused={isFocused} orders={filterOrder} isDone={isDone} />: <Spinner/>
         ) : (
           <Text>Đăng nhập để tiếp tục</Text>

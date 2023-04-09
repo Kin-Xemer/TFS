@@ -28,15 +28,18 @@ import ActionButton from "../components/ActionButton/index.jsx";
 import BackButton from "../components/BackButton/index.jsx";
 import { FONT } from "../Utils/themeFont.js";
 import { useCallback } from "react";
+import { Toast } from "@ant-design/react-native";
 import CancelOrderModal from "../components/CancelOrderModal/index.jsx";
+import { BASE_URL } from "../services/baseURL.js";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
   const [loginStatus, setLoginStatus] = useState();
-  const [isDone, setIsDone] = useState(false);
+  const [isDone, setIsDone] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
+  const [selectedReason, setSelectedReason] = useState("");
   const customer = useSelector((state) => state.account.account);
   const restaurantList = useSelector((state) => state.restaurant.restaurant);
   const order = route.params.orders;
@@ -47,18 +50,137 @@ const MyOrderDetailScreen = (props) => {
       }
     });
   }, []);
-  const handleCancelOrder = useCallback(() => {
+  useEffect(() => {
+ console.log(selectedReason)
+  }, [selectedReason]);
+  // const onConfirm = useCallback((selectedReason) => {
+  //   setIsDone(false);
+  //   let newOrder = { ...order, status: "deny", reason: selectedReason };
+  //   if (order.paymentMethod === "cash") {
+  //     axios
+  //       .put(BASE_URL + "/orders", newOrder)
+  //       .then(() => {
+  //         if (navigation.canGoBack()) {
+  //           if (navigation.canGoBack()) {
+  //             setIsDone(true);
+  //             setIsVisible(false);
+  //             navigation.goBack();
+  //           }
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+  //         console.log(error.response.data);
+  //       });
+  //   } else {
+  //     axios
+  //       .get(BASE_URL + "/orders/checkZalopayPayment/" + order.id)
+  //       .then((response) => {
+  //         if (response.data.returnCode === 1) {
+  //           let refundObject = {
+  //             amount: order.totalPricce,
+  //             orderId: order.id,
+  //           };
+  //           axios.post(BASE_URL + "/orders/refundZalopay", refundObject).then((res)=>{
+  //             if(res.data.returncode === 2){
+  //              let mrefundid =  res.data.mrefundid
+  //              axios.get(BASE_URL + "/orders/refundStatus/" +mrefundid ).then((refundResponse) => {
+
+  //              }).catch((error) => {
+  //               alert("Đã có lỗi xảy ra, vui lòng thử lại sau")
+  //               console.log(err.response.data)
+  //              })
+  //             }
+  //           }).catch((err)=>{
+  //             alert("Đã có lỗi xảy ra, vui lòng thử lại sau")
+  //             console.log(err.response.data)
+  //           })
+  //         }
+
+  //       })
+  //       .catch((error) => {
+  //         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+  //         console.log(error.response.data);
+  //       });
+  //   }
+  // }, []);
+
+  const onConfirm = useCallback(async () => {
+    setIsDone(false);
+
     if (order.paymentMethod === "cash") {
-      setIsVisible(true)
+      await updateOrder(selectedReason);
     } else {
-      setIsVisible(true)
+      try {
+        const response = await axios.get(
+          BASE_URL + "/orders/checkZalopayPayment/" + order.id
+        );
+        if (response.data.returnCode === 1) {
+          await refundOrder(order);
+        }
+      } catch (error) {
+        setIsDone(true);
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        console.log("/orders/checkZalopayPayment/", error.response.data);
+      }
     }
   }, []);
-  const onConfirm = () => {
-    console.log("confirm");
+
+  const refundOrder = async (order) => {
+    try {
+      const refundObject = {
+        amount: order.totalPrice,
+        orderId: order.id,
+      };
+      console.log(refundObject);
+      const refundRes = await axios.post(
+        BASE_URL + "/orders/refundZalopay",
+        refundObject
+      );
+      if (refundRes.data.returncode === 2) {
+        const mrefundid = refundRes.data.mrefundid;
+        await checkRefundStatus(mrefundid);
+      }
+    } catch (error) {
+      setIsDone(true);
+      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      console.log("/orders/refundZalopay", error.response.data);
+    }
+  };
+
+  const checkRefundStatus = async (mrefundid) => {
+    try {
+      const refundResponse = await axios.get(
+        BASE_URL + `/orders/refundStatus/${mrefundid}`
+      );
+      console.log(refundResponse.data.returnCode);
+      if (refundResponse.data.returnCode === 2) {
+        await updateOrder();
+      }
+    } catch (error) {
+      setIsDone(true);
+      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      console.log("/orders/refundStatus/", error.response.data);
+    }
+  };
+  const updateOrder = async () => {
+    try {
+      let newOrder = { ...order, status: "deny", reason: selectedReason };
+      await axios.put(BASE_URL + "/orders", newOrder);
+      if (navigation.canGoBack()) {
+        setIsDone(true);
+        setIsVisible(false);
+        Toast.success("Huỷ đơn hàng thành công", 0.5);
+        navigation.goBack();
+      }
+    } catch (error) {
+      setIsDone(true);
+      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      console.log(error.response.data);
+    }
   };
   const toggleModal = () => {
-    setIsVisible(!isVisible)
+    setIsVisible(!isVisible);
   };
   return (
     <View style={styles.container}>
@@ -76,7 +198,32 @@ const MyOrderDetailScreen = (props) => {
         </View>
       </Flex>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <StepProgess status={order.status} />
+        {order.status === "deny" ? (
+          <View
+            style={{
+              marginBottom: 10,
+              backgroundColor: "#fadfdf",
+              borderWidth: 1,
+              borderColor: THEME_COLOR,
+              borderRadius: 15,
+              padding: 16,
+            }}
+          >
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 18 }}>
+              Đơn hàng bị huỷ
+            </Text>
+            <Text
+              style={{ fontFamily: FONT.MEDIUM, fontSize: 16, marginTop: 10 }}
+            >
+              Lý do:
+            </Text>
+            <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 16 }}>
+              {order.reason ? order.reason : "Khác"}
+            </Text>
+          </View>
+        ) : (
+          <StepProgess status={order.status} />
+        )}
         <OrderInfor order={order} restaurant={restaurant} />
         <MyOrderItem order={order} />
 
@@ -132,16 +279,19 @@ const MyOrderDetailScreen = (props) => {
             bgColor={"#d9d9d9"}
             buttonText={"Xác nhận huỷ"}
             buttonHandler={() => {
-              handleCancelOrder();
+              toggleModal();
             }}
           />
         )}
       </ScrollView>
       <BackButton />
       <CancelOrderModal
+        isDone={isDone}
         isVisible={isVisible}
         onCancel={toggleModal}
         onConfirm={onConfirm}
+        selectedReason={selectedReason}
+        setSelectedReason={setSelectedReason}
       />
     </View>
   );

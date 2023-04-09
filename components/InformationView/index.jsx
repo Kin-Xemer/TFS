@@ -11,13 +11,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const InformationView = (props) => {
   const { filterFood, sliceFood } = props;
-  const toast = useToast();
-  const route = useRoute();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const [quantity, setQuantity] = useState(1);
-  const [contentOffset, setContentOffset] = useState(0);
-  const [totalPrice, setTotalPrice] = useState();
   const [isDone, setIsDone] = useState(false);
   var timesRunModal = 0;
   useEffect(() => {
