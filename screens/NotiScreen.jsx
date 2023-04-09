@@ -14,7 +14,7 @@ import {
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Flex,
   Spacer,
@@ -63,11 +63,29 @@ const NotiScreen = () => {
   }, [isFocused]);
 
   const NotificationItem = ({ message, createdAt }) => {
+    const handlePressNoti = async () => {
+      let order = await getOrderById(message);
+      navigation.navigate("MyOrderDetailScreen", {
+        orders: order,
+      });
+    };
+    const getOrderById = useCallback(async () => {
+      try {
+        const orderId = message.slice(9, 13);
+        const response = await axios.get(`${BASE_URL}/orders/${orderId}`);
+        return response.data;
+      } catch (error) {
+        console.error(error.response.data);
+        alert("Đã có lỗi xảy ra");
+      }
+    }, [message]);
     return (
-      <Flex
-        backgroundColor="white"
-        direction="row"
-        style={styles.workerLabel}
+      <TouchableOpacity
+        style={[styles.workerLabel, { backgroundColor: "#e8fafa" }]}
+        activeOpacity={0.7}
+        onPress={() => {
+          handlePressNoti(message);
+        }}
       >
         <View style={styles.iconStyle}>
           <Image
@@ -93,7 +111,7 @@ const NotiScreen = () => {
             {convertDate(createdAt)}
           </Text>
         </View>
-      </Flex>
+      </TouchableOpacity>
     );
   };
 
@@ -121,8 +139,8 @@ const styles = StyleSheet.create({
   },
   workerLabel: {
     padding: 16,
+    flexDirection: "row",
   },
 });
 
-// AppRegistry.registerComponent('custom-component', () => NotiScreen);
 export default NotiScreen;

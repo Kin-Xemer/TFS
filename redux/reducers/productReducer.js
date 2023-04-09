@@ -26,7 +26,10 @@ const saveCart = (state) => {
   state.cartsItem.map((item) => {
     sum = sum + item.quantity;
   });
-
+  // console.log("itemlist", state.itemList.length)
+  // if(state.itemList.length >0){
+  //   sum++
+  // }
   let totalPrice = 0;
   state.cartsItem.map((item) => {
     totalPrice = totalPrice + item.subTotal;
@@ -39,6 +42,7 @@ const saveCart = (state) => {
     numberCart: sum,
     totalPrice: totalPrice,
     comboList: [],
+    party : state.party
   };
   // initCart.numberCart = sum;
   console.log("old cart", newCart.numberCart)
@@ -50,6 +54,8 @@ const saveCart = (state) => {
       initCart.numberCart = res.data.numberCart;
       initCart.totalPrice = res.data.totalPrice;
       initCart.comboList = res.data.comboList;
+      initCart.party = res.data.party;
+      
     })
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
@@ -213,6 +219,11 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
         partyTotalPrice: action.payload,
+      };
+    case "SAVE_DATA_CART":
+      return {
+        ...state,
+        updateCart: saveCart(state),
       };
     default:
       return state;
