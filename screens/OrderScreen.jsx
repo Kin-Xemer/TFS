@@ -23,6 +23,7 @@ const OrderScreen = (props) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const status = useSelector((state) => state.status.status);
+  const currentFilter = useSelector((state) => state.status.currentFilter);
   const isLogin = useSelector((state) => state.account.isLogin);
   const customerId = useSelector((state) => state.account.account.customerId);
   const [loginStatus, setLoginStatus] = useState();
@@ -50,13 +51,15 @@ const OrderScreen = (props) => {
     { label: "Bị huỷ", value: "deny" },
   ]);
 
-  const handleSelectedItem = (item) => {
+  const handleSelectedItem = (filter) => {
+    dispatch({ type: "SET_CURRENT_FILTER", payload: filter });
     if (status !== "") {
-      if (item !== "all") {
-        setFilterOrder(orders.filter((orders) => orders.status === item));
+      console.log(filter);
+      if (filter !== "all") {
+        setFilterOrder(orders.filter((orders) => orders.status === filter));
         dispatch({
           type: "SET_ORDER_STATUS",
-          payload: orders.filter((orders) => orders.status === item),
+          payload: orders.filter((orders) => orders.status === filter),
         });
       } else {
         setFilterOrder(orders);
@@ -65,7 +68,6 @@ const OrderScreen = (props) => {
     }
   };
   const getAllOrder = () => {
-    setFilterOrder([]);
     setIsDone(false);
     let url = BASE_URL + "/orders/customer/" + customerId;
     axios
@@ -76,12 +78,35 @@ const OrderScreen = (props) => {
           (item) =>
             new Date(item.orderDate).getTime() - new Date().getTime() < 0
         );
+        console.log("curretn filter", currentFilter);
         setOrders(res.data);
         if (status === null && status !== "") {
+       
           setFilterOrder(res.data);
           setValue("all");
         } else if (status === "") {
+     
           setFilterOrder([]);
+        } else if (status !== null && status !== "") {
+          if (currentFilter === "all") {
+            dispatch({
+              type: "SET_ORDER_STATUS",
+              payload: res.data,
+            });
+            setFilterOrder(res.data);
+          } else {
+   
+            console.log(status.length);
+            dispatch({
+              type: "SET_ORDER_STATUS",
+              payload: res.data.filter(
+                (orders) => orders.status === currentFilter
+              ),
+            });
+            setFilterOrder(
+              res.data.filter((orders) => orders.status === currentFilter)
+            );
+          }
         }
       })
       .catch((error) => {
@@ -92,7 +117,8 @@ const OrderScreen = (props) => {
     if (isFocused) {
       getAllOrder();
       if (status !== null && status !== "") {
-        setFilterOrder(status);
+        console.log(status.length);
+        // setFilterOrder(status);
       }
     }
   }, [isFocused]);
@@ -141,8 +167,12 @@ const OrderScreen = (props) => {
             handleSelectedItem(item.value);
           }}
         />
-      {isLogin ? (
-          isDone ? <Order isFocused={isFocused} orders={filterOrder} isDone={isDone} />: <Spinner/>
+        {isLogin ? (
+          isDone ? (
+            <Order isFocused={isFocused} orders={filterOrder} isDone={isDone} />
+          ) : (
+            <Spinner />
+          )
         ) : (
           <Text>Đăng nhập để tiếp tục</Text>
         )}

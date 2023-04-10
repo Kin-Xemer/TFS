@@ -182,7 +182,7 @@ const ListCart = (props) => {
               deliveryDate: "",
               receiveTime: "",
               reason: "",
-              staffId: totalCart > 999999 ? null : 8,
+              // staffId: totalCart > 999999 ? null : 15,
               deliveryMethod: deliveryMethod,
               party: cartData.party,
             };

@@ -1,5 +1,6 @@
 const initState = {
     status: null,
+    currentFilter:"all"
   };
   
   function orderStatusReducer(state = initState, action) {
@@ -8,6 +9,11 @@ const initState = {
         return {
           ...state,
           status: action.payload
+        };
+      case "SET_CURRENT_FILTER":
+        return {
+          ...state,
+          currentFilter: action.payload
         };
       default:
         return state;

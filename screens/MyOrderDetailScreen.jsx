@@ -166,6 +166,7 @@ const MyOrderDetailScreen = (props) => {
   const updateOrder = async () => {
     try {
       let newOrder = { ...order, status: "deny", reason: selectedReason };
+      console.log(newOrder)
       await axios.put(BASE_URL + "/orders", newOrder);
       if (navigation.canGoBack()) {
         setIsDone(true);
