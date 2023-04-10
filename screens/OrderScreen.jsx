@@ -54,7 +54,7 @@ const OrderScreen = (props) => {
   const handleSelectedItem = (filter) => {
     dispatch({ type: "SET_CURRENT_FILTER", payload: filter });
     if (status !== "") {
-      console.log(filter);
+   
       if (filter !== "all") {
         setFilterOrder(orders.filter((orders) => orders.status === filter));
         dispatch({
@@ -78,7 +78,7 @@ const OrderScreen = (props) => {
           (item) =>
             new Date(item.orderDate).getTime() - new Date().getTime() < 0
         );
-        console.log("curretn filter", currentFilter);
+ 
         setOrders(res.data);
         if (status === null && status !== "") {
        
@@ -96,7 +96,7 @@ const OrderScreen = (props) => {
             setFilterOrder(res.data);
           } else {
    
-            console.log(status.length);
+           
             dispatch({
               type: "SET_ORDER_STATUS",
               payload: res.data.filter(
@@ -117,7 +117,7 @@ const OrderScreen = (props) => {
     if (isFocused) {
       getAllOrder();
       if (status !== null && status !== "") {
-        console.log(status.length);
+     
         // setFilterOrder(status);
       }
     }

@@ -25,13 +25,13 @@ const InformationView = (props) => {
     }, 1);
   }, [filterFood]);
 
-  useEffect(() => {
-    console.log("==============");
-    filterFood.map((food) => {
-      console.log(food.price);
-    });
-    console.log("==============");
-  }, [filterFood]);
+  // useEffect(() => {
+  //   console.log("==============");
+  //   filterFood.map((food) => {
+  //     console.log(food.price);
+  //   });
+  //   console.log("==============");
+  // }, [filterFood]);
   const navigateToFoodInformationScreen = useCallback(
     (food) => {
       navigation.navigate("FoodInformationScreen", { food: food });

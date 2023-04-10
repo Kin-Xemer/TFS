@@ -80,7 +80,6 @@ const CardFeedBack = (props) => {
             color={"#ffd000"}
             onChange={(rating) => {
               setRating(rating);
-              console.log(rating);
             }}
             enableSwiping={false}
             enableHalfStar={false}

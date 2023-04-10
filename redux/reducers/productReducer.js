@@ -45,7 +45,7 @@ const saveCart = (state) => {
     party : state.party
   };
   // initCart.numberCart = sum;
-  console.log("old cart", newCart.numberCart)
+  // console.log("old cart", newCart)
   axios
     .put(BASE_URL + "/carts", newCart)
     .then((res) => {

@@ -120,7 +120,7 @@ const ListCart = (props) => {
           setIsDone(true);
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
-            console.log(error.response.data.message);
+            console.log("create order:", error.response.data.message);
           }
         });
     } else if (orders.paymentMethod === "ZaloPay") {
@@ -188,6 +188,7 @@ const ListCart = (props) => {
             };
             createOrder(order);
             //  console.log(order);
+            //  console.log(order.party.itemList);
           })
           .catch((error) => {
             setIsDone(true);

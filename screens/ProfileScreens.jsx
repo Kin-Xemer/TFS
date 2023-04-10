@@ -71,7 +71,6 @@ const ProfileScreens = () => {
   const isFocused = useIsFocused();
   const [count, setCount] = useState(1);
   const [list, setList] = useState([]);
-  const [data, setData] = useState([]);
   const [prev, setPrev] = useState(0);
   const [cur, setCur] = useState(0);
   const isLogin = useSelector((state) => state.account.isLogin);
@@ -162,7 +161,7 @@ const ProfileScreens = () => {
   const fetchData = () => {
     axios
       .get(
-        BASE_URL + "//notifications/byaccount/" + customer.theAccount.accountId
+        BASE_URL + "/notifications/byaccount/" + customer.theAccount.accountId
       )
       .then((res) => {
         setList(res.data);
