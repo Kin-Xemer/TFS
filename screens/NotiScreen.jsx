@@ -1,42 +1,20 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  ImageBackground,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Animated,
-  SafeAreaView,
-  TouchableOpacity,
-  FlatList,
-  AppRegistry,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import {
-  Flex,
-  Spacer,
-  Text,
-  Heading,
-  Button,
-  useToast,
-  Box,
-  Image,
-} from "native-base";
+import { Text, Image } from "native-base";
 import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
 import {
   useIsFocused,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
-import { Toast } from "@ant-design/react-native";
 import { convertDate } from "../Utils/convertDate";
 import TopBar from "../components/TopBar";
+import NotLoginScreen from "./NotLoginScreen";
 const NotiScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -45,8 +23,10 @@ const NotiScreen = () => {
   const [listFeedBack, setListFeedback] = useState([]);
   const [isDone, setIsDone] = useState(true);
   const customer = useSelector((state) => state.account.account);
+  const isLogin = useSelector((state) => state.account.isLogin);
 
   useEffect(() => {
+    !isLogin ? navigation.navigate("LoginScreenn") : "";
     if (isFocused) {
       axios
         .get(
@@ -71,7 +51,7 @@ const NotiScreen = () => {
     };
     const getOrderById = useCallback(async () => {
       try {
-        const orderId = message.slice(9, 13);
+        const orderId = message.slice(9, 15);
         const response = await axios.get(`${BASE_URL}/orders/${orderId}`);
         return response.data;
       } catch (error) {
@@ -118,17 +98,37 @@ const NotiScreen = () => {
   const MemoizedNotificationItem = React.memo(NotificationItem);
   return (
     <View style={styles.container}>
-      <TopBar title="THÔNG BÁO" />
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={listNoti}
-        renderItem={({ item }) => (
-          <MemoizedNotificationItem
-            message={item.message}
-            createdAt={item.createdAt}
+      {isLogin ? (
+        <View>
+         <View style={{paddingLeft:10}}>
+         <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            paddingBottom: 20
+          }}
+        >
+          <Text style={[styles.title, { fontSize: 20, color: THEME_COLOR, paddingTop: 4}]}>
+            LỊCH SỬ ĐƠN HÀNG
+          </Text>
+        </View>
+         </View>
+          <FlatList
+          style={{marginBottom: 50}}
+            showsVerticalScrollIndicator={false}
+            data={listNoti}
+            renderItem={({ item }) => (
+              <MemoizedNotificationItem
+                message={item.message}
+                createdAt={item.createdAt}
+              />
+            )}
           />
-        )}
-      />
+        </View>
+      ) : (
+        <NotLoginScreen />
+      )}
     </View>
   );
 };
@@ -136,10 +136,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
+    paddingTop: 40
   },
   workerLabel: {
     padding: 16,
     flexDirection: "row",
+  },
+  title: {
+    fontSize: 14,
+    fontFamily: "Quicksand-Bold",
   },
 });
 

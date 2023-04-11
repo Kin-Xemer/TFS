@@ -51,7 +51,7 @@ const Home = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [cusName, setCusName] = useState("");
-  const [locateCoord, setLocateCoord] = useState(null);
+  const [fullName, setFullName] = useState("")
   const [events, setEvents] = useState();
   const [regions, setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
@@ -76,6 +76,7 @@ const Home = (props) => {
     getServices(dispatch);
   });
   const memoizedFoodList = useMemo(() => foods.slice(0, 15), [foods]);
+  const memoizedFoodList2 = useMemo(() => foods.slice(16, 30), [foods]);
   useEffect(() => {
     initializeAppOnce(dispatch);
     fetchData()(dispatch);
@@ -127,8 +128,11 @@ const Home = (props) => {
           payload: customerParsed,
         });
         setCusName(cusName);
+        setFullName(customerParsed.customerName)
       } else {
         setCusName("");
+        setFullName("")
+
       }
     } catch (e) {
       console.log(e);
@@ -195,7 +199,7 @@ const Home = (props) => {
         <View style={styles.locationHeader}>
           <Flex direction="row" style={{ marginBottom: 4 }}>
             <View style={{ paddingLeft: 3 }}>
-              <Text style={styles.textStyle}>Vị trí của {cusName}</Text>
+             {cusName ?  <Text style={styles.textStyle}>Xin chào, {fullName}</Text>:<Text style={styles.textStyle}>Vị trí của bạn</Text>}
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
@@ -361,7 +365,7 @@ const Home = (props) => {
           contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={memoizedFoodList}
+          data={memoizedFoodList2}
           renderItem={({ item }) => (
             <Flex direction="row" style={styles.cardFoodView}>
               <TouchableOpacity
@@ -381,7 +385,7 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
-        <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
+        {/* <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
           <ActionButton
             onPress={() => {
               handleLogout();
@@ -394,7 +398,7 @@ const Home = (props) => {
             }}
             buttonText=" Check button"
           />
-        </View>
+        </View> */}
       </ScrollView>
     </Flex>
   ) : (

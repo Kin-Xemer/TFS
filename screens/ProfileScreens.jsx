@@ -39,6 +39,7 @@ import { Entypo } from "@expo/vector-icons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import notifee, { EventType } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NotLoginScreen from "./NotLoginScreen";
 const ProfileScreens = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -77,19 +78,18 @@ const ProfileScreens = () => {
   const navigationRef = createNavigationContainerRef();
 
   useEffect(() => {
+    
     const unsubscribe = notifee.onBackgroundEvent(async ({ type, detail }) => {
       const { notification, pressAction } = detail;
 
       if (type === EventType.PRESS) {
         if (pressAction.id === "default") {
           navigation.navigate("NotiScreen");
-        }else{
-          axios.get(BASE_URL + "/orders/" + pressAction.id).then((res)=>{
-            navigation.navigate("MyOrderDetailScreen", {orders: res.data})
-          })
-        
+        } else {
+          axios.get(BASE_URL + "/orders/" + pressAction.id).then((res) => {
+            navigation.navigate("MyOrderDetailScreen", { orders: res.data });
+          });
         }
-        
       }
       await notifee.cancelNotification(notification.id);
       console.log("background-event");
@@ -119,6 +119,7 @@ const ProfileScreens = () => {
     return () => clearInterval(interval);
   }, [count]);
   useEffect(() => {
+    !isLogin ? navigation.navigate("LoginScreenn") : "";
     if (isFocused) {
       setCount(90);
       console.log("start");
@@ -142,18 +143,17 @@ const ProfileScreens = () => {
     // Display a notification
     await notifee.displayNotification({
       title: "Thông báo",
-      subtitle: '&#129395;',
+      subtitle: "&#129395;",
       body: noti.message,
       android: {
         channelId,
-        
+
         timestamp: Date.now(),
         // pressAction is needed if you want the notification to open the app when pressed
         pressAction: {
-          id: noti.message.slice(9,13),
+          id: noti.message.slice(9, 13),
         },
         showTimestamp: true,
-
       },
     });
   };
@@ -188,168 +188,172 @@ const ProfileScreens = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Avatar
-          size={"xl"}
-          bg="green.400"
-          mt={10}
-          source={{
-            uri: customer.avatarURL,
-          }}
-        >
-          {customer.theAccount.accountId}
-          <Avatar.Badge bg="coolGray.300" size={8}>
-            <TouchableOpacity
+      {isLogin?
+          <>
+          <View>
+            <Avatar
+              size={"xl"}
+              bg="green.400"
+              mt={10}
+              source={{
+                uri: customer.avatarURL,
+              }}
+            >
+              {customer.theAccount.accountId}
+              <Avatar.Badge bg="coolGray.300" size={8}>
+                <TouchableOpacity
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingTop: 3,
+                    borderRadius: 100,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Camera size="20" color="gray" variant="Bold" />
+                </TouchableOpacity>
+              </Avatar.Badge>
+            </Avatar>
+          </View>
+          <Flex
+            style={{ marginTop: 20, flexDirection: "row", alignItems: "center" }}
+          >
+            <Text
               style={{
-                alignItems: "center",
-                justifyContent: "center",
-                paddingTop: 3,
-                borderRadius: 100,
+                fontFamily: FONT.BOLD,
+                fontSize: 25,
+                paddingTop: 8,
+                marginRight: 8,
+              }}
+            >
+              {customer.theAccount.accountId}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("check");
               }}
               activeOpacity={0.7}
             >
-              <Camera size="20" color="gray" variant="Bold" />
+              <Edit2 color="black" variant="Bold" size={16} />
             </TouchableOpacity>
-          </Avatar.Badge>
-        </Avatar>
-      </View>
-      <Flex
-        style={{ marginTop: 20, flexDirection: "row", alignItems: "center" }}
-      >
-        <Text
-          style={{
-            fontFamily: FONT.BOLD,
-            fontSize: 25,
-            paddingTop: 8,
-            marginRight: 8,
-          }}
-        >
-          {customer.theAccount.accountId}
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            console.log("check");
-          }}
-          activeOpacity={0.7}
-        >
-          <Edit2 color="black" variant="Bold" size={16} />
-        </TouchableOpacity>
-      </Flex>
-      <View style={{ marginTop: 100, width: "100%" }}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => {
-            navigation.navigate("ProfileInfoScreen");
-          }}
-          style={{
-            backgroundColor: "#eeeeee",
-            padding: 16,
-            borderRadius: 15,
-            alignItems: "center",
-            marginBottom: 30,
-            flexDirection: "row",
-          }}
-        >
-          <ProfileCircle variant="Bold" size={24} color={THEME_COLOR} />
-          <Text
-            style={{
-              fontFamily: FONT.MEDIUM,
-              paddingBottom: 1,
-              fontSize: 16,
-              marginLeft: 8,
-            }}
-          >
-            Thông tin cá nhân
-          </Text>
-          <Spacer />
-          <Entypo name="chevron-right" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#eeeeee",
-            padding: 16,
-            borderRadius: 15,
-            alignItems: "center",
-            marginBottom: 30,
-            flexDirection: "row",
-          }}
-          onPress={() => {
-            pushNotifications(list[0]);
-          }}
-        >
-          <Setting2 color={THEME_COLOR} size={24} variant="Bold" />
-          <Text
-            style={{
-              fontFamily: FONT.MEDIUM,
-              paddingBottom: 1,
-              fontSize: 16,
-              marginLeft: 8,
-            }}
-          >
-            Cài đặt
-          </Text>
-          <Spacer />
-          <Entypo name="chevron-right" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#eeeeee",
-            padding: 16,
-            borderRadius: 15,
-            alignItems: "center",
-            marginBottom: 30,
-            flexDirection: "row",
-          }}
-          activeOpacity={0.7}
-          onPress={() => {
-            navigation.navigate("MyFeedbackScreen", {
-              id: customer.customerId,
-            });
-          }}
-        >
-          <Message color={THEME_COLOR} size={24} variant="Bold" />
-          <Text
-            style={{
-              fontFamily: FONT.MEDIUM,
-              paddingBottom: 1,
-              fontSize: 16,
-              marginLeft: 8,
-            }}
-          >
-            Đánh giá của tôi
-          </Text>
-          <Spacer />
-          <Entypo name="chevron-right" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#eeeeee",
-            padding: 16,
-            borderRadius: 15,
-            alignItems: "center",
-            marginBottom: 30,
-            flexDirection: "row",
-          }}
-          activeOpacity={0.7}
-          onPress={() => {
-            handleLogout();
-          }}
-        >
-          <Logout color={THEME_COLOR} size={24} variant="Bold" />
-          <Text
-            style={{
-              fontFamily: FONT.MEDIUM,
-              paddingBottom: 1,
-              fontSize: 16,
-              marginLeft: 8,
-            }}
-          >
-            Đăng xuất
-          </Text>
-          <Spacer />
-          <Entypo name="chevron-right" size={28} color="black" />
-        </TouchableOpacity>
-      </View>
+          </Flex>
+          <View style={{ marginTop: 100, width: "100%" }}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate("ProfileInfoScreen");
+              }}
+              style={{
+                backgroundColor: "#eeeeee",
+                padding: 16,
+                borderRadius: 15,
+                alignItems: "center",
+                marginBottom: 30,
+                flexDirection: "row",
+              }}
+            >
+              <ProfileCircle variant="Bold" size={24} color={THEME_COLOR} />
+              <Text
+                style={{
+                  fontFamily: FONT.MEDIUM,
+                  paddingBottom: 1,
+                  fontSize: 16,
+                  marginLeft: 8,
+                }}
+              >
+                Thông tin cá nhân
+              </Text>
+              <Spacer />
+              <Entypo name="chevron-right" size={28} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#eeeeee",
+                padding: 16,
+                borderRadius: 15,
+                alignItems: "center",
+                marginBottom: 30,
+                flexDirection: "row",
+              }}
+              activeOpacity={0.7}
+              onPress={() => {
+                // pushNotifications(list[0]);
+              }}
+            >
+              <Setting2 color={THEME_COLOR} size={24} variant="Bold" />
+              <Text
+                style={{
+                  fontFamily: FONT.MEDIUM,
+                  paddingBottom: 1,
+                  fontSize: 16,
+                  marginLeft: 8,
+                }}
+              >
+                Cài đặt
+              </Text>
+              <Spacer />
+              <Entypo name="chevron-right" size={28} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#eeeeee",
+                padding: 16,
+                borderRadius: 15,
+                alignItems: "center",
+                marginBottom: 30,
+                flexDirection: "row",
+              }}
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate("MyFeedbackScreen", {
+                  id: customer.customerId,
+                });
+              }}
+            >
+              <Message color={THEME_COLOR} size={24} variant="Bold" />
+              <Text
+                style={{
+                  fontFamily: FONT.MEDIUM,
+                  paddingBottom: 1,
+                  fontSize: 16,
+                  marginLeft: 8,
+                }}
+              >
+                Đánh giá của tôi
+              </Text>
+              <Spacer />
+              <Entypo name="chevron-right" size={28} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#eeeeee",
+                padding: 16,
+                borderRadius: 15,
+                alignItems: "center",
+                marginBottom: 30,
+                flexDirection: "row",
+              }}
+              activeOpacity={0.7}
+              onPress={() => {
+                handleLogout();
+              }}
+            >
+              <Logout color={THEME_COLOR} size={24} variant="Bold" />
+              <Text
+                style={{
+                  fontFamily: FONT.MEDIUM,
+                  paddingBottom: 1,
+                  fontSize: 16,
+                  marginLeft: 8,
+                }}
+              >
+                Đăng xuất
+              </Text>
+              <Spacer />
+              <Entypo name="chevron-right" size={28} color="black" />
+            </TouchableOpacity>
+          </View>
+        </>:<NotLoginScreen/>}
     </View>
   );
 };

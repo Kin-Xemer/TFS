@@ -25,6 +25,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
 import { FONT } from "../../Utils/themeFont";
+import { Toast } from "@ant-design/react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
@@ -114,6 +115,7 @@ const ListCart = (props) => {
         .then((res) => {
           setIsDone(true);
           dispatch({ type: "LOGOUT" });
+          Toast.success("Đặt hàng thành công", 1)
           navigation.navigate("Home");
         })
         .catch((error) => {

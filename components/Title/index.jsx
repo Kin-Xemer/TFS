@@ -14,7 +14,7 @@ const Title = (props) => {
       <Text style={styles.textStyle}>{textTitle}</Text>
       <Spacer />
       <Flex direction="row">
-        <Text style={[styles.textStyle, styles.moreText]}>Xem thêm</Text>
+        {/* <Text style={[styles.textStyle, styles.moreText]}>Xem thêm</Text>
         <View
           style={{
             justifyContent: "center",
@@ -23,7 +23,7 @@ const Title = (props) => {
           }}
         >
           <Icon name="chevron-right" size={16} color={THEME_COLOR} />
-        </View>
+        </View> */}
       </Flex>
     </Flex>
   );

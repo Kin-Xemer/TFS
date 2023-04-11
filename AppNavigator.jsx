@@ -43,9 +43,12 @@ import OTPScreen from "./screens/OTPScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
+import { useNavigation } from "@react-navigation/native";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const AppNavigator = () => {
+  const navigation = useNavigation();
+
   return (
     <Provider>
       <Stack.Navigator

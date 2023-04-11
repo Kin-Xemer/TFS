@@ -51,7 +51,7 @@ const MyOrderDetailScreen = (props) => {
     });
   }, []);
   useEffect(() => {
- console.log(selectedReason)
+    console.log(selectedReason);
   }, [selectedReason]);
   // const onConfirm = useCallback((selectedReason) => {
   //   setIsDone(false);
@@ -165,9 +165,15 @@ const MyOrderDetailScreen = (props) => {
   };
   const updateOrder = async () => {
     try {
-      let newOrder = { ...order, status: "deny", reason: selectedReason };
-      console.log(newOrder)
-      await axios.put(BASE_URL + "/orders", newOrder);
+      let newOrder = {
+        orderId: order.id,
+        reason: selectedReason,
+        staffId: 8,
+        status: "deny",
+      };
+      console.log(newOrder);
+      console.log(newOrder);
+      await axios.put(BASE_URL + "/orders/status", newOrder);
       if (navigation.canGoBack()) {
         setIsDone(true);
         setIsVisible(false);

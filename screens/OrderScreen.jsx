@@ -17,6 +17,7 @@ import { ArrowUp3, ArrowDown3 } from "iconsax-react-native";
 import Order from "../components/Order/index";
 import { FONT } from "../Utils/themeFont.js";
 import { BASE_URL } from "../services/baseURL.js";
+import NotLoginScreen from "./NotLoginScreen.jsx";
 const OrderScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -26,7 +27,6 @@ const OrderScreen = (props) => {
   const currentFilter = useSelector((state) => state.status.currentFilter);
   const isLogin = useSelector((state) => state.account.isLogin);
   const customerId = useSelector((state) => state.account.account.customerId);
-  const [loginStatus, setLoginStatus] = useState();
   const [orders, setOrders] = useState([]);
   const [filterOrder, setFilterOrder] = useState([]);
   const [isDone, setIsDone] = useState(false);
@@ -54,7 +54,6 @@ const OrderScreen = (props) => {
   const handleSelectedItem = (filter) => {
     dispatch({ type: "SET_CURRENT_FILTER", payload: filter });
     if (status !== "") {
-   
       if (filter !== "all") {
         setFilterOrder(orders.filter((orders) => orders.status === filter));
         dispatch({
@@ -78,14 +77,12 @@ const OrderScreen = (props) => {
           (item) =>
             new Date(item.orderDate).getTime() - new Date().getTime() < 0
         );
- 
+
         setOrders(res.data);
         if (status === null && status !== "") {
-       
           setFilterOrder(res.data);
           setValue("all");
         } else if (status === "") {
-     
           setFilterOrder([]);
         } else if (status !== null && status !== "") {
           if (currentFilter === "all") {
@@ -95,8 +92,6 @@ const OrderScreen = (props) => {
             });
             setFilterOrder(res.data);
           } else {
-   
-           
             dispatch({
               type: "SET_ORDER_STATUS",
               payload: res.data.filter(
@@ -114,10 +109,10 @@ const OrderScreen = (props) => {
       });
   };
   useEffect(() => {
+    !isLogin ? navigation.navigate("LoginScreenn") : "";
     if (isFocused) {
       getAllOrder();
       if (status !== null && status !== "") {
-     
         // setFilterOrder(status);
       }
     }
@@ -174,7 +169,7 @@ const OrderScreen = (props) => {
             <Spinner />
           )
         ) : (
-          <Text>Đăng nhập để tiếp tục</Text>
+          <NotLoginScreen />
         )}
       </View>
     </View>
@@ -207,5 +202,6 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Regular",
     fontSize: 16,
   },
+  
 });
 export default OrderScreen;

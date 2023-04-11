@@ -13,18 +13,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Toast } from "@ant-design/react-native";
-import {  useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, Message, MinusCirlce } from "iconsax-react-native";
-import {
-  Flex,
-  Spacer,
-  Text,
-  Heading,
-  Divider,
-  Spinner,
-} from "native-base";
+import { Flex, Spacer, Text, Heading, Divider, Spinner } from "native-base";
 import { convertPrice } from "../Utils/convertPrice";
 import RatingBar from "../components/RatingBar";
 import { THEME_COLOR } from "../Utils/themeColor";
@@ -46,6 +39,7 @@ const FoodInformationScreen = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [food, setFood] = useState(route.params.food);
+  const isLogin = useSelector((state) => state.account.isLogin);
   const [quantity, setQuantity] = useState(1);
   const [contentOffset, setContentOffset] = useState(0);
   const [totalPrice, setTotalPrice] = useState();
@@ -164,8 +158,8 @@ const FoodInformationScreen = (props) => {
               onPress={() => {
                 if (navigation.canGoBack()) {
                   if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                    navigation.goBack();
+                  }
                 }
               }}
             >
@@ -388,11 +382,15 @@ const FoodInformationScreen = (props) => {
               style={styles.buttonStyle}
               activeOpacity={0.8}
               onPress={() => {
-                addToCart(food, quantity);
-                Toast.success("Đã thêm vào giỏ hàng", 0.5);
-                if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                if (isLogin) {
+                  addToCart(food, quantity);
+                  Toast.success("Đã thêm vào giỏ hàng", 0.5);
+                  if (navigation.canGoBack()) {
+                    navigation.goBack();
+                  }
+                }else{
+                  navigation.navigate("LoginScreenn")
+                }
               }}
             >
               <Text style={styles.buttonText}>

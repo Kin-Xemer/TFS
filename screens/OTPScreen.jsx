@@ -1,4 +1,5 @@
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import { Button } from "native-base";
 import { useRef, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
@@ -7,11 +8,14 @@ import OTPTextInput from "react-native-otp-textinput";
 import AlertPopup from "../components/AlertPopup";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
+import { BASE_URL } from '../services/baseURL';
+import { Toast } from "@ant-design/react-native";
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
 const COLOR = "#FFDB89";
 const OTPScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [textOTP, setTextOTP] = useState("");
   const [error, setError] = useState("");
   const [isOpen, setIsOpen] = useState("");
@@ -36,12 +40,21 @@ const OTPScreen = () => {
         theAccount: {
           accountId: phone,
           password: password,
-          phoneNumber: "string",
+          phoneNumber: phone,
           roleId: 5,
           status: true,
         },
-      };
+      }
       console.log(cus)
+      axios.post(`${BASE_URL}/customers`, cus).then((response) => {
+        Toast.success("Đặng ký tài khoản thành công", 1)
+        navigation.navigate("LoginScreenn")
+      
+      }).catch((err)=>{
+        console.log("Đã có lỗi xảy ra, vui lòng thử lại sau")
+        console.log(err.response.data)
+      })
+      
     } else {
       setIsOpen(true);
     }
