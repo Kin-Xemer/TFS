@@ -121,6 +121,7 @@ const Home = (props) => {
       const cus = await AsyncStorage.getItem("customer");
       if (cus !== null) {
         const customerParsed = JSON.parse(cus);
+        console.log(customerParsed)
         let cusName = customerParsed.theAccount.accountId;
         getCartById()(dispatch, cusName);
         dispatch({
@@ -140,20 +141,7 @@ const Home = (props) => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      dispatch({
-        type: "SET_ORDER_STATUS",
-        payload: null,
-      });
-      await AsyncStorage.removeItem("customer");
-      dispatch({ type: "LOGOUT" });
-      dispatch({ type: "SET_LOGIN_STATUS_LOGOUT" });
-      navigation.navigate("LoginScreenn");
-    } catch (e) {
-      alert("Failed to clear the async storage.");
-    }
-  };
+
 
   const getLocation = async () => {
     setIsFindDone(false);

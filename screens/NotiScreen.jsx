@@ -110,7 +110,7 @@ const NotiScreen = () => {
           }}
         >
           <Text style={[styles.title, { fontSize: 20, color: THEME_COLOR, paddingTop: 4}]}>
-            LỊCH SỬ ĐƠN HÀNG
+            THÔNG BÁO
           </Text>
         </View>
          </View>

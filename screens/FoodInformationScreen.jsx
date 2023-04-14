@@ -154,7 +154,7 @@ const FoodInformationScreen = (props) => {
               },
             ]}
           >
-            <TouchableWithoutFeedback
+            <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
                   if (navigation.canGoBack()) {
@@ -181,7 +181,7 @@ const FoodInformationScreen = (props) => {
                   <Entypo name="chevron-left" size={36} color="white" />
                 )}
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           </Animated.View>
 
           <Animated.ScrollView

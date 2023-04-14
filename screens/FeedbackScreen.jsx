@@ -97,7 +97,7 @@ const FeedbackScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <TopBar title="Đánh giá"/>
+      <TopBar title="ĐÁNH GIÁ"/>
       <ScrollView
       style={{marginTop: 10}}
       showsVerticalScrollIndicator={false}

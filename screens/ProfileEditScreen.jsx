@@ -41,6 +41,7 @@ import {
 } from "iconsax-react-native";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { validateEmail } from "../Utils/validateEmail";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getCustomerById } from "../Utils/api/getCustomerById";
 const ProfileEditScreen = () => {
   const route = useRoute();
@@ -71,8 +72,23 @@ const ProfileEditScreen = () => {
     axios
       .put(BASE_URL + "/customers", newCustomer)
       .then((res) => {
-        getCustomerById(dispatch, customer.customerId);
+         getCustomerById(dispatch, customer.customerId);
+        const saveData = async () => {
+          try {
+            await AsyncStorage.setItem(
+              "customer",
+              JSON.stringify(res.data)
+            );
+            await AsyncStorage.setItem(
+              "cart",
+              JSON.stringify(res.data.cart.cartItems)
+            );
+          } catch (e) {
+            console.log("Save storage", e);
+          }
+        };
         Toast.success("Cập nhật thành công", 1);
+        saveData()
         if (navigation.canGoBack()) {
           navigation.goBack();
         }
