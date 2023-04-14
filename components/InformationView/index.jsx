@@ -17,8 +17,8 @@ const InformationView = (props) => {
   useEffect(() => {
     setIsDone(false);
     const interval = setInterval(() => {
-      timesRunModal += 1;
-      if (timesRunModal === 1) {
+      timesRunModal += 0.5;
+      if (timesRunModal === 0.5) {
         setIsDone(true);
         clearInterval(interval);
       }

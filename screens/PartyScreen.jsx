@@ -45,7 +45,6 @@ const PartyScreen = () => {
   const cart = useSelector((state) => state.cart);
 
   useEffect(() => {
-
     console.log("subtotal in screen", party.subTotal);
     console.log("total", totalPrice);
   }, [itemParty.length, menuQuantity, subTotal]);
@@ -239,6 +238,7 @@ const PartyScreen = () => {
                 Số lượng:
               </Text>
             </TouchableOpacity>
+
             <TextInput
               maxLength={3}
               keyboardType={"numeric"}
@@ -257,6 +257,11 @@ const PartyScreen = () => {
               value={menuQuantity}
             />
             <Text style={{ fontSize: 14, fontFamily: FONT.MEDIUM }}>bàn</Text>
+          </Flex>
+          <Flex direction="row">
+            {" "}
+            <Spacer />
+            <Text style={{ fontSize: 11, fontFamily: FONT.MEDIUM, color:"#9c9c9c" }}>10 người/bàn</Text>
           </Flex>
           <Box mb={2}>
             <Text style={{ fontFamily: FONT.SEMI, fontSize: 16 }}>

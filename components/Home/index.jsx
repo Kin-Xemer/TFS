@@ -121,7 +121,6 @@ const Home = (props) => {
       const cus = await AsyncStorage.getItem("customer");
       if (cus !== null) {
         const customerParsed = JSON.parse(cus);
-        console.log(customerParsed)
         let cusName = customerParsed.theAccount.accountId;
         getCartById()(dispatch, cusName);
         dispatch({
@@ -258,7 +257,7 @@ const Home = (props) => {
         </View>
       </Flex>
       <View style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}>
-        <SearchBar />
+        {/* <SearchBar /> */}
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}

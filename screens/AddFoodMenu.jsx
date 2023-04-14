@@ -53,11 +53,6 @@ const AddFoodMenu = (props) => {
   const [contentOffset, setContentOffset] = useState(0);
   const id = "test-toast";
 
-  useEffect(() => {
-    ScrollViewRef.current.scrollTo({
-      y: 153,
-    });
-  }, [filterFood]);
 
   const filterSelectedRegions = (array) => {
     if (regionProps === "") {
@@ -114,7 +109,15 @@ const AddFoodMenu = (props) => {
       }
     }
   };
-
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isEndReached = layoutMeasurement.height + contentOffset.y >= contentSize.height -0.001;
+    if (isEndReached) {
+      // Nếu người dùng cuộn tới cuối danh sách thì tải thêm dữ liệu
+      // loadData();
+      setSliceFood(sliceFood + 10);
+    }
+  };
   const handleFilter = (regions, events, price) => {
     console.log(
       "regions: " + regions + " Event: " + events + "price: " + price
@@ -140,96 +143,65 @@ const AddFoodMenu = (props) => {
   }, [regionProps, eventProps, priceProps, filterSelected]);
 
   const ScrollViewRef = useRef();
-  //   const isCloseToBottom = ({
-  //     layoutMeasurement,
-  //     contentOffset,
-  //     contentSize,
-  //   }) => {
-  //     const paddingToBottom = 20;
-  //     return (
-  //       layoutMeasurement.height + contentOffset.y >=
-  //       contentSize.height - paddingToBottom
-  //     );
-  //   };
-
   return (
-
-      <Flex style={styles.container}>
-        <View>
-          <View style={{ alignItems: "center", flexDirection: "row" }}>
-            <TouchableOpacity
-              onPress={() => {
+    <Flex style={styles.container}>
+      <View>
+        <View style={{ alignItems: "center", flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
                 if (navigation.canGoBack()) {
-                  if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                  navigation.goBack();
                 }
-              }}
-            >
-              <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
-            </TouchableOpacity>
-            <View style={{ width: "80%" }}>
-              <SearchBar />
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                refRBSheet.current.open();
-              }}
-            >
-              <View style={{ marginHorizontal: 6 }}>
-                <Setting4 size="26" color="#000" />
-              </View>
-            </TouchableOpacity>
+              }
+            }}
+          >
+            <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
+          </TouchableOpacity>
+          <View style={{ width: "80%" }}>
+          {/* <SearchBar 
+              setFilterFood={setFilterFood} 
+              foodList={filterFood} 
+              /> */}
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              refRBSheet.current.open();
+            }}
+          >
+            <View style={{ marginHorizontal: 6 }}>
+              <Setting4 size="26" color="#000" />
+            </View>
+          </TouchableOpacity>
         </View>
-        <FilterView
-          setFilterSelected={setFilterSelected}
-          filterSelected={filterSelected}
+      </View>
+      <FilterView
+        setFilterSelected={setFilterSelected}
+        filterSelected={filterSelected}
+        listFood={food}
+      />
+      <ScrollView
+        ref={ScrollViewRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{minHeight: screenHeight - 60}}
+        scrollEventThrottle={16}
+        onScroll={handleScroll}
+      >
+        <InformationViewMenu
+          sliceFood={sliceFood}
           listFood={food}
+          filterSelected={filterSelected}
+          filterFood={filterFood}
+          setFilterFood={setFilterFood}
         />
-        <ScrollView
-          ref={ScrollViewRef}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          // onScroll={Animated.event(
-          //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          //   {
-          //     useNativeDriver: true,
-          //     listener: (event) => {
-          //       setContentOffset(event.nativeEvent.contentOffset.y);
-          //       setIsScrollBottom(false);
-          //       // if (ifCloseToTop(event.nativeEvent)) {
-          //       //   console.log(event.nativeEvent.contentOffset.y)
-          //       //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
-          //       //   // ScrollViewRef.current.scrollTo({
-          //       //   //   y:
-          //       //   //   140
-          //       //   // });
-          //       // }
-          //       // console.log(event.nativeEvent.contentOffset.y)
-          //       if (isCloseToBottom(event.nativeEvent)) {
-          //         setSliceFood(sliceFood + 10);
-          //         setIsScrollBottom(true);
-          //       }
-          //     },
-          //   }
-          // )}
-        >
-          <InformationViewMenu
-            sliceFood={sliceFood}
-            listFood={food}
-            filterSelected={filterSelected}
-            filterFood={filterFood}
-            setFilterFood={setFilterFood}
-          />
-        </ScrollView>
-        <BottomSheet
-          handleFilter={handleFilter}
-          events={events}
-          regions={regions}
-          refRBSheet={refRBSheet}
-        />
-      </Flex>
+      </ScrollView>
+      <BottomSheet
+        handleFilter={handleFilter}
+        events={events}
+        regions={regions}
+        refRBSheet={refRBSheet}
+      />
+    </Flex>
   );
 };
 const styles = StyleSheet.create({
@@ -237,36 +209,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     backgroundColor: "white",
-  },
-  textStyle: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 14,
-  },
-
-  titleBox: {
-    width: "100%",
-    alignItems: "flex-start",
-    height: 42,
-  },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 25, color: THEME_COLOR },
-  textDescription: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 15,
-  },
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    overflow: "hidden",
-    height: HEADER_MAX_HEIGHT,
-  },
-
-  ratingPointField: {
-    width: "45%",
-    height: "100%",
-    justifyContent: "center",
   },
 });
 export default AddFoodMenu;

@@ -64,6 +64,7 @@ const FilterView = (props) => {
       ref={ScrollViewRef}
       horizontal={true}
       style={{ backgroundColor: "white" }}
+      showsHorizontalScrollIndicator={false}
       onScroll={({ nativeEvent }) => {
         // console.log(nativeEvent.contentOffset.x)
       }}

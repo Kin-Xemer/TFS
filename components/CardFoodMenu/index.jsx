@@ -23,10 +23,7 @@ const CardFoodMenu = (props) => {
   const itemParty = useSelector((state) => state.party.itemList);
   const itemPartyEdit = useSelector((state) => state.cart.itemList);
   const navigation = useNavigation();
-  const addToCart = async (food, quantity) => {
-    // await dispatch({ type: "ADD_CART", payload: food, quantity });
-    // await getCartById()(dispatch, username);
-  };
+
   const addMenu = () => {
     if (party !== null) {
       if (itemPartyEdit.some((item) => item.foodId === food.id)) {

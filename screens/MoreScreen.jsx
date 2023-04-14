@@ -5,6 +5,7 @@ import {
   Dimensions,
   Animated,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef } from "react";
@@ -30,26 +31,13 @@ const FoodInformationScreen = (props) => {
   const [food, setFood] = useState(route.params.food);
   const [events, setEvents] = useState(route.params.events);
   const [regions, setRegions] = useState(route.params.regions);
-  const [currentPos, setCurrentPos] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [sliceFood, setSliceFood] = useState(10);
-  const [selectedRegions, setSelectedRegions] = useState();
-  const [selectedEvents, setSelectedEvents] = useState();
   const [filterFood, setFilterFood] = useState([]);
-  const [isScrollBottom, setIsScrollBottom] = useState(false);
   const [regionProps, setRegionProps] = useState("");
   const [eventProps, setEventProps] = useState("");
   const [priceProps, setPriceProps] = useState("");
+  const [query, setQuery] = useState("");
   const [filterSelected, setFilterSelected] = useState("Tất cả");
-  const [contentOffset, setContentOffset] = useState(0);
-  const id = "test-toast";
-
-  useEffect(() => {
-    ScrollViewRef.current.scrollTo({
-      y: 153,
-    });
-  }, [filterFood]);
-
   const filterSelectedRegions = (array) => {
     if (regionProps === "") {
       return array;
@@ -116,67 +104,43 @@ const FoodInformationScreen = (props) => {
       setPriceProps(price);
     }
   };
+  const handleSearchValue = (array) => {
+    return array.filter((food) =>
+      food.foodName.toLowerCase().includes(query.toLowerCase())
+    );
+  };
   useEffect(() => {
     let result = food;
     result = filterSelectedRegions(result);
     result = filterSelectedCategory(result);
     result = filterSelectedEvents(result);
+    result = handleSearchValue(result);
     filterSelectedPrice(result);
     // filterSelectedPrice();
     setFilterFood(result);
-  }, [regionProps, eventProps, priceProps, filterSelected]);
+  }, [regionProps, eventProps, priceProps, filterSelected, query]);
 
-  const scrollY = useRef(new Animated.Value(0)).current;
   const ScrollViewRef = useRef();
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, -HEADER_SCROLL_DISTANCE],
-    extrapolate: "clamp",
-  });
-
-  const imageOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 1, 0],
-    extrapolate: "clamp",
-  });
-  const imageTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, 100],
-    extrapolate: "clamp",
-  });
-
-  const titleScale = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 1, 1],
-    extrapolate: "clamp",
-  });
-  const titleTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, 0, -8],
-    extrapolate: "clamp",
-  });
-  const isCloseToBottom = ({
-    layoutMeasurement,
-    contentOffset,
-    contentSize,
-  }) => {
-    const paddingToBottom = 20;
-    return (
-      layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom
-    );
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isEndReached =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 0.001;
+    if (isEndReached) {
+      // Nếu người dùng cuộn tới cuối danh sách thì tải thêm dữ liệu
+      // loadData();
+      setSliceFood(sliceFood + 10);
+    }
   };
-
   return (
     <Flex style={styles.container}>
       <View style={{ height: 36 }}></View>
-      <Animated.View
+      {/* <View
         style={[
           styles.header,
-          { transform: [{ translateY: headerTranslateY }] },
+         
         ]}
       >
-        <Animated.Image
+        <Image
           style={[
             styles.headerBackground,
             {
@@ -188,95 +152,68 @@ const FoodInformationScreen = (props) => {
             uri: route.params.banner,
           }}
         />
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.topBar,
-          {
-            transform: [{ scale: titleScale }, { translateY: titleTranslateY }],
-          },
-        ]}
-      >
+      </View> */}
+      <View style={[styles.topBar]}>
         <View style={{ width: "100%" }}>
-          {contentOffset > 128 ? (
-            <Animated.View
-              style={{ alignItems: "center", flexDirection: "row" }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  if (navigation.canGoBack()) {
-                    navigation.goBack();
-                  }
-                }}
-              >
-                <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
-              </TouchableOpacity>
-              <View style={{ width: "80%" }}>
-                <SearchBar />
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  refRBSheet.current.open();
-                }}
-              >
-                <View style={{ marginHorizontal: 6 }}>
-                  <Setting4 size="26" color="#000" />
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
-          ) : (
+          <View style={{ alignItems: "center", flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
                   navigation.goBack();
                 }
               }}
-              style={{ width: "10%" }}
             >
-              <Entypo name="chevron-left" size={36} color="white" />
+              <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
             </TouchableOpacity>
-          )}
+            <View style={{ width: "80%" }}>
+              <SearchBar setQuery={setQuery} />
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                refRBSheet.current.open();
+              }}
+            >
+              <View style={{ marginHorizontal: 6 }}>
+                <Setting4 size="26" color="#000" />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </Animated.View>
-
-      <Animated.ScrollView
-        ref={ScrollViewRef}
+      </View>
+      <FilterView
+        setFilterSelected={setFilterSelected}
+        filterSelected={filterSelected}
+        listFood={food}
+      />
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingTop: HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 20,
-          minHeight: screenHeight,
-        }}
+        contentContainerStyle={{ minHeight: screenHeight - 150 }}
         scrollEventThrottle={16}
-        stickyHeaderIndices={[0]}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-            listener: (event) => {
-              setContentOffset(event.nativeEvent.contentOffset.y);
-              setIsScrollBottom(false);
-              // if (ifCloseToTop(event.nativeEvent)) {
-              //   console.log(event.nativeEvent.contentOffset.y)
-              //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
-              //   // ScrollViewRef.current.scrollTo({
-              //   //   y:
-              //   //   140
-              //   // });
-              // }
-              // console.log(event.nativeEvent.contentOffset.y)
-              if (isCloseToBottom(event.nativeEvent)) {
-                setSliceFood(sliceFood + 10);
-                setIsScrollBottom(true);
-              }
-            },
-          }
-        )}
+        // onScroll={Animated.event(
+        //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        //   {
+        //     useNativeDriver: true,
+        //     listener: (event) => {
+        //       setContentOffset(event.nativeEvent.contentOffset.y);
+        //       setIsScrollBottom(false);
+        //       // if (ifCloseToTop(event.nativeEvent)) {
+        //       //   console.log(event.nativeEvent.contentOffset.y)
+        //       //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
+        //       //   // ScrollViewRef.current.scrollTo({
+        //       //   //   y:
+        //       //   //   140
+        //       //   // });
+        //       // }
+        //       // console.log(event.nativeEvent.contentOffset.y)
+        //       if (isCloseToBottom(event.nativeEvent)) {
+        //         setSliceFood(sliceFood + 10);
+        //         setIsScrollBottom(true);
+        //       }
+        //     },
+        //   }
+        // )}
+        onScroll={handleScroll}
       >
-        <FilterView
-          setFilterSelected={setFilterSelected}
-          filterSelected={filterSelected}
-          listFood={food}
-        />
         <InformationView
           sliceFood={sliceFood}
           listFood={food}
@@ -284,7 +221,7 @@ const FoodInformationScreen = (props) => {
           filterFood={filterFood}
           setFilterFood={setFilterFood}
         />
-      </Animated.ScrollView>
+      </ScrollView>
       <BottomSheet
         handleFilter={handleFilter}
         events={events}
@@ -297,7 +234,7 @@ const FoodInformationScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 55,
+    paddingTop: 45,
     backgroundColor: "white",
   },
   textStyle: {
@@ -305,47 +242,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  titleBox: {
-    width: "100%",
-    alignItems: "flex-start",
-    height: 42,
-  },
   priceText: { fontFamily: "Quicksand-Bold", fontSize: 25, color: THEME_COLOR },
   textDescription: {
     fontFamily: "Quicksand-Bold",
     fontSize: 15,
   },
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    overflow: "hidden",
-    height: HEADER_MAX_HEIGHT,
-  },
-  headerBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    width: null,
-    width: "100%",
-    height: IMAGE_HEIGHT,
-    resizeMode: "cover",
-  },
   topBar: {
-    marginTop: 60,
+    marginTop: 40,
     height: 80,
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-  },
-  ratingPointField: {
-    width: "45%",
-    height: "100%",
-    justifyContent: "center",
   },
 });
 export default FoodInformationScreen;
