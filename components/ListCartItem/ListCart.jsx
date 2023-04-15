@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -26,6 +26,9 @@ import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
 import { FONT } from "../../Utils/themeFont";
 import { Toast } from "@ant-design/react-native";
+import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
+import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
+import { calculateShippingFee } from "../../Utils/shipCost";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
@@ -34,7 +37,6 @@ const ListCart = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
   const items = useSelector((state) => state.cart);
-  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [isDone, setIsDone] = useState(true);
   const customerId = useSelector((state) => state.account.account.customerId);
   const stringAddress = useSelector((state) => state.address.stringAddress);
@@ -54,18 +56,41 @@ const ListCart = (props) => {
   const nearlyRestaurant = useSelector(
     (state) => state.restaurant.nearRestaurant
   );
+  const specRes = useSelector((state) => state.restaurant.specRes);
+  const minDistance = useSelector((state) => state.restaurant.minDistance);
 
   const [discount, setDiscount] = useState(0);
-  const [deliveryFee, seyDeliveryFee] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const [servicesFee, setServicesFee] = useState(0);
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
+  const [weight, setWeight] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isVisible, setIsVisible] = useState(false);
   const [openPicker, setOpenPicker] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const refRBSheet = useRef();
 
+  useEffect(() => {
+    deliveryMethod === "delivery"
+      ? setDeliveryFee(calculateShippingFee(weight, minDistance / 1000))
+      : setDeliveryFee(0);
+  }, [minDistance, weight, deliveryMethod, specRes]);
+
+  useEffect(() => {
+    if (!specRes) {
+      getNearlyRestaurant(
+        stringAddress === "" ? address : stringAddress,
+        dispatch
+      );
+    }
+  }, [stringAddress, address, specRes]);
+
+  const onDeliveryMethodChange = (value) => {
+    setDeliveryMethod(value);
+    dispatch({ type: "SET_SPEC_RESTAURANT", specRes: null });
+  };
   let list = [];
   let totalCart = 0;
   Object.keys(items.cartsItem).forEach(function (item) {
@@ -88,24 +113,6 @@ const ListCart = (props) => {
     setTextAreaCount(value.length);
     setNote(value);
   };
-
-  // function convertUTCDateToLocalDate(date) {
-  //   var newDate = new Date(
-  //     date.getTime() + date.getTimezoneOffset() * 60 * 1000
-  //   );
-  //   var offset = date.getTimezoneOffset() / 60;
-  //   var hours = date.getHours();
-  //   newDate.setHours(hours - offset);
-  //   return newDate;
-  // }
-
-  // const convertDateTime = () => {
-  //   let dt = new Date();
-  //   let date = convertUTCDateToLocalDate(dt).toISOString();
-  //   let day = date.slice(0, 10);
-  //   let time = date.slice(11, 22);
-  //   return time + " " + day;
-  // };
   const createOrder = (orders) => {
     if (orders.paymentMethod === "cash") {
       let url = BASE_URL + "/orders";
@@ -115,7 +122,7 @@ const ListCart = (props) => {
         .then((res) => {
           setIsDone(true);
           dispatch({ type: "LOGOUT" });
-          Toast.success("Đặt hàng thành công", 1)
+          Toast.success("Đặt hàng thành công", 1);
           navigation.navigate("Home");
         })
         .catch((error) => {
@@ -140,7 +147,7 @@ const ListCart = (props) => {
         .catch((err) => {
           setIsDone(true);
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          console.log("Create order zalo",err.response.data)
+          console.log("Create order zalo", err.response.data);
         });
     }
   };
@@ -178,7 +185,7 @@ const ListCart = (props) => {
               deliveryAddress: stringAddress === "" ? address : stringAddress,
               customerId: customerId,
               itemList: cartData.cartItems,
-              restaurantId: nearlyRestaurant.restaurantId,
+              restaurantId: specRes ? specRes.restaurantId : nearlyRestaurant.restaurantId,
               status: totalCart > 999999 ? "pending" : "accept",
               note: note,
               deliveryDate: "",
@@ -190,7 +197,7 @@ const ListCart = (props) => {
             };
             createOrder(order);
             //  console.log(order);
-            //  console.log(order.party.itemList);
+
           })
           .catch((error) => {
             setIsDone(true);
@@ -270,11 +277,11 @@ const ListCart = (props) => {
             }
             ListHeaderComponent={
               <HeaderComponent
-                nearlyRestaurant={nearlyRestaurant}
+                nearlyRestaurant={specRes ? specRes : nearlyRestaurant}
                 setVisible={() => refRBSheet.current.open()}
                 note={note}
                 deliveryMethod={deliveryMethod}
-                setDeliveryMethod={setDeliveryMethod}
+                setDeliveryMethod={onDeliveryMethodChange}
                 locateCoord={route.params.locateCoord}
               />
             }
@@ -428,8 +435,8 @@ const ListCart = (props) => {
         onPress={() => {
           if (navigation.canGoBack()) {
             if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+              navigation.goBack();
+            }
           }
         }}
         activeOpacity={0.7}

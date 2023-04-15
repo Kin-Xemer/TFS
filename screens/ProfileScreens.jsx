@@ -277,7 +277,7 @@ const ProfileScreens = () => {
               }}
               activeOpacity={0.7}
               onPress={() => {
-                // pushNotifications(list[0]);
+                pushNotifications(list[0]);
               }}
             >
               <Setting2 color={THEME_COLOR} size={24} variant="Bold" />

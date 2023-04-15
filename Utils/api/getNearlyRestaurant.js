@@ -8,18 +8,18 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
       let activeResaurants = response.data.filter(
         (item) => item.status === true
       );
+      let availableRestaurants = activeResaurants.filter( (item) => item.availableStatus === true)
       let url =
         "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" +
         stringAddress +
         "&destinations=" +
-        activeResaurants
+        availableRestaurants
           .map((item, index) => {
             return `${item.restaurantLocation}`;
           })
           .join("|") +
         "&key=" +
         GOOGLE_MAPS_APIKEY;
-
       axios
         .get(url)
         .then((res) => {
@@ -30,7 +30,6 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
               return item.distance.value;
             });
           let min = Math.min(...arr);
-          console.log(min);
           let index = arr.indexOf(min);
           let nearlyObject = activeResaurants[index];
 
@@ -40,11 +39,11 @@ export const getNearlyRestaurant = (stringAddress, dispatch) => {
             index + " near:",
             nearlyObject.restaurantName
           );
-          dispatch({ type: "SET_NEARLY_RESTAURANT", payload: nearlyObject });
+          dispatch({ type: "SET_NEARLY_RESTAURANT", payload: nearlyObject, minDistance: min });
         })
         .catch((err) => {
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          console.log("Error get nearly: ", err.response.data);
+      console.log("get resstaurant api google", err)
         });
     })
     .catch((err) => {

@@ -2,6 +2,8 @@
 const initState = {
   restaurant: [],
   nearRestaurant: {},
+  minDistance: 0,
+  specRes:null
 };
 
 function restaurantReducer(state = initState, action) {
@@ -15,6 +17,12 @@ function restaurantReducer(state = initState, action) {
       return {
         ...state,
         nearRestaurant: action.payload,
+        minDistance: action.minDistance,
+      };
+    case "SET_SPEC_RESTAURANT":
+      return {
+        ...state,
+        specRes: action.payload,
       };
     default:
       return state;

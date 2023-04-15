@@ -19,7 +19,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { useState, useMemo, useRef, useCallback } from "react";
 import axios from "axios";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
-import BottomSheet,{ BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
@@ -43,7 +43,7 @@ const SelectStore = (props) => {
   const [myLocation, setMyLocation] = useState();
   const [isDone, setIsDone] = useState(true);
   const [placeFlexIndex, setPlaceFlexIndex] = useState(1);
-  const [selectedStore, setSelectedStore] = useState("");
+  const [selectedStore, setSelectedStore] = useState({});
   const snapPoints = useMemo(() => ["25%", "40%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
@@ -63,7 +63,7 @@ const SelectStore = (props) => {
   }, [isFocused]);
 
   const handleSelectedStore = (item) => {
-    setSelectedStore(item.restaurantLocation);
+    setSelectedStore(item);
     setIndex(1);
     const destination = convertLatLng(item.latitude, item.longitude);
     mapRef.current.animateToRegion(destination, DURATION);
@@ -76,14 +76,14 @@ const SelectStore = (props) => {
       e.nativeEvent.coordinate.latitude,
       e.nativeEvent.coordinate.longitude
     );
-    setSelectedStore(item.restaurantLocation);
+    setSelectedStore(item);
     setIndex(1);
     mapRef.current.animateToRegion(destination, DURATION - 500);
   };
   const onLoadAddress = () => {
     const lat = nearlyRes.latitude;
     const lng = nearlyRes.longitude;
-    setSelectedStore(nearlyRes.restaurantLocation);
+    setSelectedStore(nearlyRes);
     const destination = convertLatLng(lat, lng);
     mapRef.current.animateToRegion(destination, DURATION);
   };
@@ -97,6 +97,8 @@ const SelectStore = (props) => {
   return (
     <View style={styles.container}>
       <MapView
+        showsUserLocation={true}
+        userLocationCalloutEnabled={true}
         style={StyleSheet.absoluteFill}
         ref={mapRef}
         mapType="standard"
@@ -126,39 +128,13 @@ const SelectStore = (props) => {
               key={index}
               coordinate={coord}
               image={
-                item.restaurantLocation === selectedStore
+                item.restaurantLocation === selectedStore.restaurantLocation
                   ? require("../assets/icons/store_2.png")
                   : require("../assets/icons/store_1.png")
               }
             />
           );
         })}
-        {/* <MapViewDirections
-          origin={pickupCords}
-          destination={droplocationCors}
-          apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={5}
-          strokeColor="#d83a3a"
-          optimizeWaypoints={true}
-          
-          onReady={(result) => {
-            console.log(
-              result.duration.toFixed(0) +
-                " phút" +
-                "(" +
-                result.distance.toFixed(1) +
-                " km)"
-            );
-            mapRef.current.fitToCoordinates(result.coordinates, {
-              edgePadding: {
-                right: 30,
-                bottom: 200,
-                left: 30,
-                top: 100,
-              },
-            });
-          }}
-        /> */}
       </MapView>
       <BottomSheet
         ref={bottomSheetRef}
@@ -167,7 +143,7 @@ const SelectStore = (props) => {
         onChange={handleSheetChanges}
         style={{
           paddingHorizontal: 16,
-          flex:1
+          flex: 1,
         }}
       >
         <BottomSheetFlatList
@@ -188,7 +164,7 @@ const SelectStore = (props) => {
             >
               <View
                 style={
-                  item.restaurantLocation === selectedStore
+                  item.restaurantLocation === selectedStore.restaurantLocation
                     ? styles.storeItemSelected
                     : styles.storeItem
                 }
@@ -202,7 +178,8 @@ const SelectStore = (props) => {
                   <View style={{ marginLeft: 8, paddingRight: 16 }}>
                     <Text
                       style={
-                        item.restaurantLocation === selectedStore
+                        item.restaurantLocation ===
+                        selectedStore.restaurantLocation
                           ? styles.textActive
                           : styles.textInActive
                       }
@@ -212,7 +189,8 @@ const SelectStore = (props) => {
                     <Text
                       numberOfLines={1}
                       style={
-                        item.restaurantLocation === selectedStore
+                        item.restaurantLocation ===
+                        selectedStore.restaurantLocation
                           ? styles.addressActive
                           : styles.addressInActive
                       }
@@ -223,79 +201,23 @@ const SelectStore = (props) => {
                 </Flex>
               </View>
             </TouchableOpacity>
-  )}
+          )}
           keyExtractor={(item) => item.restaurantId}
         />
-
-        {/* <ScrollView
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 90 }}
-          onScroll={() => {
-            setIndex(1);
-          }}
-          scrollEventThrottle={16}
-        >
-          {restaurant.map((item, index) => {
-            return (
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                  handleSelectedStore(item);
-                }}
-                key={index}
-              >
-                <View
-                  style={
-                    item.restaurantLocation === selectedStore
-                      ? styles.storeItemSelected
-                      : styles.storeItem
-                  }
-                >
-                  <Flex
-                    flexDirection="row"
-                    w={"100%"}
-                    style={{ alignItems: "center" }}
-                  >
-                    <Shop size="28" color={THEME_COLOR} />
-                    <View style={{ marginLeft: 8, paddingRight: 16 }}>
-                      <Text
-                        style={
-                          item.restaurantLocation === selectedStore
-                            ? styles.textActive
-                            : styles.textInActive
-                        }
-                      >
-                        {item.restaurantName}
-                      </Text>
-                      <Text
-                        numberOfLines={1}
-                        style={
-                          item.restaurantLocation === selectedStore
-                            ? styles.addressActive
-                            : styles.addressInActive
-                        }
-                      >
-                        {item.restaurantLocation}
-                      </Text>
-                    </View>
-                  </Flex>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView> */}
       </BottomSheet>
 
       <View style={styles.selectedButton}>
-        {selectedStore !== "" ? (
+        {selectedStore ? (
           <Button
             style={{
               borderRadius: 10,
               backgroundColor: THEME_COLOR,
             }}
             onPress={() => {
-              console.log(selectedStore);
+              dispatch({ type: "SET_SPEC_RESTAURANT", payload: selectedStore });
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              }
             }}
           >
             <Text

@@ -145,14 +145,14 @@ const MapScreen = (props) => {
       <MapView
         style={StyleSheet.absoluteFill}
         showsUserLocation={true}
+        userLocationCalloutEnabled={true}
         onRegionChangeComplete={(result) => {
           if (!isSelectedAddress) {
             onRegionChange(result);
           }
         }}
         ref={mapRef}
-        mapType="standard"
-        userLocationCalloutEnabled={true}
+        mapType="standard"   
         onPress={() => {
           placeRef.current?.blur();
         }}
