@@ -28,8 +28,8 @@ const CancelOrderModal = (props) => {
     onCancel();
   };
 
-  const handleConfirm = () => {
-    onConfirm();
+  const handleConfirm = (selectedReason) => {
+    onConfirm(selectedReason);
   };
 
   return (

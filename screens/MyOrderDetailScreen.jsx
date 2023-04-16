@@ -10,21 +10,15 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Provider } from "@ant-design/react-native";
-import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useState, useMemo, useEffect } from "react";
-import Home from "../components/Home/index.jsx";
-import { Box, Button, Flex, Spacer } from "native-base";
+import { useState,useEffect } from "react";
+import { Flex } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
-import SearchField from "../components/SearchField/index.jsx";
-import Order from "../components/Order/index";
 import StepProgess from "../components/StepProgess/index.jsx";
 import OrderInfor from "../components/OrderInfor/index.jsx";
 import MyOrderItem from "../components/MyOrderItem/index.jsx";
 import OrderButton from "../components/OrderButton/index";
-import ActionButton from "../components/ActionButton/index.jsx";
 import BackButton from "../components/BackButton/index.jsx";
 import { FONT } from "../Utils/themeFont.js";
 import { useCallback } from "react";
@@ -34,8 +28,6 @@ import { BASE_URL } from "../services/baseURL.js";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
-  const isFocused = useIsFocused();
-  const [loginStatus, setLoginStatus] = useState();
   const [isDone, setIsDone] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
@@ -53,63 +45,12 @@ const MyOrderDetailScreen = (props) => {
   useEffect(() => {
     console.log(selectedReason);
   }, [selectedReason]);
-  // const onConfirm = useCallback((selectedReason) => {
-  //   setIsDone(false);
-  //   let newOrder = { ...order, status: "deny", reason: selectedReason };
-  //   if (order.paymentMethod === "cash") {
-  //     axios
-  //       .put(BASE_URL + "/orders", newOrder)
-  //       .then(() => {
-  //         if (navigation.canGoBack()) {
-  //           if (navigation.canGoBack()) {
-  //             setIsDone(true);
-  //             setIsVisible(false);
-  //             navigation.goBack();
-  //           }
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-  //         console.log(error.response.data);
-  //       });
-  //   } else {
-  //     axios
-  //       .get(BASE_URL + "/orders/checkZalopayPayment/" + order.id)
-  //       .then((response) => {
-  //         if (response.data.returnCode === 1) {
-  //           let refundObject = {
-  //             amount: order.totalPricce,
-  //             orderId: order.id,
-  //           };
-  //           axios.post(BASE_URL + "/orders/refundZalopay", refundObject).then((res)=>{
-  //             if(res.data.returncode === 2){
-  //              let mrefundid =  res.data.mrefundid
-  //              axios.get(BASE_URL + "/orders/refundStatus/" +mrefundid ).then((refundResponse) => {
-
-  //              }).catch((error) => {
-  //               alert("Đã có lỗi xảy ra, vui lòng thử lại sau")
-  //               console.log(err.response.data)
-  //              })
-  //             }
-  //           }).catch((err)=>{
-  //             alert("Đã có lỗi xảy ra, vui lòng thử lại sau")
-  //             console.log(err.response.data)
-  //           })
-  //         }
-
-  //       })
-  //       .catch((error) => {
-  //         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-  //         console.log(error.response.data);
-  //       });
-  //   }
-  // }, []);
 
   const onConfirm = useCallback(async () => {
     setIsDone(false);
 
     if (order.paymentMethod === "cash") {
-      await updateOrder(selectedReason);
+      await updateOrder();
     } else {
       try {
         const response = await axios.get(
@@ -124,7 +65,7 @@ const MyOrderDetailScreen = (props) => {
         console.log("/orders/checkZalopayPayment/", error.response.data);
       }
     }
-  }, []);
+  }, [selectedReason]);
 
   const refundOrder = async (order) => {
     try {
@@ -172,7 +113,7 @@ const MyOrderDetailScreen = (props) => {
         status: "deny",
       };
       console.log(newOrder);
-      console.log(newOrder);
+
       await axios.put(BASE_URL + "/orders/status", newOrder);
       if (navigation.canGoBack()) {
         setIsDone(true);
@@ -299,6 +240,7 @@ const MyOrderDetailScreen = (props) => {
         onConfirm={onConfirm}
         selectedReason={selectedReason}
         setSelectedReason={setSelectedReason}
+        order={order}
       />
     </View>
   );
