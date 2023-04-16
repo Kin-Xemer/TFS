@@ -30,7 +30,7 @@ const Title = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    marginTop: 18,
+    marginTop: 8,
     marginBottom: 10,
     width: "100%",
     alignItems: "flex-end",
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontFamily: "Quicksand-Bold",
-    fontSize: 20,
+    fontSize: 21,
   },
   moreText: {
     fontSize: 12,

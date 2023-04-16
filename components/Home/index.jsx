@@ -60,7 +60,7 @@ const Home = (props) => {
   const [events, setEvents] = useState();
   const [regions, setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [query, setQuery] = useState("");
   const [isFindDone, setIsFindDone] = useState(false);
   const numberCart = useSelector((state) => state.cart.numberCart);
   const party = useSelector((state) => state.cart.party);
@@ -267,7 +267,7 @@ const Home = (props) => {
         </View>
       </Flex>
       <View style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}>
-        {/* <SearchBar /> */}
+        <SearchBar setQuery={setQuery} />
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -282,13 +282,14 @@ const Home = (props) => {
         >
           <ImageTitle />
         </View>
-        <Divider />
+     
         <Categories
           events={events}
           regions={regions}
           handlePressParty={handlePressParty}
         />
-         <Title textTitle="Mâm tiệc" />
+           <Divider mt={4} py={1} backgroundColor="coolGray.100" />
+        <Title textTitle="Mâm tiệc" />
         <FlatList
           initialNumToRender={15}
           windowSize={5}
@@ -296,12 +297,12 @@ const Home = (props) => {
           updateCellsBatchingPeriod={30}
           removeClippedSubviews={false}
           onEndReachedThreshold={0.1}
-          contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
+          contentContainerStyle={{ marginLeft: 16, paddingRight: 20 }}
           showsHorizontalScrollIndicator={false}
           horizontal
           data={combo}
           renderItem={({ item }) => (
-            <Flex direction="row" >
+            <Flex direction="row">
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() =>
@@ -319,6 +320,7 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
+        <Divider mt={4} py={1} backgroundColor="coolGray.100" />
         <Title textTitle="Món ngon nổi bật" />
         <FlatList
           initialNumToRender={15}
@@ -382,6 +384,7 @@ const Home = (props) => {
             </Flex>
           </ImageBackground>
         </TouchableOpacity>
+        <Divider mt={4} py={1} backgroundColor="coolGray.100" />
         <Title textTitle="Ẩm thực cổ truyền" />
         <FlatList
           initialNumToRender={15}
