@@ -214,6 +214,7 @@ const SelectStore = (props) => {
               backgroundColor: THEME_COLOR,
             }}
             onPress={() => {
+              console.log(selectedStore.availableStatus? "cửa hàng đang bận" : "cửa hàng đang rảnh")
               dispatch({ type: "SET_SPEC_RESTAURANT", payload: selectedStore });
               if (navigation.canGoBack()) {
                 navigation.goBack();

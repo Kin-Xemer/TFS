@@ -1,6 +1,8 @@
 import { GET_ALL_FOOD } from "../actions/productAction";
 const initState = {
   food: [],
+  foodTrend:[],
+  foodTraditional: []
 };
 
 function foodReducer(state = initState, action) {
@@ -10,7 +12,16 @@ function foodReducer(state = initState, action) {
         ...state,
        food: action.payload
       };
-
+    case "SET_FOOD_TREND":
+      return {
+        ...state,
+        foodTrend: action.payload
+      };
+    case "FETCH_FOODS_TRENDING_SUCCESS":
+      return {
+        ...state,
+        foodTrend: action.payload
+      };
     default:
       return state;
   }

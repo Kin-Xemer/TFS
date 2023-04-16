@@ -45,13 +45,18 @@ import ActionButton from "../ActionButton";
 import notifee, { AndroidColor } from "@notifee/react-native";
 import { GetFCMToken, requestNotiPermission } from "../../Helper/pushNoti";
 import { FONT } from "../../Utils/themeFont";
+import { fetchFoods } from "../../redux/actions/foodAction";
+import { fetchCombos } from "../../redux/actions/comboAction";
+import CardCombo from "../CardFood/CardCombo";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [cusName, setCusName] = useState("");
-  const [fullName, setFullName] = useState("")
+  const [fullName, setFullName] = useState("");
+  const [size, setSize] = useState(15);
+  const [page, setPage] = useState(0);
   const [events, setEvents] = useState();
   const [regions, setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
@@ -63,10 +68,10 @@ const Home = (props) => {
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
-  const restaurant = useSelector((state) => state.restaurant.restaurant);
+  const foodNewTrending = useSelector((state) => state.food.foodTrend);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const foods = useSelector((state) => state.food.food);
-
+  const { loading, combo, error } = useSelector((state) => state.combo);
   const initializeAppOnce = once((dispatch) => {
     requestNotiPermission();
     getLocation();
@@ -75,7 +80,7 @@ const Home = (props) => {
     getEvent();
     getServices(dispatch);
   });
-  const memoizedFoodList = useMemo(() => foods.slice(0, 15), [foods]);
+  const memoizedFoodList = useMemo(() => foodNewTrending, [foodNewTrending]);
   const memoizedFoodList2 = useMemo(() => foods.slice(16, 30), [foods]);
   useEffect(() => {
     initializeAppOnce(dispatch);
@@ -83,7 +88,6 @@ const Home = (props) => {
   }, []);
   useEffect(() => {
     if (isFocused) {
-
       checkLogin();
     }
   }, [isFocused]);
@@ -92,6 +96,11 @@ const Home = (props) => {
       getCartById()(dispatch, cusName);
     }
   }, [cusName]);
+  useEffect(() => {
+    dispatch(fetchFoods(page, size));
+    dispatch(fetchCombos());
+  }, [dispatch, page, size]);
+
   const getRegion = useMemo(() => {
     return () => {
       axios
@@ -128,19 +137,16 @@ const Home = (props) => {
           payload: customerParsed,
         });
         setCusName(cusName);
-        setFullName(customerParsed.customerName)
+        setFullName(customerParsed.customerName);
       } else {
         setCusName("");
-        setFullName("")
-
+        setFullName("");
       }
     } catch (e) {
       console.log(e);
       console.log("Failed to fetch the data from storage");
     }
   };
-
-
 
   const getLocation = async () => {
     setIsFindDone(false);
@@ -186,7 +192,11 @@ const Home = (props) => {
         <View style={styles.locationHeader}>
           <Flex direction="row" style={{ marginBottom: 4 }}>
             <View style={{ paddingLeft: 3 }}>
-             {cusName ?  <Text style={styles.textStyle}>Xin chào, {fullName}</Text>:<Text style={styles.textStyle}>Vị trí của bạn</Text>}
+              {cusName ? (
+                <Text style={styles.textStyle}>Xin chào, {fullName}</Text>
+              ) : (
+                <Text style={styles.textStyle}>Vị trí của bạn</Text>
+              )}
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
@@ -277,6 +287,37 @@ const Home = (props) => {
           events={events}
           regions={regions}
           handlePressParty={handlePressParty}
+        />
+         <Title textTitle="Mâm tiệc" />
+        <FlatList
+          initialNumToRender={15}
+          windowSize={5}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={30}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
+          contentContainerStyle={{ marginLeft: 16, paddingRight: 16 }}
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          data={combo}
+          renderItem={({ item }) => (
+            <Flex direction="row" >
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  navigation.navigate("FoodInformationScreen", { food: item })
+                }
+              >
+                <CardCombo
+                  isLogin={isLogin}
+                  itemWith={290}
+                  mr={10}
+                  food={item}
+                />
+              </TouchableOpacity>
+            </Flex>
+          )}
+          keyExtractor={(item) => item.id}
         />
         <Title textTitle="Món ngon nổi bật" />
         <FlatList
@@ -372,20 +413,6 @@ const Home = (props) => {
           )}
           keyExtractor={(item) => item.id}
         />
-        {/* <View style={{ paddingHorizontal: 16, backgroundColor: "transparent" }}>
-          <ActionButton
-            onPress={() => {
-              handleLogout();
-            }}
-            buttonText="Đăng xuất"
-          />
-          <ActionButton
-            onPress={() => {
-              Linking.openURL("demozpdk://notiscreen");
-            }}
-            buttonText=" Check button"
-          />
-        </View> */}
       </ScrollView>
     </Flex>
   ) : (

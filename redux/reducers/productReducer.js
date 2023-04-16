@@ -21,19 +21,12 @@ const initCart = {
   totalPrice: 0,
 };
 
+let sum = 0;
+let totalPrice = 0;
 const saveCart = (state) => {
-  let sum = 0;
-  state.cartsItem.map((item) => {
-    sum = sum + item.quantity;
-  });
-  // console.log("itemlist", state.itemList.length)
-  // if(state.itemList.length >0){
-  //   sum++
-  // }
-  let totalPrice = 0;
-  state.cartsItem.map((item) => {
-    totalPrice = totalPrice + item.subTotal;
-  });
+  sum = state.cartsItem.reduce((total, item) => total + item.quantity, 0);
+  totalPrice = state.cartsItem.reduce((total, item) => total + item.subTotal, 0);
+
 
   const newCart = {
     ...initCart,
@@ -42,7 +35,7 @@ const saveCart = (state) => {
     numberCart: sum,
     totalPrice: totalPrice,
     comboList: [],
-    party : state.party
+    party: state.party,
   };
   // initCart.numberCart = sum;
   // console.log("old cart", newCart)
@@ -55,7 +48,6 @@ const saveCart = (state) => {
       initCart.totalPrice = res.data.totalPrice;
       initCart.comboList = res.data.comboList;
       initCart.party = res.data.party;
-      
     })
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
