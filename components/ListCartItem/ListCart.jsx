@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, TextArea, Spacer,Image } from "native-base";
+import { Flex, TextArea, Spacer } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
@@ -35,12 +35,29 @@ const ListCart = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
-  const items = useSelector((state) => state.cart);
+  const refRBSheet = useRef();
   const [isDone, setIsDone] = useState(true);
+  const [discount, setDiscount] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(0);
+  const [servicesFee, setServicesFee] = useState(0);
+  const [note, setNote] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [textAreaCount, setTextAreaCount] = useState(0);
+  const [weight, setWeight] = useState(3);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [isVisible, setIsVisible] = useState(false);
+  const [openPicker, setOpenPicker] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
+  const [totalCart, setTotalCart] = useState(0);
+  const [list, setList] = useState([]);
   const customerId = useSelector((state) => state.account.account.customerId);
+  const items = useSelector((state) => state.cart);
+  const deliveryDate = useSelector((state) => state.cart.deliveryDate);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const listService = useSelector((state) => state.services.services);
   const selectedService = useSelector((state) => state.cart.serviceList);
+  const specRes = useSelector((state) => state.restaurant.specRes);
+  const minDistance = useSelector((state) => state.restaurant.minDistance);
   const listSelectedService = useSelector(
     (state) => state.cart.serviceListObject
   );
@@ -54,21 +71,6 @@ const ListCart = (props) => {
   const nearlyRestaurant = useSelector(
     (state) => state.restaurant.nearRestaurant
   );
-  const specRes = useSelector((state) => state.restaurant.specRes);
-  const minDistance = useSelector((state) => state.restaurant.minDistance);
-
-  const [discount, setDiscount] = useState(0);
-  const [deliveryFee, setDeliveryFee] = useState(0);
-  const [servicesFee, setServicesFee] = useState(0);
-  const [note, setNote] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [textAreaCount, setTextAreaCount] = useState(0);
-  const [weight, setWeight] = useState(3);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [isVisible, setIsVisible] = useState(false);
-  const [openPicker, setOpenPicker] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
-  const refRBSheet = useRef();
 
   useEffect(() => {
     deliveryMethod === "delivery"
@@ -77,11 +79,13 @@ const ListCart = (props) => {
   }, [minDistance, weight, deliveryMethod, specRes]);
 
   useEffect(() => {
-    if (!specRes) {
-      getNearlyRestaurant(
-        stringAddress === "" ? address : stringAddress,
-        dispatch
-      );
+    if (address) {
+      if (!specRes) {
+        getNearlyRestaurant(
+          stringAddress === "" ? address : stringAddress,
+          dispatch
+        );
+      }
     }
   }, [stringAddress, address, specRes]);
 
@@ -89,17 +93,21 @@ const ListCart = (props) => {
     setDeliveryMethod(value);
     dispatch({ type: "SET_SPEC_RESTAURANT", specRes: null });
   };
-  let list = [];
-  let totalCart = 0;
-  Object.keys(items.cartsItem).forEach(function (item) {
-    totalCart += items.cartsItem[item].quantity * items.cartsItem[item].price;
-    list.push(items.cartsItem[item]);
-  });
+  useEffect(() => {
+    let cartTotal = 0;
+    const cartItems = Object.keys(items.cartsItem).map((item) => {
+      const { quantity, price } = items.cartsItem[item];
+      cartTotal += quantity * price;
+      return items.cartsItem[item];
+    });
+    setList(cartItems);
+    Object.keys(items.serviceListObject).forEach(function (item) {
+      cartTotal += items.serviceListObject[item].servicePrice;
+    });
+    cartTotal += items.partyTotalPrice;
+    setTotalCart(cartTotal);
+  }, [items]);
 
-  Object.keys(items.serviceListObject).forEach(function (item) {
-    totalCart += items.serviceListObject[item].servicePrice;
-  });
-  totalCart += items.partyTotalPrice;
   const listData = list.map((item, index) => ({
     id: `${index}`,
     name: item.name,
@@ -135,7 +143,6 @@ const ListCart = (props) => {
       axios
         .post(BASE_URL + "/orders/zaloPay", orders)
         .then((response) => {
-          console.log(response.data);
           setIsDone(true);
           navigation.navigate("ZaloPaymentScreen", {
             paymentResponse: response.data,
@@ -183,10 +190,12 @@ const ListCart = (props) => {
               deliveryAddress: stringAddress === "" ? address : stringAddress,
               customerId: customerId,
               itemList: cartData.cartItems,
-              restaurantId: specRes ? specRes.restaurantId : nearlyRestaurant.restaurantId,
+              restaurantId: specRes
+                ? specRes.restaurantId
+                : nearlyRestaurant.restaurantId,
               status: totalCart > 999999 ? "pending" : "accept",
               note: note,
-              deliveryDate: "",
+              deliveryDate:deliveryDate,
               receiveTime: "",
               reason: "",
               // staffId: totalCart > 999999 ? null : 15,
@@ -194,8 +203,7 @@ const ListCart = (props) => {
               party: cartData.party,
             };
             createOrder(order);
-             console.log(order);
-
+            console.log(order);
           })
           .catch((error) => {
             setIsDone(true);
@@ -262,7 +270,7 @@ const ListCart = (props) => {
             ListFooterComponent={
               <FooterComponent
                 togglePicker={togglePicker}
-                currentDate={new Date()}
+                currentDate={deliveryDate}
                 service={service}
                 discount={discount}
                 totalCart={totalCart}

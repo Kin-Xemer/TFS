@@ -30,6 +30,7 @@ const HeaderComponent = (props) => {
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
+  
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const listDeliveryMethod = [
     { label: "Giao hàng", value: "delivery" },
@@ -73,7 +74,7 @@ const HeaderComponent = (props) => {
                 numberOfLines={1}
                 style={[styles.textStyle, styles.addressText]}
               >
-                {nearlyRestaurant.restaurantLocation}
+                {address ? nearlyRestaurant.restaurantLocation : "Đang tìm vị trí của bạn..."}
               </Text>
             </View>
           </Flex>
@@ -88,7 +89,7 @@ const HeaderComponent = (props) => {
               numberOfLines={1}
               style={[styles.textStyle, styles.addressText]}
             >
-              {stringAddress === "" ? address : stringAddress}
+              {address ? stringAddress === "" ? address : stringAddress:"Đang tìm vị trí của bạn..."}
             </Text>
           </View>
         </Flex>}

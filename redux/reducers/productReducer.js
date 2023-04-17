@@ -19,6 +19,7 @@ const initCart = {
   cartId: 0,
   party: null,
   totalPrice: 0,
+  deliveryDate: new Date(),
 };
 
 let sum = 0;
@@ -179,6 +180,7 @@ function todoProduct(state = initCart, action) {
         party: null,
         partyTotalPrice: 0,
         totalPrice: 0,
+        deliveryDate: new Date(),
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;
@@ -219,6 +221,11 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
         updateCart: saveCart(state),
+      };
+    case "SET_DATE":
+      return {
+        ...state,
+        deliveryDate: action.payload,
       };
     default:
       return state;

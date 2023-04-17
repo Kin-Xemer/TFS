@@ -1,7 +1,7 @@
 
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { FONT } from "../../Utils/themeFont";
-import { convertDate } from "../../Utils/convertDate";
+import { convertDate, convertDateToString, convertOnlyDate } from "../../Utils/convertDate";
 const OrderInfor = (props) => {
   const { order, restaurant } = props;
   return (
@@ -17,6 +17,12 @@ const OrderInfor = (props) => {
           <Text style={styles.infor}>{convertDate(order.orderDate)}</Text>
         </Text>
       </View>
+    {order.party ?   <View style={styles.inforView}>
+        <Text style={styles.preinfor}>
+          Thời gian giao hàng:{" "}
+          <Text style={styles.infor}>{convertOnlyDate(order.deliveryDate)}</Text>
+        </Text>
+      </View>: <></>}
       <View style={styles.inforView}>
         <Text style={styles.preinfor}>
           Phương thức thanh toán: <Text style={styles.infor}>{order.paymentMethod ==="cash"? "Tiền mặt":"ZaloPay"}</Text>

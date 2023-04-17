@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   TouchableWithoutFeedback,
   ImageBackground,
-  TextInput,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -15,12 +13,16 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Party from "./Party";
-import { Calendar2, SearchNormal1 } from "iconsax-react-native";
+import { Calendar2, Clock } from "iconsax-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { convertDateToString } from "../../Utils/convertDate";
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+import {
+  convertDateToString,
+  convertTimeToString,
+  formatVNTime,
+} from "../../Utils/convertDate";
+import moment from "moment-timezone";
 const FooterComponent = (props) => {
   const {
     totalCart,
@@ -35,14 +37,14 @@ const FooterComponent = (props) => {
     currentDate,
   } = props;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const party = useSelector((state) => state.cart.party);
   const [payment, setPayment] = useState("cash");
-
-  // const [selectedDate,setSelectedDate] = useState(new Date().format("DD-MM-yyyy"));
-  const [selectedDate, setSelectedDate] = useState(
-    convertDateToString(currentDate)
-  );
-  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState("date");
+  const [openDate, setOpenDate] = useState(false);
+  const [openTime, setOpenTime] = useState(false);
+  const [datee, setDatee] = useState("");
+  const [time, setTime] = useState("");
   let date = new Date();
   let maxDate = new Date();
   maxDate.setDate(date.getDate() + 7);
@@ -60,9 +62,52 @@ const FooterComponent = (props) => {
       size: 35,
     },
   ];
+  useEffect(() => {
+    
+    if (time !== "" && datee !== "") {
+      let hours = moment.utc(time).tz("Asia/Ho_Chi_Minh").format("HH");
+      let minutes = moment.utc(time).tz("Asia/Ho_Chi_Minh").format("mm");
+      let dateVN = new Date(datee);
+      const year = dateVN.getFullYear();
+      const month = dateVN.getMonth();
+      const day = dateVN.getDate();
+      const newDate = new Date(year, month, day, hours, minutes);
+      const formatDate = moment.utc(newDate).local().format()
+      dispatch({ type: "SET_DATE", payload: formatDate });
+    }
+    // console.log(
+    //
+    // );
+  }, [time, datee]);
   const onChangeDate = (event, selectedDate) => {
-    setOpen(false);
-    setSelectedDate(convertDateToString(selectedDate));
+    setOpenDate(false);
+
+    if (mode === "date") {
+      setDatee(selectedDate);
+      showTimePicker();
+    } else {
+      setOpenTime(false);
+      setTime(selectedDate);
+    }
+  };
+  const onChangeTime = (event, selectedTime) => {
+    setTime(selectedTime);
+    setOpenTime(false);
+  };
+  const showMode = (mode) => {
+    if (mode === "time") {
+      setOpenTime(true);
+    } else {
+      setOpenDate(true);
+    }
+  };
+  const showTimePicker = () => {
+    setMode("time");
+    showMode("time");
+  };
+  const showDatePicker = () => {
+    showMode("date");
+    setMode("date");
   };
   return (
     <ImageBackground
@@ -99,7 +144,7 @@ const FooterComponent = (props) => {
                   padding: 4,
                 }}
               >
-                Chọn ngày giao
+                Chọn thời gian giao hàng
               </Text>
               <Input
                 style={{ fontFamily: FONT.SEMI, fontSize: 16 }}
@@ -109,18 +154,18 @@ const FooterComponent = (props) => {
                 editable={false}
                 borderWidth={1}
                 h={39}
-                width={130}
+                width={175}
                 InputRightElement={
                   <TouchableOpacity
                     style={{ marginRight: 7 }}
                     onPress={() => {
-                      setOpen(true);
+                      showDatePicker();
                     }}
                   >
                     <Calendar2 size="25" color={"#8c8c8c"} variant="Outline" />
                   </TouchableOpacity>
                 }
-                defaultValue={selectedDate}
+                defaultValue={formatVNTime(currentDate)}
               />
             </Flex>
             <Divider style={{ marginTop: 8 }} thickness={3} bg="#e4e2e2" />
@@ -350,15 +395,27 @@ const FooterComponent = (props) => {
           <Entypo name="chevron-right" size={15} color={THEME_COLOR} />
         </Flex>
       </Flex>
-      {open && (
+      {openDate && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
-          mode={"date"}
+          mode={mode}
           is24Hour={true}
           minimumDate={date}
           maximumDate={maxDate}
           display={"calendar"}
+          onChange={onChangeDate}
+        />
+      )}
+      {openTime && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          minimumDate={date}
+          maximumDate={maxDate}
+          display={"spinner"}
           onChange={onChangeDate}
         />
       )}
