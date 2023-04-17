@@ -1,8 +1,7 @@
 import { Flex, Spacer } from "native-base";
 import { View, StyleSheet, Text, Dimensions } from "react-native";
-import { SearchNormal1, ArrowDown2 } from "iconsax-react-native";
-import { Entypo } from "@expo/vector-icons";
-import { Input, Icon } from "native-base";
+import { SearchNormal1 } from "iconsax-react-native";
+import { Input } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { useState, useEffect } from "react";
 

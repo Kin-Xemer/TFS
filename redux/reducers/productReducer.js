@@ -29,7 +29,6 @@ const saveCart = (state) => {
 
 
   const newCart = {
-    ...initCart,
     id: state.cartId,
     cartItems: state.cartsItem,
     numberCart: sum,
@@ -38,7 +37,7 @@ const saveCart = (state) => {
     party: state.party,
   };
   // initCart.numberCart = sum;
-  // console.log("old cart", newCart)
+  // console.log("new cart", newCart)
   axios
     .put(BASE_URL + "/carts", newCart)
     .then((res) => {
@@ -52,7 +51,7 @@ const saveCart = (state) => {
     .catch((err) => {
       alert("Đã có lỗi xảy ra");
       if (err.response.data) {
-        console.log("Error", err.response.data);
+        console.log("Error add to cart", err.response.data);
       } else {
         console.log(err);
       }
@@ -69,6 +68,8 @@ function todoProduct(state = initCart, action) {
           name: action.payload.foodName,
           image: action.payload.imgUrl,
           price: action.payload.price,
+          type: action.payload.type,
+          description: action.payload.description,
           subTotal: action.payload.price * action.quantity,
         };
         state.cartsItem.push(cart);
@@ -91,6 +92,8 @@ function todoProduct(state = initCart, action) {
             name: action.payload.foodName,
             image: action.payload.imgUrl,
             price: action.payload.price,
+            type: action.payload.type,
+            description: action.payload.description,
             subTotal: action.payload.price * action.quantity,
           };
           state.cartsItem.push(_cart);

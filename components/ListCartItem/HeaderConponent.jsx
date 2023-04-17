@@ -9,7 +9,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Flex, Badge, Spacer, Divider, Text } from "native-base";
+import { Flex, Spacer, Divider, Text } from "native-base";
 import { Location, Edit2 } from "iconsax-react-native";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
@@ -42,7 +42,7 @@ const HeaderComponent = (props) => {
     <View style={{ backgroundColor: "white" }}>
       <Flex
         direction="row"
-        style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: "center" }}
+        style={{ paddingHorizontal: 16, alignItems: "center" }}
       >
         <View style={styles.locationHeader}>
           <Flex

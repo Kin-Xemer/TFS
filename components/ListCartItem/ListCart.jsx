@@ -20,14 +20,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, TextArea, Spacer, Spinner, Image } from "native-base";
+import { Flex, TextArea, Spacer,Image } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
 import { FONT } from "../../Utils/themeFont";
 import { Toast } from "@ant-design/react-native";
 import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
-import { GOOGLE_MAPS_APIKEY } from "../../Utils/getGoogleAPI";
 import { calculateShippingFee } from "../../Utils/shipCost";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -46,7 +45,6 @@ const ListCart = (props) => {
     (state) => state.cart.serviceListObject
   );
   const itemList = useSelector((state) => state.cart.itemList);
-  const comboList = useSelector((state) => state.cart.comboList);
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
@@ -65,7 +63,7 @@ const ListCart = (props) => {
   const [note, setNote] = useState("");
   const [visible, setVisible] = useState(false);
   const [textAreaCount, setTextAreaCount] = useState(0);
-  const [weight, setWeight] = useState(0);
+  const [weight, setWeight] = useState(3);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [isVisible, setIsVisible] = useState(false);
   const [openPicker, setOpenPicker] = useState(false);
@@ -196,7 +194,7 @@ const ListCart = (props) => {
               party: cartData.party,
             };
             createOrder(order);
-            //  console.log(order);
+             console.log(order);
 
           })
           .catch((error) => {
@@ -448,7 +446,7 @@ const ListCart = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 35,
     flex: 1,
   },
   title: {

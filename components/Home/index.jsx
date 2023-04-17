@@ -343,7 +343,7 @@ const Home = (props) => {
               >
                 <CardFood
                   isLogin={isLogin}
-                  itemWith={170}
+                  itemWith={150}
                   mr={15}
                   food={item}
                 />
@@ -407,7 +407,7 @@ const Home = (props) => {
               >
                 <CardFood
                   isLogin={isLogin}
-                  itemWith={170}
+                  itemWith={150}
                   mr={15}
                   food={item}
                 />

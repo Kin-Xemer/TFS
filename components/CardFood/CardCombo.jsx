@@ -77,7 +77,7 @@ const CardCombo = (props) => {
     <Box
       rounded="lg"
       borderColor="coolGray.300"
-      borderWidth="0.5"
+      borderWidth="0.8"
       borderRadius="15"
       alignItems="center"
       flexDirection={"row"}
@@ -87,9 +87,9 @@ const CardCombo = (props) => {
       ]}
     >
       <Image
-        size={85}
+        size={90}
         borderRadius={15}
-        marginLeft={2}
+        borderBottomLeftRadius={15}
         source={{
           uri:
             food.imgUrl !== ""
@@ -99,7 +99,7 @@ const CardCombo = (props) => {
         alt="image"
       />
 
-      <Flex  pl={2.5} pr={2} width={itemWith - 92}>
+      <Flex pl={2.5} pr={2} width={itemWith - 92}>
         <Flex style={styles.titleBox}>
           <Text numberOfLines={1} style={[styles.textStyle, { fontSize: 18 }]}>
             {food.foodName}
@@ -148,7 +148,6 @@ const CardCombo = (props) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    paddingVertical: 6,
   },
   textStyle: {
     fontFamily: "Quicksand-Bold",
@@ -162,7 +161,6 @@ const styles = StyleSheet.create({
   titleBox: {
     width: "100%",
     alignItems: "flex-start",
-
   },
   priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
 });

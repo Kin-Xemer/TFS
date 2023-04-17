@@ -10,25 +10,15 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Flex,
-  Spacer,
-  Divider,
-  Image,
-  Box,
-  Button,
-  Text,
-  Input,
-} from "native-base";
+import { Flex, Spacer, Divider, Image, Box, Text, Input } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
-import DatePicker from "react-native-date-picker";
 import { useSelector } from "react-redux";
 import Party from "./Party";
-import { Calendar, Calendar2 } from "iconsax-react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Calendar2, SearchNormal1 } from "iconsax-react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { convertDateToString } from "../../Utils/convertDate";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FooterComponent = (props) => {
@@ -42,18 +32,20 @@ const FooterComponent = (props) => {
     toggleModal,
     listSelectedService,
     togglePicker,
-    currentDate
+    currentDate,
   } = props;
   const navigation = useNavigation();
   const party = useSelector((state) => state.cart.party);
   const [payment, setPayment] = useState("cash");
 
   // const [selectedDate,setSelectedDate] = useState(new Date().format("DD-MM-yyyy"));
-  const [selectedDate,setSelectedDate] = useState(convertDateToString(currentDate));
+  const [selectedDate, setSelectedDate] = useState(
+    convertDateToString(currentDate)
+  );
   const [open, setOpen] = useState(false);
   let date = new Date();
-  let maxDate = new Date()
-  maxDate.setDate(date.getDate() + 7)
+  let maxDate = new Date();
+  maxDate.setDate(date.getDate() + 7);
   let arrayPayment = [
     {
       payment: "cash",
@@ -69,8 +61,8 @@ const FooterComponent = (props) => {
     },
   ];
   const onChangeDate = (event, selectedDate) => {
-    setOpen(false)
-    setSelectedDate(convertDateToString(selectedDate))
+    setOpen(false);
+    setSelectedDate(convertDateToString(selectedDate));
   };
   return (
     <ImageBackground
@@ -92,44 +84,42 @@ const FooterComponent = (props) => {
             >
               THỰC ĐƠN
             </Text>
-            <Party party ={party} />
-         
+            <Party party={party} />
+
             <Flex
               flexDirection={"row"}
               alignItems="center"
               alignSelf={"flex-end"}
-              mt={5}
+              mt={2}
             >
               <Text
-               style={{
-                fontSize: 16,
-                fontFamily: FONT.SEMI,
-                padding: 4,
-              }}>
-                Chọn ngày giao
-              </Text>
-              <Spacer/>
-              <TouchableOpacity
-                onPress={() => {
-                  setOpen(true);
-                }}
-              >
-                <Calendar2 size="30" color={"black"} variant="Outline" />
-              </TouchableOpacity>
-              <TextInput
                 style={{
-                  marginVertical: 2,
                   fontSize: 16,
                   fontFamily: FONT.SEMI,
-                  borderColor: "#8c8c8c",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  marginLeft: 2,
-                  width: 100,
                   padding: 4,
                 }}
-                
-                editable = {false}
+              >
+                Chọn ngày giao
+              </Text>
+              <Input
+                style={{ fontFamily: FONT.SEMI, fontSize: 16 }}
+                borderRadius={10}
+                bgColor="transparent"
+                size="30px"
+                editable={false}
+                borderWidth={1}
+                h={39}
+                width={130}
+                InputRightElement={
+                  <TouchableOpacity
+                    style={{ marginRight: 7 }}
+                    onPress={() => {
+                      setOpen(true);
+                    }}
+                  >
+                    <Calendar2 size="25" color={"#8c8c8c"} variant="Outline" />
+                  </TouchableOpacity>
+                }
                 defaultValue={selectedDate}
               />
             </Flex>
@@ -222,8 +212,8 @@ const FooterComponent = (props) => {
             onPress={() => {
               if (navigation.canGoBack()) {
                 if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+                  navigation.goBack();
+                }
               }
             }}
           >

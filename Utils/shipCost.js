@@ -25,10 +25,8 @@ const DISTANCE_PRICE_TABLE = [
 ];
 
 export const calculateShippingFee = (weight, distance) => {
-  const weightPrice = WEIGHT_PRICE_TABLE.find((item) => item.weight >= weight);
-  const distancePrice = DISTANCE_PRICE_TABLE.find(
-    (item) => item.distance >= distance
-  );
+  let weightFee = weight > 1 ? (weight - 1) * 5000 : 0;
+  let distanceFee = distance > 5 ? (distance - 5) * 3000 : 0;
 
-  return weightPrice.price + distancePrice.price;
+  return weightFee + distanceFee;
 };

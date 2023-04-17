@@ -9,9 +9,6 @@ import axios from "axios";
 const CartScreen = () => {
   const isFocused = useIsFocused()
   const [service, setService] = useState();
-  const username = useSelector(
-    (state) => state.account.account.theAccount.accountId
-  );
   const dispatch = useDispatch();
   const deleteItem = (typeAction, id) => {
     dispatch({ type:typeAction, payload:id})
