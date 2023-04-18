@@ -4,7 +4,7 @@ import { FONT } from "../../Utils/themeFont";
 import { THEME_COLOR } from '../../Utils/themeColor';
 
 const AlertPopup = (props) => {
-    const {onDelete, isOpen, setIsOpen, title, content} = props;
+    const {onDelete, isOpen, setIsOpen, title, content,content2} = props;
 
 
   const onClose = () => setIsOpen(false);
@@ -22,6 +22,7 @@ const AlertPopup = (props) => {
           <AlertDialog.Header>{title}</AlertDialog.Header>
           <AlertDialog.Body>
             <Text fontFamily={FONT.REGULAR} style={{fontSize: 15}}>{content}</Text>
+            <Text fontFamily={FONT.REGULAR} style={{fontSize: 15}}>{content2 ? content2:""}</Text>
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>

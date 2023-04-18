@@ -195,7 +195,7 @@ const ListCart = (props) => {
                 : nearlyRestaurant.restaurantId,
               status: totalCart > 999999 ? "pending" : "accept",
               note: note,
-              deliveryDate:deliveryDate,
+              deliveryDate: deliveryDate,
               receiveTime: "",
               reason: "",
               // staffId: totalCart > 999999 ? null : 15,
@@ -289,6 +289,7 @@ const ListCart = (props) => {
                 deliveryMethod={deliveryMethod}
                 setDeliveryMethod={onDeliveryMethodChange}
                 locateCoord={route.params.locateCoord}
+               
               />
             }
             contentContainerStyle={{
@@ -319,7 +320,8 @@ const ListCart = (props) => {
                 onPress={() => {
                   handleCheckout();
                 }}
-                buttonText="Thanh toán"
+                disabled={nearlyRestaurant.restaurantId ? false : true}
+                buttonText={nearlyRestaurant.restaurantId ? "Thanh toán":"Đang tìm vị trí"}
               />
             ) : (
               <TouchableOpacity

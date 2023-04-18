@@ -17,12 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Party from "./Party";
 import { Calendar2, Clock } from "iconsax-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import {
-  convertDateToString,
-  convertTimeToString,
-  formatVNTime,
-} from "../../Utils/convertDate";
+import { formatVNTime } from "../../Utils/convertDate";
 import moment from "moment-timezone";
+import AlertPopup from "../AlertPopup";
 const FooterComponent = (props) => {
   const {
     totalCart,
@@ -43,6 +40,7 @@ const FooterComponent = (props) => {
   const [mode, setMode] = useState("date");
   const [openDate, setOpenDate] = useState(false);
   const [openTime, setOpenTime] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [datee, setDatee] = useState("");
   const [time, setTime] = useState("");
   let date = new Date();
@@ -63,7 +61,12 @@ const FooterComponent = (props) => {
     },
   ];
   useEffect(() => {
-    
+    if (totalCart > 9999999) {
+      alert(`Đơn hàng quá lớn nên sẽ buộc phải cọc trước 10% đơn hàng là ${totalCart*0.1}đ`)
+      setPayment("ZaloPay");
+    }
+  }, [totalCart]);
+  useEffect(() => {
     if (time !== "" && datee !== "") {
       let hours = moment.utc(time).tz("Asia/Ho_Chi_Minh").format("HH");
       let minutes = moment.utc(time).tz("Asia/Ho_Chi_Minh").format("mm");
@@ -71,14 +74,21 @@ const FooterComponent = (props) => {
       const year = dateVN.getFullYear();
       const month = dateVN.getMonth();
       const day = dateVN.getDate();
-      const newDate = new Date(year, month, day, hours, minutes);
-      const formatDate = moment.utc(newDate).local().format()
-      dispatch({ type: "SET_DATE", payload: formatDate });
+      if (hours < 10 || hours > 17) {
+        setIsOpen(true);
+        const newDate = new Date(year, month, day, 10, 0);
+        // const formatDate = moment.utc(newDate).local().format();
+        dispatch({ type: "SET_DATE", payload: newDate });
+      } else {
+        const newDate = new Date(year, month, day, hours, minutes);
+        // const formatDate = moment.utc(newDate).local().format();
+        dispatch({ type: "SET_DATE", payload: newDate });
+      }
     }
     // console.log(
     //
     // );
-  }, [time, datee]);
+  }, [time]);
   const onChangeDate = (event, selectedDate) => {
     setOpenDate(false);
 
@@ -160,12 +170,17 @@ const FooterComponent = (props) => {
                     style={{ marginRight: 7 }}
                     onPress={() => {
                       showDatePicker();
+                      // setDatePickerVisibility(true)
                     }}
                   >
                     <Calendar2 size="25" color={"#8c8c8c"} variant="Outline" />
                   </TouchableOpacity>
                 }
-                defaultValue={formatVNTime(currentDate)}
+                defaultValue={
+                  new Date().getHours() < 10 && !time
+                    ? formatVNTime(new Date().setHours(10, 0))
+                    : formatVNTime(currentDate)
+                }
               />
             </Flex>
             <Divider style={{ marginTop: 8 }} thickness={3} bg="#e4e2e2" />
@@ -292,6 +307,16 @@ const FooterComponent = (props) => {
                     setPayment(item.payment);
                     setPaymentMethod(item.payment);
                   }}
+                  disabled={
+                    totalCart > 9999999 && item.payment !== "ZaloPay"
+                      ? true
+                      : false
+                  }
+                  style={
+                    totalCart > 9999999 && item.payment !== "ZaloPay"
+                      ? { opacity: 0.3 }
+                      : { opacity: 1 }
+                  }
                   key={index}
                   activeOpacity={0.5}
                 >
@@ -413,12 +438,26 @@ const FooterComponent = (props) => {
           value={date}
           mode={mode}
           is24Hour={true}
-          minimumDate={date}
-          maximumDate={maxDate}
+          minimumDate={new Date()}
+          maximumDate={new Date()}
           display={"spinner"}
+          minuteInterval={15}
           onChange={onChangeDate}
         />
       )}
+      <AlertPopup
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title={"Thời gian không hợp lệ"}
+        content={
+          <Text>
+            Cửa hàng chúng tôi chỉ tiến hành giao bàn tiệc từ{" "}
+            <Text style={{ fontFamily: FONT.BOLD }}>10 giờ </Text>đến
+            <Text style={{ fontFamily: FONT.BOLD }}> 17 giờ </Text> hàng ngày.
+            Vui lòng chọn lại thời gian
+          </Text>
+        }
+      />
     </ImageBackground>
   );
 };
