@@ -9,10 +9,11 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Flex } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
 import StepProgess from "../components/StepProgess/index.jsx";
@@ -25,6 +26,9 @@ import { useCallback } from "react";
 import { Toast } from "@ant-design/react-native";
 import CancelOrderModal from "../components/CancelOrderModal/index.jsx";
 import { BASE_URL } from "../services/baseURL.js";
+import AlertPopup from "../components/AlertPopup";
+import { convertPrice } from "../Utils/convertPrice";
+import PopupRefund from "../components/AlertPopup/PopupRefund";
 const MyOrderDetailScreen = (props) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -32,6 +36,7 @@ const MyOrderDetailScreen = (props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
   const [selectedReason, setSelectedReason] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const customer = useSelector((state) => state.account.account);
   const restaurantList = useSelector((state) => state.restaurant.restaurant);
   const order = route.params.orders;
@@ -42,12 +47,10 @@ const MyOrderDetailScreen = (props) => {
       }
     });
   }, []);
-  useEffect(() => {
-  }, [selectedReason]);
+  useEffect(() => {}, [selectedReason]);
 
   const onConfirm = useCallback(async () => {
     setIsDone(false);
-
     if (order.paymentMethod === "cash") {
       await updateOrder();
     } else {
@@ -66,29 +69,38 @@ const MyOrderDetailScreen = (props) => {
     }
   }, [selectedReason]);
 
+  const onConfirmRefund = async()=>{
+    await updateOrder();
+    setIsOpen(false)
+  }
   const refundOrder = async (order) => {
     try {
-      const refundObject = {
-        amount: order.totalPrice,
-        orderId: order.id,
-      };
-      console.log(refundObject);
-      const refundRes = await axios.post(
-        BASE_URL + "/orders/refundZalopay",
-        refundObject
-      );
-      if (refundRes.data.returncode === 2) {
-        const mrefundid = refundRes.data.mrefundid;
-        await checkRefundStatus(mrefundid);
+      if (order.totalPrice > 9999999) {
+        setIsDone(true);
+        toggleModal();
+        setIsOpen(true)
+      } else {
+        const refundObject = {
+          amount: order.totalPrice,
+          orderId: order.id,
+        };
+        const refundRes = await axios.post(
+          BASE_URL + "/orders/refundZalopay",
+          refundObject
+        );
+        if (refundRes.data.returncode === 2) {
+          const mrefundid = refundRes.data.mrefundid;
+          await checkRefundStatus(mrefundid);
+        }
       }
     } catch (error) {
       setIsDone(true);
-       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          if (error.response) {
-            console.log(error.response.data);
-          }else{
-            console.log(error.message)
-          }
+      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
     }
   };
 
@@ -107,6 +119,7 @@ const MyOrderDetailScreen = (props) => {
       console.log("/orders/refundStatus/", error.response.data);
     }
   };
+  
   const updateOrder = async () => {
     try {
       let newOrder = {
@@ -127,11 +140,11 @@ const MyOrderDetailScreen = (props) => {
     } catch (error) {
       setIsDone(true);
       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          if (error.response) {
-            console.log(error.response.data);
-          }else{
-            console.log(error.message)
-          }
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
     }
   };
   const toggleModal = () => {
@@ -243,12 +256,36 @@ const MyOrderDetailScreen = (props) => {
       <BackButton />
       <CancelOrderModal
         isDone={isDone}
+        setIsDone={setIsDone}
         isVisible={isVisible}
         onCancel={toggleModal}
         onConfirm={onConfirm}
         selectedReason={selectedReason}
         setSelectedReason={setSelectedReason}
         order={order}
+      />
+      <PopupRefund
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onConfirm={onConfirmRefund}
+        cancelText={"Huỷ"}
+        title={<Text style={{ fontFamily: FONT.BOLD , fontSize: 21}}>Cảnh báo</Text>}
+        content={
+          <Text>
+            Đơn hàng của bạn đã cọc{" "}
+            <Text style={{ fontFamily: FONT.BOLD }}>
+              {convertPrice(order.totalPrice * 0.1)} đ
+            </Text>{" "}
+            và sử dụng phương thức thanh toán Zalopay.
+          </Text>
+        }
+        content2={
+          <Text>
+            Nếu bạn chọn tiếp tục, đơn hàng sẽ{" "}
+            <Text style={{ fontFamily: FONT.BOLD }}>không được hoàn tiền</Text>.
+            Bạn có muốn tiếp tục?
+          </Text>
+        }
       />
     </View>
   );

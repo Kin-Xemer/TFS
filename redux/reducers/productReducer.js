@@ -19,15 +19,21 @@ const initCart = {
   cartId: 0,
   party: null,
   totalPrice: 0,
-  deliveryDate: new Date(),
+  deliveryDate:
+    new Date().getHours().toLocaleString() < 10 ||
+    new Date().getHours().toLocaleString() > 17
+      ? new Date(new Date().setHours(10, 0)).toISOString()
+      : new Date().toISOString(),
 };
 
 let sum = 0;
 let totalPrice = 0;
 const saveCart = (state) => {
   sum = state.cartsItem.reduce((total, item) => total + item.quantity, 0);
-  totalPrice = state.cartsItem.reduce((total, item) => total + item.subTotal, 0);
-
+  totalPrice = state.cartsItem.reduce(
+    (total, item) => total + item.subTotal,
+    0
+  );
 
   const newCart = {
     id: state.cartId,
@@ -180,7 +186,11 @@ function todoProduct(state = initCart, action) {
         party: null,
         partyTotalPrice: 0,
         totalPrice: 0,
-        deliveryDate: new Date(),
+        deliveryDate:
+          new Date().getHours().toLocaleString() < 10 ||
+          new Date().getHours().toLocaleString() > 17
+            ? new Date(new Date().setHours(10, 0)).toISOString()
+            : new Date().toISOString(),
       };
     case "SET_PARTY":
       state.party.note = action.payload.note;

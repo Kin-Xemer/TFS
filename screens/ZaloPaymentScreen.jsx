@@ -98,7 +98,7 @@ const ZaloPaymentScreen = () => {
 
   useEffect(() => {
     if (isFocused) {
-      console.log(paymentObject);
+      console.log(order);
     }
   }, [isFocused]);
 

@@ -83,11 +83,11 @@ const FooterComponent = (props) => {
         setIsOpen(true);
         const newDate = new Date(year, month, day, 10, 0);
         // const formatDate = moment.utc(newDate).local().format();
-        dispatch({ type: "SET_DATE", payload: newDate });
+        dispatch({ type: "SET_DATE", payload: newDate.toISOString() });
       } else {
         const newDate = new Date(year, month, day, hours, minutes);
         // const formatDate = moment.utc(newDate).local().format();
-        dispatch({ type: "SET_DATE", payload: newDate });
+        dispatch({ type: "SET_DATE", payload: newDate.toISOString() });
       }
     }
     // console.log(
@@ -182,9 +182,10 @@ const FooterComponent = (props) => {
                   </TouchableOpacity>
                 }
                 defaultValue={
-                  new Date().getHours() < 10 && !time
-                    ? formatVNTime(new Date().setHours(10, 0))
-                    : formatVNTime(currentDate)
+                  // new Date().getHours() < 10 && !time
+                  //   ? formatVNTime(new Date().setHours(10, 0))
+                  //   : 
+                    formatVNTime(currentDate)
                 }
               />
             </Flex>
