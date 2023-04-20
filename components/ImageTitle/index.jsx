@@ -17,7 +17,7 @@ const ImageTitle = (props) => {
   const getAllEvent = useCallback(() => {
     axios.get(BASE_URL + "/events")
       .then((response) => {
-        setListEvent(response.data.slice(0,8));
+        setListEvent(response.data.slice(0,8).filter((item)=>item.status === true));
       })
       .catch((err) => {
         console.log("ImageTitle", err);

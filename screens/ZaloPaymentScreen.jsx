@@ -89,13 +89,16 @@ const ZaloPaymentScreen = () => {
 
   useEffect(() => {
     if (paymentStatus && paymentStatus.returnCode === 1) {
-      navigation.navigate("ZaloPaymentSuccessScreen", { order: order, paymentObject: paymentObject  });
+      navigation.navigate("ZaloPaymentSuccessScreen", {
+        order: order,
+        paymentObject: paymentObject,
+      });
     }
   }, [paymentStatus]);
 
   useEffect(() => {
     if (isFocused) {
-      console.log(paymentObject)
+      console.log(paymentObject);
     }
   }, [isFocused]);
 
@@ -121,7 +124,12 @@ const ZaloPaymentScreen = () => {
           height: 40,
         }}
       >
-        <Text style={[styles.title, { fontFamily:FONT.SEMI,fontSize: 20, color: THEME_COLOR }]}>
+        <Text
+          style={[
+            styles.title,
+            { fontFamily: FONT.SEMI, fontSize: 20, color: THEME_COLOR },
+          ]}
+        >
           THANH TOÁN
         </Text>
       </View>
@@ -192,7 +200,7 @@ const ZaloPaymentScreen = () => {
           </Text>
         </Flex>
         <Flex flexDirection="row" style={styles.infor}>
-          <Text style={[styles.title, { color: "gray" }]}>Tổng tiền</Text>
+          <Text style={[styles.title, { color: "gray" }]}>Tổng thanh toán</Text>
           <Spacer />
           <Text
             style={[
@@ -200,7 +208,12 @@ const ZaloPaymentScreen = () => {
               { fontFamily: FONT.BOLD, color: THEME_COLOR, fontSize: 16 },
             ]}
           >
-            {convertPrice(order.totalPrice)} VNĐ
+            {convertPrice(
+              order.totalPrice > 9999999
+                ? order.totalPrice * 0.1
+                : order.totalPrice
+            )}{" "}
+            VNĐ
           </Text>
         </Flex>
       </View>
@@ -208,8 +221,8 @@ const ZaloPaymentScreen = () => {
         style={{ position: "absolute", marginTop: 50 }}
         onPress={() => {
           if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+            navigation.goBack();
+          }
         }}
         activeOpacity={0.7}
       >
@@ -228,7 +241,10 @@ const ZaloPaymentScreen = () => {
         </TouchableOpacity>
       ) : null} */}
 
-      <ActionButton onPress={() => payOrder()} buttonText="Tiếp tục với ZaloPay"/>
+      <ActionButton
+        onPress={() => payOrder()}
+        buttonText="Tiếp tục với ZaloPay"
+      />
     </View>
   );
 };

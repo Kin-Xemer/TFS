@@ -35,9 +35,11 @@ const FeedbackDetailScreen = () => {
           setListMyfeedback(response.data);
         })
         .catch((error) => {
+          alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
             console.log(error.response.data);
-            alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
+          }else{
+            console.log(error.message)
           }
         });
     }

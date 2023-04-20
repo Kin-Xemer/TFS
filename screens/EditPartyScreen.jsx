@@ -111,7 +111,7 @@ const EditPartyScreen = () => {
 
   const getEvent = () => {
     axios.get(BASE_URL + "/events").then((response) => {
-      setEvents(response.data);
+      setEvents(response.data.filter((item)=>item.status === true));
     });
   };
   const onDeleteMenu = () => {
@@ -129,8 +129,12 @@ const EditPartyScreen = () => {
         Toast.success("Xoá thực đơn thành công", 1);
       })
       .catch((error) => {
-        alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
-        console.log("delete menu", error.response.data);
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          if (error.response) {
+            console.log(error.response.data);
+          }else{
+            console.log(error.message)
+          };
       });
   };
   const handleAddMenuToCart = () => {
@@ -169,8 +173,12 @@ const EditPartyScreen = () => {
         navigation.navigate("Home");
       })
       .catch((error) => {
-        alert("Đã xảy ra lỗi , vui lòng thử lại sau");
-        console.log(error.response.data);
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        if (error.response) {
+          console.log(error.response.data);
+        }else{
+          console.log(error.message)
+        }
       });
   };
   return (

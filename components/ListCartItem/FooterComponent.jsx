@@ -62,7 +62,12 @@ const FooterComponent = (props) => {
   ];
   useEffect(() => {
     if (totalCart > 9999999) {
-      alert(`Đơn hàng quá lớn nên sẽ buộc phải cọc trước 10% đơn hàng là ${totalCart*0.1}đ`)
+      // alert(
+      //   `Đơn hàng quá lớn nên sẽ buộc phải cọc trước 10% đơn hàng là ${
+      //     totalCart * 0.1
+      //   }đ`
+      // );
+      setPaymentMethod("ZaloPay");
       setPayment("ZaloPay");
     }
   }, [totalCart]);
@@ -360,9 +365,11 @@ const FooterComponent = (props) => {
             Chi tiết đơn hàng
           </Text>
         </Flex>
-        <DetailTextStyle textName="Giá tiền" price={totalCart} />
+        <DetailTextStyle
+          textName="Giá tiền"
+          price={totalCart > 9999999 ? totalCart * 0.1 : totalCart}
+        />
         <DetailTextStyle textName="Phí giao hàng" price={deliveryFee} />
-        <DetailTextStyle textName="Phí dịch vụ" price={servicesFee} />
         <Flex direction="row" style={styles.textView}>
           <Text
             style={{
@@ -402,7 +409,10 @@ const FooterComponent = (props) => {
               fontSize: 16,
             }}
           >
-            {convertPrice(totalCart + servicesFee + deliveryFee - discount)} đ
+            {convertPrice(
+               totalCart + deliveryFee - discount
+            )}{" "}
+            đ
           </Text>
         </Flex>
         <Divider style={{ marginVertical: 8 }} thickness={2} bg="#e4e2e2" />

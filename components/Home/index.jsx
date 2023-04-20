@@ -112,6 +112,8 @@ const Home = (props) => {
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
             console.log(error.response.data.message);
+          }else{
+            console.log(error.message)
           }
         });
     };
@@ -120,7 +122,7 @@ const Home = (props) => {
   const getEvent = useMemo(() => {
     return () => {
       axios.get(BASE_URL + "/events").then((response) => {
-        setEvents(response.data);
+        setEvents(response.data.filter((item)=>item.status === true));
       });
     };
   }, []);

@@ -53,6 +53,8 @@ const CardCombo = (props) => {
         if (error.response) {
           alert("Đã có lỗi xảy ra, xin vui lòng thử lại sau");
           console.log(error.response.data);
+        }else{
+          console.log(error.message);
         }
       }
     }

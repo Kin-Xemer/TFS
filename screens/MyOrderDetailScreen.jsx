@@ -43,7 +43,6 @@ const MyOrderDetailScreen = (props) => {
     });
   }, []);
   useEffect(() => {
-    console.log(selectedReason);
   }, [selectedReason]);
 
   const onConfirm = useCallback(async () => {
@@ -84,8 +83,12 @@ const MyOrderDetailScreen = (props) => {
       }
     } catch (error) {
       setIsDone(true);
-      alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      console.log("/orders/refundZalopay", error.response.data);
+       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          if (error.response) {
+            console.log(error.response.data);
+          }else{
+            console.log(error.message)
+          }
     }
   };
 
@@ -124,7 +127,11 @@ const MyOrderDetailScreen = (props) => {
     } catch (error) {
       setIsDone(true);
       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      console.log(error.response.data);
+          if (error.response) {
+            console.log(error.response.data);
+          }else{
+            console.log(error.message)
+          }
     }
   };
   const toggleModal = () => {
@@ -177,17 +184,17 @@ const MyOrderDetailScreen = (props) => {
 
         {order.status === "done" ? (
           <Flex flexDirection={"row"}>
-            <View style={{ width: "49%", marginRight: 8 }}>
-              <OrderButton
+            <View style={{ width: 0, marginRight: 0 }}>
+              {/* <OrderButton
                 bgColor={THEME_COLOR}
                 buttonText={"Đặt lại"}
                 buttonHandler={() => {
                   console.log("press");
                 }}
-              />
+              /> */}
             </View>
             {!order.feedbackStatus ? (
-              <View style={{ width: "49%" }}>
+              <View style={{ width: "100%" }}>
                 <TouchableOpacity
                   style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
                   activeOpacity={0.8}
@@ -199,7 +206,7 @@ const MyOrderDetailScreen = (props) => {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={{ width: "49%" }}>
+              <View style={{ width: "98%" }}>
                 <TouchableOpacity
                   style={[styles.buttonStyle, { backgroundColor: "#ffc746" }]}
                   activeOpacity={0.8}
@@ -215,13 +222,14 @@ const MyOrderDetailScreen = (props) => {
             )}
           </Flex>
         ) : order.status === "deny" ? (
-          <OrderButton
-            bgColor={THEME_COLOR}
-            buttonText={"Đặt lại"}
-            buttonHandler={() => {
-              console.log("press");
-            }}
-          />
+          // <OrderButton
+          //   bgColor={THEME_COLOR}
+          //   buttonText={"Đặt lại"}
+          //   buttonHandler={() => {
+          //     console.log("press");
+          //   }}
+          // />
+          <></>
         ) : (
           <OrderButton
             bgColor={"#d9d9d9"}

@@ -48,7 +48,9 @@ const FilterView = (props) => {
       .catch((error) => {
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
-            console.log(error.response.data.message);
+            console.log(error.response.data);
+          }else{
+            console.log(error.message)
           }
       });
   };

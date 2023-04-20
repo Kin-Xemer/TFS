@@ -173,13 +173,10 @@ const ProfileScreens = () => {
   };
   const handleLogout = async () => {
     try {
-      dispatch({
-        type: "SET_ORDER_STATUS",
-        payload: "",
-      });
       await AsyncStorage.removeItem("customer");
       dispatch({ type: "LOGOUT" });
       dispatch({ type: "SET_LOGIN_STATUS_LOGOUT" });
+      dispatch({ type: "CLEAR_FILTER" });
       navigation.navigate("LoginScreenn");
     } catch (e) {
       alert("Failed to clear the async storage.");

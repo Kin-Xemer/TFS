@@ -85,7 +85,7 @@ const PartyScreen = () => {
 
   const getEvent = () => {
     axios.get(BASE_URL + "/events").then((response) => {
-      setEvents(response.data);
+      setEvents(response.data.filter((item)=>item.status === true));
     });
   };
 

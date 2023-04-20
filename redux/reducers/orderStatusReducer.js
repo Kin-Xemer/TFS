@@ -15,6 +15,12 @@ const initState = {
           ...state,
           currentFilter: action.payload
         };
+      case "CLEAR_FILTER":
+        return {
+          ...state,
+          currentFilter:"all",
+          status:null
+        };
       default:
         return state;
     }

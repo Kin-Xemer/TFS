@@ -50,6 +50,7 @@ const ListCart = (props) => {
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [totalCart, setTotalCart] = useState(0);
   const [list, setList] = useState([]);
+  const [warning, setWarning] = useState("");
   const customerId = useSelector((state) => state.account.account.customerId);
   const items = useSelector((state) => state.cart);
   const deliveryDate = useSelector((state) => state.cart.deliveryDate);
@@ -58,6 +59,7 @@ const ListCart = (props) => {
   const selectedService = useSelector((state) => state.cart.serviceList);
   const specRes = useSelector((state) => state.restaurant.specRes);
   const minDistance = useSelector((state) => state.restaurant.minDistance);
+
   const listSelectedService = useSelector(
     (state) => state.cart.serviceListObject
   );
@@ -88,7 +90,15 @@ const ListCart = (props) => {
       }
     }
   }, [stringAddress, address, specRes]);
-
+  useEffect(() => {
+    if (totalCart > 9999999) {
+      setWarning(
+        "Do đơn hàng quá lớn nên cửa hàng sẽ bắt buộc phải cọc trước 10% tổng giá trị đơn hàng"
+      );
+    } else {
+      setWarning("");
+    }
+  }, [totalCart]);
   const onDeliveryMethodChange = (value) => {
     setDeliveryMethod(value);
     dispatch({ type: "SET_SPEC_RESTAURANT", specRes: null });
@@ -135,13 +145,20 @@ const ListCart = (props) => {
           setIsDone(true);
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
-            console.log("create order:", error.response.data.message);
+            console.log(error.response.data);
+          } else {
+            console.log(error.message);
           }
         });
     } else if (orders.paymentMethod === "ZaloPay") {
       setIsDone(false);
       axios
-        .post(BASE_URL + "/orders/zaloPay", orders)
+        .post(
+          BASE_URL + "/orders/zaloPay",
+          orders.totalPrice > 9999999
+            ? { ...orders, totalPrice: orders.totalPrice*0.1 }
+            : orders
+        )
         .then((response) => {
           setIsDone(true);
           navigation.navigate("ZaloPaymentScreen", {
@@ -195,7 +212,7 @@ const ListCart = (props) => {
                 : nearlyRestaurant.restaurantId,
               status: totalCart > 999999 ? "pending" : "accept",
               note: note,
-              deliveryDate: deliveryDate,
+              deliveryDate: cartData.party ? deliveryDate : "",
               receiveTime: "",
               reason: "",
               // staffId: totalCart > 999999 ? null : 15,
@@ -208,13 +225,21 @@ const ListCart = (props) => {
           .catch((error) => {
             setIsDone(true);
             alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-            console.log("getCart fromdb", error.response.data);
+            if (error.response) {
+              console.log(error.response.data);
+            } else {
+              console.log(error.message);
+            }
           });
       })
       .catch((error) => {
         setIsDone(true);
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-        console.log("get all order  fromdb", error.response.data);
+        if (error.response) {
+          console.log(error.response.data);
+        } else {
+          console.log(error.message);
+        }
       });
     // navigation.goBack();
   };
@@ -289,7 +314,6 @@ const ListCart = (props) => {
                 deliveryMethod={deliveryMethod}
                 setDeliveryMethod={onDeliveryMethodChange}
                 locateCoord={route.params.locateCoord}
-               
               />
             }
             contentContainerStyle={{
@@ -297,9 +321,47 @@ const ListCart = (props) => {
             }}
           />
           <View style={styles.paymentView}>
+            {warning ? (
+              <Text
+                style={{
+                  marginTop: 2,
+                  fontFamily: FONT.MEDIUM,
+                  color: THEME_COLOR,
+                }}
+              >
+                {warning}
+              </Text>
+            ) : (
+              <></>
+            )}
+            {totalCart > 9999999 ? (
+              <Flex
+                direction="row"
+                style={{ paddingTop: 2, alignItems: "flex-end" }}
+              >
+                <Text style={{ fontSize: 15, fontFamily: "Quicksand-Medium" }}>
+                  {"Tiền cọc"}
+                </Text>
+                <Spacer />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: "Quicksand-Bold",
+                    // color: THEME_COLOR,
+                  }}
+                >
+                  {convertPrice(
+                    ((totalCart + deliveryFee - discount) * 0.1).toFixed(0)
+                  )}{" "}
+                  đ
+                </Text>
+              </Flex>
+            ) : (
+              <></>
+            )}
             <Flex direction="row" style={styles.paymentContentView}>
               <Text style={{ fontSize: 15, fontFamily: "Quicksand-Medium" }}>
-                Tổng tiền
+                {"Tổng tiền đơn hàng"}
               </Text>
               <Spacer />
               <Text
@@ -309,8 +371,7 @@ const ListCart = (props) => {
                   color: THEME_COLOR,
                 }}
               >
-                {convertPrice(totalCart + servicesFee + deliveryFee - discount)}{" "}
-                đ
+                {convertPrice(totalCart + deliveryFee - discount)} đ
               </Text>
             </Flex>
           </View>
@@ -321,7 +382,11 @@ const ListCart = (props) => {
                   handleCheckout();
                 }}
                 disabled={nearlyRestaurant.restaurantId ? false : true}
-                buttonText={nearlyRestaurant.restaurantId ? "Thanh toán":"Đang tìm vị trí"}
+                buttonText={
+                  nearlyRestaurant.restaurantId
+                    ? "Thanh toán"
+                    : "Đang tìm vị trí"
+                }
               />
             ) : (
               <TouchableOpacity
