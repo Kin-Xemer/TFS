@@ -12,6 +12,7 @@ const CancelOrderModal = (props) => {
     setSelectedReason,
     selectedReason,
     isDone,
+    setIsDone
   } = props;
 
   const reasons = [
@@ -25,6 +26,7 @@ const CancelOrderModal = (props) => {
 
   const handleCancel = () => {
     setSelectedReason("");
+    setIsDone(true)
     onCancel();
   };
 

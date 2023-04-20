@@ -7,7 +7,9 @@ const AlertPopup = (props) => {
     const {onDelete, isOpen, setIsOpen, title, content,content2} = props;
 
 
-  const onClose = () => setIsOpen(false);
+  const onClose = () => {
+    setIsOpen(false)
+  };
 
   const cancelRef = useRef(null);
   return (
