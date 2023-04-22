@@ -127,7 +127,7 @@ const SelectStore = (props) => {
               }}
               key={index}
               coordinate={coord}
-              image={
+              icon={
                 item.restaurantLocation === selectedStore.restaurantLocation
                   ? require("../assets/icons/store_2.png")
                   : require("../assets/icons/store_1.png")
@@ -274,24 +274,6 @@ const SelectStore = (props) => {
         <Spacer />
       </Flex>
 
-      {/* {!isSelectedAddress ? (
-        <View
-          style={{
-            position: "absolute",
-            marginTop: height / 2,
-            marginLeft: width / 2 - 8,
-          }}
-        >
-          <Image
-            alt="check"
-            h={8}
-            w={8}
-            source={require("../assets/icons/restaurant.png")}
-          />
-        </View>
-      ) : (
-        ""
-      )} */}
     </View>
   );
 };
