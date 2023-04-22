@@ -44,8 +44,8 @@ const FooterComponent = (props) => {
   const [datee, setDatee] = useState("");
   const [time, setTime] = useState("");
   let date = new Date();
-  let maxDate = new Date();
-  maxDate.setDate(date.getDate() + 7);
+  const minDate = new Date(date.setDate(date.getDate() + 1));
+  const maxDate = new Date(date.setDate(date.getDate() + 7));
   let arrayPayment = [
     {
       payment: "cash",
@@ -184,8 +184,8 @@ const FooterComponent = (props) => {
                 defaultValue={
                   // new Date().getHours() < 10 && !time
                   //   ? formatVNTime(new Date().setHours(10, 0))
-                  //   : 
-                    formatVNTime(currentDate)
+                  //   :
+                  formatVNTime(currentDate)
                 }
               />
             </Flex>
@@ -410,10 +410,7 @@ const FooterComponent = (props) => {
               fontSize: 16,
             }}
           >
-            {convertPrice(
-               totalCart + deliveryFee - discount
-            )}{" "}
-            đ
+            {convertPrice(totalCart + deliveryFee - discount)} đ
           </Text>
         </Flex>
         <Divider style={{ marginVertical: 8 }} thickness={2} bg="#e4e2e2" />
@@ -434,10 +431,10 @@ const FooterComponent = (props) => {
       {openDate && (
         <DateTimePicker
           testID="dateTimePicker"
-          value={date}
+          value={minDate}
           mode={mode}
           is24Hour={true}
-          minimumDate={date}
+          minimumDate={minDate}
           maximumDate={maxDate}
           display={"calendar"}
           onChange={onChangeDate}

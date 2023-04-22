@@ -6,6 +6,8 @@ import {
 } from "../actions/productAction";
 import axios from "axios";
 import { BASE_URL } from "../../services/baseURL";
+let date = new Date();
+const minDate = new Date(date.setDate(date.getDate() + 1));
 const initCart = {
   numberCart: 0,
   cartsItem: [],
@@ -22,8 +24,8 @@ const initCart = {
   deliveryDate:
     new Date().getHours().toLocaleString() < 10 ||
     new Date().getHours().toLocaleString() > 17
-      ? new Date(new Date().setHours(10, 0)).toISOString()
-      : new Date().toISOString(),
+      ? new Date(new Date(minDate).setHours(10, 0)).toISOString()
+      : new Date(minDate).toISOString(),
 };
 
 let sum = 0;
