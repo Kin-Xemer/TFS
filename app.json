@@ -10,7 +10,7 @@
       "scheme": "demozpdk"
     },
     "splash": {
-      "image": "./assets/splash1.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
