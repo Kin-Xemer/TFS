@@ -1,3 +1,5 @@
+import { SET_ACCOUNT, SET_LOGIN_STATUS_LOGOUT } from "../../Utils/constant";
+
 const initState = {
   account: {
     customerId: 0,
@@ -22,13 +24,13 @@ const initState = {
 
 function accountReducer(state = initState, action) {
   switch (action.type) {
-    case "SET_ACCOUNT":
+    case SET_ACCOUNT:
       return {
         ...state,
         account: action.payload,
         isLogin: true
       };
-    case "SET_LOGIN_STATUS_LOGOUT":
+    case SET_LOGIN_STATUS_LOGOUT:
       return {
         ...state,
         isLogin: false

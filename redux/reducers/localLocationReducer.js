@@ -1,10 +1,12 @@
+import { SET_LOCAL } from "../../Utils/constant";
+
 const initState = {
   myLocation: {},
 };
 
 function localLocationReducer(state = initState, action) {
   switch (action.type) {
-    case "SET_LOCAL":
+    case SET_LOCAL:
       return {
         ...state,
         myLocation: action.payload

@@ -1,3 +1,5 @@
+import { SET_ORDER } from "../../Utils/constant";
+
 const initState = {
     order: false,
     stringAddress: "aa",
@@ -5,7 +7,7 @@ const initState = {
   
   function orderReducer(state = initState, action) {
     switch (action.type) {
-      case "SET_ORDER":
+      case SET_ORDER:
         return {
           ...state,
           stringAddress: action.payload

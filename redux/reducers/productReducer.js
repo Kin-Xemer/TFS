@@ -1,11 +1,25 @@
+
+import axios from "axios";
+import { BASE_URL } from "../../services/baseURL";
 import {
+  ADD_PROMOTION,
+  DELETE_MENU_ITEM_EDIT,
+  LOGOUT,
+  PUSH_LIST_ITEM_EDIT,
+  SAVE_DATA_CART,
+  SET_CART,
+  SET_CARTITEM,
+  SET_DATE,
+  SET_LIST_ITEM_EDIT,
+  SET_PARTY,
+  SET_PARTY_TOTAL_PRICE,
+  SET_SERVICE_LIST,
+  SET_SERVICE_LIST_OBJECT,
   ADD_CART,
   DECREASE_QUANTITY,
   INCREASE_QUANTITY,
   DELETE_CART,
-} from "../actions/productAction";
-import axios from "axios";
-import { BASE_URL } from "../../services/baseURL";
+} from "../../Utils/constant";
 let date = new Date();
 const minDate = new Date(date.setDate(date.getDate() + 1));
 const initCart = {
@@ -21,6 +35,7 @@ const initCart = {
   cartId: 0,
   party: null,
   totalPrice: 0,
+  promotion: null,
   deliveryDate:
     new Date().getHours().toLocaleString() < 10 ||
     new Date().getHours().toLocaleString() > 17
@@ -147,7 +162,8 @@ function todoProduct(state = initCart, action) {
         ...state,
         updateCart: saveCart(state),
       };
-    case "SET_CART":
+    case SET_CART:
+
       return {
         ...state,
         cartsItem: action.payload,
@@ -157,22 +173,22 @@ function todoProduct(state = initCart, action) {
         party: action.cart.party,
         totalPrice: action.cart.totalPrice,
       };
-    case "SET_CARTITEM":
+    case SET_CARTITEM:
       return {
         ...state,
         cartsItem: action.payload,
       };
-    case "SET_SERVICE_LIST":
+    case SET_SERVICE_LIST:
       return {
         ...state,
         serviceList: action.payload,
       };
-    case "SET_SERVICE_LIST_OBJECT":
+    case SET_SERVICE_LIST_OBJECT:
       return {
         ...state,
         serviceListObject: action.payload,
       };
-    case "LOGOUT":
+    case LOGOUT:
       return {
         ...state,
         numberCart: 0,
@@ -194,19 +210,19 @@ function todoProduct(state = initCart, action) {
             ? new Date(new Date().setHours(10, 0)).toISOString()
             : new Date().toISOString(),
       };
-    case "SET_PARTY":
+    case SET_PARTY:
       state.party.note = action.payload.note;
       state.party.quantity = action.payload.quantity;
       return {
         ...state,
         // updateCart: saveCart(state, action.payload),
       };
-    case "SET_LIST_ITEM_EDIT":
+    case SET_LIST_ITEM_EDIT:
       return {
         ...state,
         itemList: action.payload,
       };
-    case "PUSH_LIST_ITEM_EDIT":
+    case PUSH_LIST_ITEM_EDIT:
       let item = {
         foodId: action.payload.id,
         foodImage: action.payload.imgUrl,
@@ -217,27 +233,32 @@ function todoProduct(state = initCart, action) {
       return {
         ...state,
       };
-    case "DELETE_MENU_ITEM_EDIT":
+    case DELETE_MENU_ITEM_EDIT:
       return {
         ...state,
         itemList: state.itemList.filter(
           (item) => item.foodId !== action.payload
         ),
       };
-    case "SET_PARTY_TOTAL_PRICE":
+    case SET_PARTY_TOTAL_PRICE:
       return {
         ...state,
         partyTotalPrice: action.payload,
       };
-    case "SAVE_DATA_CART":
+    case SAVE_DATA_CART:
       return {
         ...state,
         updateCart: saveCart(state),
       };
-    case "SET_DATE":
+    case SET_DATE:
       return {
         ...state,
         deliveryDate: action.payload,
+      };
+    case ADD_PROMOTION:
+      return {
+        ...state,
+        promotion: action.payload,
       };
     default:
       return state;

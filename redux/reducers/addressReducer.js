@@ -1,3 +1,4 @@
+import { SET_STRING_ADDRESS } from "../../Utils/constant";
 import {
       SET_ADDRESS,
   } from "../actions/productAction";
@@ -16,7 +17,7 @@ function addressReducer(state = initState, action) {
         address: action.payload,
         location: action.location,
       };
-      case "SET_STRING_ADDRESS":
+      case SET_STRING_ADDRESS:
         return {
           ...state,
           stringAddress: action.payload

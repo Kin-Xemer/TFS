@@ -27,6 +27,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
 import { convertPrice } from "../../Utils/convertPrice";
 import ActionButton from "../ActionButton/index";
+import { SET_SERVICE_LIST, SET_SERVICE_LIST_OBJECT } from "../../Utils/constant";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ModalPicker = (props) => {
   const {
@@ -40,9 +41,9 @@ const ModalPicker = (props) => {
   const dispatch = useDispatch();
   const [groupValue, setGroupValue] = useState(selectedService);
   const handleSelectedService = () => {
-    dispatch({ type: "SET_SERVICE_LIST", payload: groupValue });
+    dispatch({ type: SET_SERVICE_LIST, payload: groupValue });
     let results = filter();
-    dispatch({ type: "SET_SERVICE_LIST_OBJECT", payload: results });
+    dispatch({ type: SET_SERVICE_LIST_OBJECT, payload: results });
     setIsvisible(false);
   };
   const filter = () => {

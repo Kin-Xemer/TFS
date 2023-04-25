@@ -1,3 +1,5 @@
+import { DELETE_MENU_ITEM, DELETE_PARTY, SET_MENU_QUANTITY, SET_NOTE, SET_PARTY_LIST, SET_PARTY_NAME, SET_SELECTED_FORM, SET_TOTAL_PRICE } from "../../Utils/constant";
+
 const initState = {
   note: "",
   quantity: 0,
@@ -24,7 +26,7 @@ const itemFilter = (itemList, action) => {
 };
 function partyReducer(state = initState, action) {
   switch (action.type) {
-    case "DELETE_MENU_ITEM":
+    case DELETE_MENU_ITEM:
       return {
         ...state,
         itemList: itemFilter(state.itemList, action),
@@ -38,34 +40,34 @@ function partyReducer(state = initState, action) {
             itemList: itemFilter(state.itemList, action),
           }) * state.quantity,
       };
-    case "SET_MENU_QUANTITY":
+    case SET_MENU_QUANTITY:
       return {
         ...state,
         quantity: action.payload,
         subTotal: getCurrentSubtotal(state),
         totalPrice: getCurrentSubtotal(state) * action.payload,
       };
-    case "SET_SELECTED_FORM":
+    case SET_SELECTED_FORM:
       return {
         ...state,
         partyTemplate: action.payload,
       };
-    case "SET_TOTAL_PRICE":
+    case SET_TOTAL_PRICE:
       return {
         ...state,
         totalPrice: action.payload,
       };
-    case "SET_NOTE":
+    case SET_NOTE:
       return {
         ...state,
         note: action.payload,
       };
-    case "SET_PARTY_NAME":
+    case SET_PARTY_NAME:
       return {
         ...state,
         partyName: action.payload,
       };
-    case "SET_PARTY_LIST":
+    case SET_PARTY_LIST:
       let item = {
         foodId: action.payload.id,
         foodImage: action.payload.imgUrl,
@@ -78,7 +80,7 @@ function partyReducer(state = initState, action) {
         subTotal: getCurrentSubtotal(state),
         totalPrice: getCurrentSubtotal(state) * state.quantity,
       };
-    case "DELETE_PARTY":
+    case DELETE_PARTY:
       return {
         ...state,
         note: "",

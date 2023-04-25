@@ -1,3 +1,5 @@
+import { CLEAR_FILTER, SET_CURRENT_FILTER, SET_ORDER_STATUS } from "../../Utils/constant";
+
 const initState = {
     status: null,
     currentFilter:"all"
@@ -5,17 +7,17 @@ const initState = {
   
   function orderStatusReducer(state = initState, action) {
     switch (action.type) {
-      case "SET_ORDER_STATUS":
+      case SET_ORDER_STATUS:
         return {
           ...state,
           status: action.payload
         };
-      case "SET_CURRENT_FILTER":
+      case SET_CURRENT_FILTER:
         return {
           ...state,
           currentFilter: action.payload
         };
-      case "CLEAR_FILTER":
+      case CLEAR_FILTER:
         return {
           ...state,
           currentFilter:"all",

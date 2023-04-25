@@ -1,3 +1,4 @@
+import { SET_LIST_FEEDBACK } from "../../Utils/constant";
 
 const initState = {
     feedBackList: [],
@@ -6,17 +7,12 @@ const initState = {
     
     function feedBackReducer(state = initState, action) {
     switch (action.type) {
-    case "SET_LIST_FEEDBACK":
+    case SET_LIST_FEEDBACK:
       return {
         ...state,
         feedBackList: action.payload,
         
       };
-      case "SET_STRING_ADDRESS":
-        return {
-          ...state,
-          feedBackList: []
-        }
     default:
       return state;
     }

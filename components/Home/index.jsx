@@ -48,6 +48,7 @@ import { FONT } from "../../Utils/themeFont";
 import { fetchFoods } from "../../redux/actions/foodAction";
 import { fetchCombos } from "../../redux/actions/comboAction";
 import CardCombo from "../CardFood/CardCombo";
+import { getAllPromotion } from "../../redux/actions/promotionAction";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -79,6 +80,7 @@ const Home = (props) => {
     getRegion();
     getEvent();
     getServices(dispatch);
+    dispatch(getAllPromotion())
   });
   const memoizedFoodList = useMemo(() => foodNewTrending, [foodNewTrending]);
   const memoizedFoodList2 = useMemo(() => foods.slice(16, 30), [foods]);

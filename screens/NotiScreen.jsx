@@ -51,7 +51,7 @@ const NotiScreen = () => {
     };
     const getOrderById = useCallback(async () => {
       try {
-        const orderId = message.slice(9, 15);
+        const orderId = message.slice(9, 13);
         const response = await axios.get(`${BASE_URL}/orders/${orderId}`);
         return response.data;
       } catch (error) {

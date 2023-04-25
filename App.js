@@ -32,37 +32,6 @@ LogBox.ignoreLogs([
 
 export default function App() {
   const [IsReady, SetIsReady] = useState(false);
-  const deepLinksConf = {
-    screens: {
-      TabNaviHome: {
-        screens: {
-          NotiScreen: { path: "notiscreen" },
-        },
-      },
-      MyFeedbackScreen:{
-        path:"feed"
-      }
-    },
-  };
-  const linking = {
-    prefixes: ["demozpdk://","https://app.tfs.com"],
-    config: deepLinksConf,
-    async getInitialURL() {
-      // Check if app was opened from a deep link
-      const url = await Linking.getInitialURL();
-
-      if (url != null) {
-        return url;
-      }
-
-      // Check if there is an initial firebase notification
-      const message = await messaging().getInitialNotification();
-
-      // Get the `url` property from the notification which corresponds to a screen
-      // This property needs to be set on the notification payload when sending it
-      return message?.data?.url;
-    },
-  };
   const LoadFonts = async () => {
     await useFonts();
   };
@@ -78,7 +47,6 @@ export default function App() {
     return (
       <Provider store={stores}>
         <NavigationContainer
-          linking={linking}
           fallback={<ActivityIndicator size="large" />}
         >
           <StatusBar
