@@ -15,7 +15,13 @@ import DetailTextStyle from "./DetailTextStyle";
 import { FONT } from "../../Utils/themeFont";
 import { useDispatch, useSelector } from "react-redux";
 import Party from "./Party";
-import { Calendar2, Clock } from "iconsax-react-native";
+import {
+  Add,
+  ArrowCircleRight2,
+  Calendar2,
+  Clock,
+  Edit,
+} from "iconsax-react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { formatVNTime } from "../../Utils/convertDate";
 import moment from "moment-timezone";
@@ -137,7 +143,7 @@ const FooterComponent = (props) => {
             <Text
               style={{
                 fontSize: 18,
-                fontFamily: "Quicksand-Bold",
+                fontFamily: FONT.BOLD,
                 color: "#8c8c8c",
                 marginBottom: 12,
               }}
@@ -195,68 +201,76 @@ const FooterComponent = (props) => {
           <></>
         )}
 
-        {listSelectedService.length > 0 ? (
+        {/* {listSelectedService.length > 0 ? (
           <View style={{ marginVertical: 6 }}>
             <Text
               style={{
                 fontSize: 18,
-                fontFamily: "Quicksand-Bold",
+                fontFamily: FONT.BOLD,
                 color: "#8c8c8c",
               }}
             >
               DỊCH VỤ
             </Text>
           </View>
-        ) : null}
-        <View>
-          <View style={{ marginBottom: 10 }}>
-            {listSelectedService.map((item, index) => {
-              return (
-                <Flex
-                  flexDirection={"row"}
-                  key={index}
-                  style={{ paddingVertical: 4 }}
-                >
-                  <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
-                    {item.serviceName}
-                  </Text>
-                  <Spacer />
-                  <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
-                    {" "}
-                    + {convertPrice(item.servicePrice)} đ
-                  </Text>
-                </Flex>
-              );
-            })}
-          </View>
-          <TouchableOpacity
-            style={styles.changeButton}
-            onPress={() => {
-              toggleModal();
-            }}
-          >
-            {listSelectedService.length > 0 ? (
+        ) : null} */}
+
+        <TouchableOpacity
+          onPress={() => {
+            toggleModal();
+          }}
+          style={{marginTop: 8}}
+          activeOpacity={0.7}
+        >
+          {listSelectedService.length > 0 ? (
+            <View style={{ flexDirection: "row" }}>
               <Text
                 style={{
-                  fontSize: 13,
-                  color: THEME_COLOR,
+                  fontSize: 18,
                   fontFamily: FONT.BOLD,
+                  color: "#8c8c8c",
                 }}
               >
-                Sửa dịch vụ
+                DỊCH VỤ
               </Text>
-            ) : (
+              <Spacer />
+              <Edit size={20} color={THEME_COLOR} />
+            </View>
+          ) : (
+            <View style={{ flexDirection: "row" }}>
               <Text
                 style={{
-                  fontSize: 13,
-                  color: THEME_COLOR,
+                  fontSize: 18,
                   fontFamily: FONT.BOLD,
+                  color: "#8c8c8c",
                 }}
               >
-                Thêm dịch vụ
+                DỊCH VỤ
               </Text>
-            )}
-          </TouchableOpacity>
+              <Spacer />
+              <Add size={24} color={THEME_COLOR} />
+            </View>
+          )}
+        </TouchableOpacity>
+        <View style={{ marginBottom: listSelectedService.length > 0 ? 8 : -4 }}>
+          {listSelectedService.map((item, index) => {
+            return (
+              <Flex
+                flexDirection={"row"}
+                key={index}
+                style={{ paddingVertical: 4 }}
+              >
+                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
+                  {item.serviceName}
+                </Text>
+                <Spacer />
+                <Text style={{ fontSize: 14, fontFamily: FONT.SEMI }}>
+                  {" "}
+                  + {convertPrice(item.servicePrice)} đ
+                </Text>
+              </Flex>
+            );
+          })}
         </View>
         <Divider style={{ marginVertical: 8 }} thickness={3} bg="#e4e2e2" />
         <Flex direction="row" style={{ alignItems: "center" }}>
@@ -277,9 +291,7 @@ const FooterComponent = (props) => {
           <TouchableWithoutFeedback
             onPress={() => {
               if (navigation.canGoBack()) {
-                if (navigation.canGoBack()) {
-                  navigation.goBack();
-                }
+                navigation.goBack();
               }
             }}
           >
@@ -288,7 +300,7 @@ const FooterComponent = (props) => {
                 style={{
                   fontSize: 13,
                   color: THEME_COLOR,
-                  fontFamily: "Quicksand-Bold",
+                  fontFamily: FONT.BOLD,
                 }}
               >
                 Thêm món
@@ -298,10 +310,52 @@ const FooterComponent = (props) => {
         </Flex>
         <Divider style={{ marginTop: 8 }} thickness={3} bg="#e4e2e2" />
       </View>
+
+      <TouchableOpacity
+        style={[
+          styles.paymentUnSelected,
+          {
+            backgroundColor: "white",
+            marginTop: 16,
+            marginHorizontal: 16,
+            paddingHorizontal: 16,
+            borderWidth: 0.5,
+            borderColor: "silver",
+            padding: 16,
+            alignItems: "center",
+            flexDirection: "row",
+          },
+        ]}
+        activeOpacity={1}
+        onPress={() => {
+          navigation.navigate("PromotionScreen");
+        }}
+      >
+        <Box>
+          <Image
+            source={{
+              uri: "https://live.staticflickr.com/65535/52845776895_f7c49eaf8d_n.jpg",
+            }}
+            alt={"voucher"}
+            h={7}
+            w={7}
+          />
+        </Box>
+        <Text
+          style={[
+            styles.textActive,
+            { marginLeft: 10, fontSize: 18, marginTop: 5 },
+          ]}
+        >
+          Chọn khuyến mãi
+        </Text>
+        <Spacer />
+        <ArrowCircleRight2 size={24} color={THEME_COLOR} />
+      </TouchableOpacity>
       <Flex style={styles.voucherView}>
         <View style={{ marginLeft: 8, justifyContent: "center" }}>
           <Flex flexDirection={"row"} style={{ alignItems: "center" }}>
-            <Text style={{ fontSize: 18, fontFamily: "Quicksand-Bold" }}>
+            <Text style={{ fontSize: 18, fontFamily: FONT.BOLD }}>
               Phương thức thanh toán
             </Text>
           </Flex>
@@ -362,7 +416,7 @@ const FooterComponent = (props) => {
 
       <Flex style={styles.orderDetailView}>
         <Flex direction="row" style={styles.textView}>
-          <Text style={{ fontFamily: "Quicksand-Bold", fontSize: 15 }}>
+          <Text style={{ fontFamily: FONT.BOLD, fontSize: 15 }}>
             Chi tiết đơn hàng
           </Text>
         </Flex>
@@ -374,7 +428,7 @@ const FooterComponent = (props) => {
         <Flex direction="row" style={styles.textView}>
           <Text
             style={{
-              fontFamily: "Quicksand-Regular",
+              fontFamily: FONT.REGULAR,
               fontSize: 14,
               color: "#898989",
             }}
@@ -384,7 +438,7 @@ const FooterComponent = (props) => {
           <Spacer />
           <Text
             style={{
-              fontFamily: "Quicksand-Regular",
+              fontFamily: FONT.REGULAR,
               fontSize: 14,
               color: "#898989",
               textDecorationLine: "line-through",
@@ -397,7 +451,7 @@ const FooterComponent = (props) => {
         <Flex direction="row" style={styles.textView}>
           <Text
             style={{
-              fontFamily: "Quicksand-Bold",
+              fontFamily: FONT.BOLD,
               fontSize: 14,
             }}
           >
@@ -406,7 +460,7 @@ const FooterComponent = (props) => {
           <Spacer />
           <Text
             style={{
-              fontFamily: "Quicksand-Bold",
+              fontFamily: FONT.BOLD,
               fontSize: 16,
             }}
           >
@@ -417,7 +471,7 @@ const FooterComponent = (props) => {
         <Flex direction="row">
           <Text
             style={{
-              fontFamily: "Quicksand-SemiBold",
+              fontFamily: FONT.SEMI,
               fontSize: 13,
               color: THEME_COLOR,
             }}
@@ -471,11 +525,11 @@ const FooterComponent = (props) => {
 };
 const styles = StyleSheet.create({
   textStyle: {
-    fontFamily: "Quicksand-Regular",
+    fontFamily: FONT.REGULAR,
     fontSize: 12,
   },
   addressText: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
   },
   changeButton: {
     alignItems: "center",
@@ -525,7 +579,6 @@ const styles = StyleSheet.create({
   },
   paymentUnSelected: {
     alignItems: "center",
-    width: "100%",
     borderWidth: 0.8,
     borderColor: "gray",
     marginBottom: 4,
@@ -534,7 +587,6 @@ const styles = StyleSheet.create({
   },
   paymentSelected: {
     alignItems: "center",
-    width: "100%",
     borderWidth: 1.5,
     borderColor: THEME_COLOR,
     backgroundColor: "#ffefef",
