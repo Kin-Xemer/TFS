@@ -38,12 +38,14 @@ import ProfileScreens from "./screens/ProfileScreens";
 import ProfileInfoScreen from "./screens/ProfileInfoScreen";
 import FeedbackDetailScreen from "./screens/FeedbackDetailScreen";
 import ProfileEditScreen from "./screens/ProfileEditScreen";
+import PromotionScreen from "./screens/PromotionScreen";
 import NotiScreen from "./screens/NotiScreen";
 import OTPScreen from "./screens/OTPScreen";
 import { THEME_COLOR } from "./Utils/themeColor";
 import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
 import { useNavigation } from "@react-navigation/native";
+import { FONT } from "./Utils/themeFont";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const AppNavigator = () => {
@@ -94,6 +96,7 @@ const AppNavigator = () => {
         <Stack.Screen name="OTPScreen" component={OTPScreen} />
         <Stack.Screen name="ProfileInfoScreen" component={ProfileInfoScreen} />
         <Stack.Screen name="ProfileEditScreen" component={ProfileEditScreen} />
+        <Stack.Screen name="PromotionScreen" component={PromotionScreen} />
       </Stack.Navigator>
     </Provider>
   );
@@ -132,7 +135,7 @@ const TabNavigator = () => {
       initialRouteName="HomeScreen"
       barStyle={{ backgroundColor: "white", paddingTop: 0 }}
       tabBarOptions={{ color: "white" }}
-      tabBarLabelStyle={{ fontFamily: "Quicksand-Bold" }}
+      tabBarLabelStyle={{ fontFamily: FONT.BOLD }}
       screenOptions={{
         headerShown: false,
       }}
@@ -143,7 +146,7 @@ const TabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarLabel: (
-            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 12 }}>
               Trang chủ
             </Text>
           ),
@@ -155,7 +158,7 @@ const TabNavigator = () => {
         component={OrderScreen}
         options={{
           tabBarLabel: (
-            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 12 }}>
               Đơn hàng
             </Text>
           ),
@@ -167,7 +170,7 @@ const TabNavigator = () => {
         component={NotiScreen}
         options={{
           tabBarLabel: (
-            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 14 }}>
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 14 }}>
               Thông báo
             </Text>
           ),
@@ -181,7 +184,7 @@ const TabNavigator = () => {
         component={ProfileScreens}
         options={{
           tabBarLabel: (
-            <Text style={{ fontFamily: "Quicksand-SemiBold", fontSize: 12 }}>
+            <Text style={{ fontFamily: FONT.BOLD, fontSize: 12 }}>
               Thông tin
             </Text>
           ),
