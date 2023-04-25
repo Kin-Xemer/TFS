@@ -142,9 +142,7 @@ const AddFoodMenu = (props) => {
           <TouchableOpacity
             onPress={() => {
               if (navigation.canGoBack()) {
-                if (navigation.canGoBack()) {
-                  navigation.goBack();
-                }
+                navigation.goBack();
               }
             }}
           >

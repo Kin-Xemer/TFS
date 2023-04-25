@@ -1,8 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "../../services/baseURL";
 import {
-    ADD_PROMOTION,
-    FETCH_PROMOTION_BY_ID,
+  ADD_PROMOTION,
+  FETCH_PROMOTION_BY_ID,
   FETCH_PROMOTION_FAILURE,
   FETCH_PROMOTION_REQUEST,
   FETCH_PROMOTION_SUCCESS,
@@ -45,14 +45,14 @@ export const fetchPromotionFailure = (error) => {
   };
 };
 export const fetchPromotionByid = (promotion) => {
-    return {
-        type: FETCH_PROMOTION_BY_ID,
-        payload: promotion,
-      };
-}
+  return {
+    type: FETCH_PROMOTION_BY_ID,
+    payload: promotion,
+  };
+};
 export const addPromotion = (promotion) => {
-    return {
-        type: ADD_PROMOTION,
-        payload: promotion,
-      };
-}
+  return {
+    type: ADD_PROMOTION,
+    payload: promotion,
+  };
+};

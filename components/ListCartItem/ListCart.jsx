@@ -507,9 +507,7 @@ const ListCart = (props) => {
         style={{ position: "absolute" }}
         onPress={() => {
           if (navigation.canGoBack()) {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            }
+            navigation.goBack();
           }
         }}
         activeOpacity={0.7}

@@ -9,7 +9,6 @@ const TopBar = (props) => {
   const { title, onPress } = props;
   const navigation = useNavigation();
   return (
-    
     <View>
       <View style={styles.container}>
         <Text
@@ -26,11 +25,9 @@ const TopBar = (props) => {
       <TouchableOpacity
         activeOpacity={0.7}
         style={styles.backButton}
-        onPress={()=>{
+        onPress={() => {
           if (navigation.canGoBack()) {
-            if (navigation.canGoBack()) {
-          navigation.goBack();
-        }
+            navigation.goBack();
           }
         }}
       >
@@ -49,7 +46,7 @@ const styles = StyleSheet.create({
   backButton: {
     marginTop: 35,
     position: "absolute",
-   marginLeft: -10,
+    marginLeft: -10,
   },
 });
 export default TopBar;

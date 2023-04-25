@@ -34,7 +34,7 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
-const COLOR = "#FFDB89";
+const COLOR = "#fcd475";
 const LoginForm = () => {
   const [show, setShow] = useState(false);
   const [username, setUserName] = useState("");
@@ -93,11 +93,11 @@ const LoginForm = () => {
         <Text style={{ fontFamily: FONT.BOLD, fontSize: 28 }}>Đăng Nhập</Text>
       </View>
       <View style={{ marginTop: 16 }}>
-        <Text style={{ fontFamily: FONT.SEMI, fontSize: 18, color: "gray" }}>
+        <Text style={{ fontFamily: FONT.SEMI, fontSize: 18, color: "gray", marginBottom: 60 }}>
           Đăng nhập để tiếp tục!{" "}
         </Text>
       </View>
-      <Flex flexDirection={"row"}>
+      {/* <Flex flexDirection={"row"}>
         <ImageLogin
           imageURL={"https://cdn-icons-png.flaticon.com/512/2702/2702602.png"}
         />
@@ -107,7 +107,7 @@ const LoginForm = () => {
         <ImageLogin
           imageURL={"https://cdn-icons-png.flaticon.com/512/3670/3670151.png"}
         />
-      </Flex>
+      </Flex> */}
       <Stack space={4} w="100%" alignItems="center">
         <Input
           // keyboardType="numeric"
