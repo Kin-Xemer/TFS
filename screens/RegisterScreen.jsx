@@ -32,6 +32,7 @@ import { Lock, Mobile, User } from "iconsax-react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { BASE_URL } from "../services/baseURL";
 import { validatePhone } from "../Utils/regexPhoneNum";
+import TopBar from "../components/TopBar";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
@@ -137,7 +138,12 @@ const RegisterScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <Stack space={4} w="100%" alignItems="center">
+      <TopBar title="ĐĂNG KÝ" onPress={()=>{
+           if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+      }}/>
+      <Stack space={4} w="100%" alignItems="center" mt={ScreenWidth/2}>
         {error ? (
           <View>
             <Text style={{ fontFamily: FONT.MEDIUM, color: "red" }}>
@@ -297,8 +303,7 @@ const RegisterScreen = () => {
 };
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    paddingTop: 50,
+    paddingTop: 10,
     backgroundColor: "white",
     flex: 1,
     paddingHorizontal: 16,

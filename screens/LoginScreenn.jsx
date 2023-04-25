@@ -11,12 +11,14 @@ import { useDispatch } from "react-redux";
 import BottomSheet from "@gorhom/bottom-sheet";
 import LoginForm from "../components/LoginForm/LoginForm";
 import { THEME_COLOR } from "../Utils/themeColor";
+import { ArrowLeft, Home2 } from "iconsax-react-native";
+import { FONT } from "../Utils/themeFont";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const LoginScreenn = (props) => {
   const navigation = useNavigation();
   const [index, setIndex] = useState(1);
   const bottomSheetRef = useRef(null);
-  const snapPoints = useMemo(() => ["85%", "93%"], []);
+  const snapPoints = useMemo(() => ["85%", "92%"], []);
   const handleSheetChanges = useCallback((index) => {
     setIndex(index);
   }, []);
@@ -26,10 +28,10 @@ const LoginScreenn = (props) => {
         onPress={() => {
           navigation.navigate("Home")
         }}
+        style={{flexDirection:"row", marginLeft: 4, alignItems:"flex-start"}}
       >
-        <View>
-          <Text style={{color: "white", fontSize: 15}}>Trang chủ</Text>
-        </View>
+        <ArrowLeft color="white" size={23} />
+        <Text style={{fontFamily:FONT.BOLD, color: "white", fontSize: 18, marginLeft:4 }}>Trang chủ</Text>
       </TouchableOpacity>
       <BottomSheet
         ref={bottomSheetRef}
@@ -54,7 +56,7 @@ const LoginScreenn = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 50,
+    paddingTop: 40,
     flex: 1,
     backgroundColor: THEME_COLOR,
   },

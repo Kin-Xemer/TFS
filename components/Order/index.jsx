@@ -115,7 +115,16 @@ const Order = (props) => {
               </View>
               <Flex flexDirection={"row"}>
                 <View style={{ marginRight: 4 }}>
-                  <Stickynote size="50" color={THEME_COLOR} />
+                  {/* <Stickynote size="50" color={THEME_COLOR} /> */}
+                  <Image
+                    source={{
+                      uri:"https://live.staticflickr.com/65535/52845581366_6273a4e8c7_w.jpg"
+                    }}
+                    alt="order"
+                    size="58"
+                    
+                  />
+                  
                 </View>
                 <View>
                   <Text style={styles.inforText}>
@@ -126,7 +135,7 @@ const Order = (props) => {
                       Địa chỉ: {item.deliveryAddress}
                     </Text>
                   </Box>
-                  <Flex flexDirection={"row"} width={"93%"}>
+                  <Flex flexDirection={"row"} width={"90%"}>
                     <Text style={styles.inforText}>
                       Số lượng: {item.totalQuantity}
                     </Text>
