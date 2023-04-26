@@ -47,7 +47,7 @@ const OTPScreen = () => {
       }
       console.log(cus)
       axios.post(`${BASE_URL}/customers`, cus).then((response) => {
-        Toast.success("Đặng ký tài khoản thành công", 1)
+        Toast.success("Đăng ký tài khoản thành công", 1)
         navigation.navigate("LoginScreenn")
       
       }).catch((err)=>{
