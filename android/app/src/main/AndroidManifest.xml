@@ -24,7 +24,7 @@
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@kienchothiec1/TFS"/>
     <meta-data android:name="com.google.android.geo.API_KEY" 
-    android:value="AIzaSyCkpAbyPOfF22KFkRErB4cBRqY7kutPa6A" />
+    android:value="AIzaSyCBM484zyjp6SLTk2j8vXhUCUuOuNAn4ac" />
     <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService" android:exported="false">
       <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT"/>
