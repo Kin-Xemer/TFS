@@ -8,7 +8,7 @@ import { Provider } from "@ant-design/react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Home from "../components/Home/index.jsx";
 import { Box, Flex, Spinner } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
@@ -51,7 +51,7 @@ const OrderScreen = (props) => {
     { label: "Bị huỷ", value: "deny" },
   ]);
 
-  const handleSelectedItem = (filter) => {
+  const handleSelectedItem = useCallback((filter) => {
     dispatch({ type: "SET_CURRENT_FILTER", payload: filter });
     if (status !== "") {
       if (filter !== "all") {
@@ -65,8 +65,9 @@ const OrderScreen = (props) => {
         dispatch({ type: "SET_ORDER_STATUS", payload: orders });
       }
     }
-  };
-  const getAllOrder = () => {
+  },[dispatch, orders, status]);
+
+  const getAllOrder = useCallback(() => {
     setIsDone(false);
     let url = BASE_URL + "/orders/customer/" + customerId;
     axios
@@ -77,7 +78,7 @@ const OrderScreen = (props) => {
           (item) =>
             new Date(item.orderDate).getTime() - new Date().getTime() < 0
         );
-
+          
         setOrders(res.data);
         if (status === null && status !== "") {
           setFilterOrder(res.data);
@@ -107,7 +108,7 @@ const OrderScreen = (props) => {
       .catch((error) => {
         console.log("OrderScreen", error);
       });
-  };
+  }, [customerId, status, currentFilter, dispatch]);
   useEffect(() => {
     !isLogin ? navigation.navigate("LoginScreenn") : "";
     if (isFocused) {

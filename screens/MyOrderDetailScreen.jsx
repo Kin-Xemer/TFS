@@ -47,7 +47,6 @@ const MyOrderDetailScreen = (props) => {
       }
     });
   }, []);
-  useEffect(() => {}, [selectedReason]);
 
   const onConfirm = useCallback(async () => {
     setIsDone(false);
@@ -73,7 +72,7 @@ const MyOrderDetailScreen = (props) => {
     await updateOrder();
     setIsOpen(false)
   }
-  const refundOrder = async (order) => {
+  const refundOrder = useCallback(async (order) => {
     try {
       if (order.totalPrice > 9999999) {
         setIsDone(true);
@@ -102,9 +101,9 @@ const MyOrderDetailScreen = (props) => {
         console.log(error.message);
       }
     }
-  };
+  }, [ toggleModal, setIsOpen, checkRefundStatus,order]);
 
-  const checkRefundStatus = async (mrefundid) => {
+  const checkRefundStatus = useCallback(async (mrefundid) => {
     try {
       const refundResponse = await axios.get(
         BASE_URL + `/orders/refundStatus/${mrefundid}`
@@ -118,9 +117,9 @@ const MyOrderDetailScreen = (props) => {
       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
       console.log("/orders/refundStatus/", error.response.data);
     }
-  };
+  }, []);
   
-  const updateOrder = async () => {
+  const updateOrder = useCallback(async () => {
     try {
       let newOrder = {
         orderId: order.id,
@@ -129,7 +128,7 @@ const MyOrderDetailScreen = (props) => {
         status: "deny",
       };
       console.log(newOrder);
-
+  
       await axios.put(BASE_URL + "/orders/status", newOrder);
       if (navigation.canGoBack()) {
         setIsDone(true);
@@ -146,7 +145,7 @@ const MyOrderDetailScreen = (props) => {
         console.log(error.message);
       }
     }
-  };
+  }, [order.id, selectedReason, navigation]);
   const toggleModal = () => {
     setIsVisible(!isVisible);
   };
