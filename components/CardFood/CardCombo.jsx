@@ -15,6 +15,7 @@ import {
   getAverageRating,
   getListPercentRating,
 } from "../../Utils/getListPercentRating";
+import { FONT } from "../../Utils/themeFont";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -152,11 +153,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   textStyle: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     fontSize: 14,
   },
   textFoodContent: {
-    fontFamily: "Quicksand-SemiBold",
+    fontFamily: FONT.SEMI,
     fontSize: 12,
     color: "#6E798C",
   },
@@ -164,6 +165,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "flex-start",
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
+  priceText: { fontFamily: FONT.BOLD, fontSize: 20, color: THEME_COLOR },
 });
 export default CardCombo;

@@ -1,6 +1,7 @@
 import { Flex } from "native-base";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { FONT } from "../../Utils/themeFont";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CartItem = (props) => {
   const { item, quantity } = props;
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   textStyle: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     fontSize: 14,
   },
   itemView: {

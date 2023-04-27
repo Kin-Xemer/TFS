@@ -10,6 +10,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { getCartById } from "../../Utils/api/getCart";
+import { FONT } from "../../Utils/themeFont";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -129,11 +130,11 @@ const styles = StyleSheet.create({
     shadowRadius: 1.2,
   },
   textStyle: {
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     fontSize: 14,
   },
   textFoodContent: {
-    fontFamily: "Quicksand-SemiBold",
+    fontFamily: FONT.SEMI,
     fontSize: 12,
     color: "#6E798C",
   },
@@ -142,6 +143,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 6,
   },
-  priceText: { fontFamily: "Quicksand-Bold", fontSize: 20, color: THEME_COLOR },
+  priceText: { fontFamily: FONT.BOLD, fontSize: 20, color: THEME_COLOR },
 });
 export default CardFoodMenu;

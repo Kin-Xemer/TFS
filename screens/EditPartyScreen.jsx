@@ -418,7 +418,7 @@ const EditPartyScreen = () => {
           <Text
             style={{
               fontSize: 16,
-              fontFamily: "Quicksand-Bold",
+              fontFamily: FONT.BOLD,
               color: THEME_COLOR,
             }}
           >
@@ -432,7 +432,7 @@ const EditPartyScreen = () => {
           <Text
             style={{
               fontSize: 22,
-              fontFamily: "Quicksand-Bold",
+              fontFamily: FONT.BOLD,
               color: THEME_COLOR,
             }}
           >
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontFamily: "Quicksand-Bold",
+    fontFamily: FONT.BOLD,
     paddingVertical: 12,
   },
   topBar: {
