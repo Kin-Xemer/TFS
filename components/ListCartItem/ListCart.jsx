@@ -124,7 +124,7 @@ const ListCart = (props) => {
       let discountValue = totalCart * (promotion.discountPercent * 0.01);
       setDiscount(discountValue);
     } else {
-      console.log("dont have promotion");
+      setDiscount(0);
     }
   }, [promotion]);
 
