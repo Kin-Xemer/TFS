@@ -42,6 +42,7 @@ const FooterComponent = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const party = useSelector((state) => state.cart.party);
+  const promotionApplied = useSelector((state) => state.cart.promotion);
   const [payment, setPayment] = useState("cash");
   const [mode, setMode] = useState("date");
   const [openDate, setOpenDate] = useState(false);
@@ -219,7 +220,7 @@ const FooterComponent = (props) => {
           onPress={() => {
             toggleModal();
           }}
-          style={{marginTop: 8}}
+          style={{ marginTop: 8 }}
           activeOpacity={0.7}
         >
           {listSelectedService.length > 0 ? (
@@ -341,14 +342,25 @@ const FooterComponent = (props) => {
             w={7}
           />
         </Box>
-        <Text
-          style={[
-            styles.textActive,
-            { marginLeft: 10, fontSize: 18, marginTop: 5 },
-          ]}
-        >
-          Chọn khuyến mãi
-        </Text>
+        {promotionApplied ? (
+          <Text
+            style={[
+              styles.textActive,
+              { marginLeft: 10, fontSize: 18, marginTop: 5 },
+            ]}
+          >
+            Đã áp dụng 1 khuyến mãi
+          </Text>
+        ) : (
+          <Text
+            style={[
+              styles.textActive,
+              { marginLeft: 10, fontSize: 18, marginTop: 5 },
+            ]}
+          >
+            Chọn khuyến mãi
+          </Text>
+        )}
         <Spacer />
         <ArrowCircleRight2 size={24} color={THEME_COLOR} />
       </TouchableOpacity>

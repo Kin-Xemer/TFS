@@ -54,6 +54,7 @@ const ListCart = (props) => {
   const customerId = useSelector((state) => state.account.account.customerId);
   const items = useSelector((state) => state.cart);
   const deliveryDate = useSelector((state) => state.cart.deliveryDate);
+  const promotion = useSelector((state) => state.cart.promotion);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const listService = useSelector((state) => state.services.services);
   const selectedService = useSelector((state) => state.cart.serviceList);
@@ -118,6 +119,15 @@ const ListCart = (props) => {
     setTotalCart(cartTotal);
   }, [items]);
 
+  useEffect(() => {
+    if (promotion) {
+      let discountValue = totalCart * (promotion.discountPercent * 0.01);
+      setDiscount(discountValue);
+    } else {
+      console.log("dont have promotion");
+    }
+  }, [promotion]);
+
   const listData = list.map((item, index) => ({
     id: `${index}`,
     name: item.name,
@@ -156,7 +166,7 @@ const ListCart = (props) => {
         .post(
           BASE_URL + "/orders/zaloPay",
           orders.totalPrice > 9999999
-            ? { ...orders, totalPrice: orders.totalPrice*0.1 }
+            ? { ...orders, totalPrice: orders.totalPrice * 0.1 }
             : orders
         )
         .then((response) => {

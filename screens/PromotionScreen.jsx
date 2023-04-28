@@ -16,37 +16,62 @@ import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Box, Flex, Spacer, Spinner } from "native-base";
+import { Box, Flex, Input, Spacer, Spinner } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
-import { ArrowUp3, ArrowDown3 } from "iconsax-react-native";
+import { ArrowUp3, ArrowDown3, SearchNormal1 } from "iconsax-react-native";
 import { FONT } from "../Utils/themeFont.js";
 import { RadioButton } from "react-native-paper";
 import { BASE_URL } from "../services/baseURL.js";
 import React from "react";
+import { Toast } from "@ant-design/react-native";
 import TopBar from "../components/TopBar/index";
-import { fetchPromotionByid } from "../redux/actions/promotionAction";
+import { addPromotion, fetchPromotionByid } from "../redux/actions/promotionAction";
 const PromotionScreen = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const listPromotion = useSelector((state) => state.promotion.listPromotion);
+  const promotionApplied = useSelector((state) => state.cart.promotion);
   const selectedVoucher = useSelector((state) => state.promotion.promotion);
+  const [codeInput, setCodeInput] = useState("");
+  const [voucherCodeSelected, setVoucherCodeSelected] = useState(null);
   useEffect(() => {
-    console.log("listPromotion lenght", listPromotion.length);
+   if(promotionApplied){
+    setVoucherCodeSelected(promotionApplied)
+   }
   }, []);
   // const [selectedVoucher, setSelectedVoucher] = useState(null);
 
-  const selectVoucher = useCallback(
+  const handleSelectedVoucher = 
     (voucher) => {
-      dispatch(fetchPromotionByid(voucher));
-    },
-    [selectedVoucher,dispatch]
-  );
+    console.log(voucherCodeSelected)
+    console.log(voucher)
+     if(voucherCodeSelected === voucher){
+      setVoucherCodeSelected(null);
+     }else{
+      setVoucherCodeSelected(voucher);
+     }
+    };
 
   const handleRedeem = () => {
-    if (selectedVoucher) {
+
+      Toast.success("Áp dụng thành công",1)
+      dispatch(addPromotion(voucherCodeSelected));
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
+    
+  };
+  const handleApplyCode = (codeInput) => {
+    const foundPromotion = listPromotion.find(
+      (promotion) => promotion.promotionCode.toLowerCase().trim() === codeInput.toLowerCase().trim()
+    );
+    if (foundPromotion) {
+     Toast.success("Đã áp dụng",1)
+      setVoucherCodeSelected(foundPromotion)
+      
     } else {
-      alert("Vui lòng chọn voucher để sử dụng");
+      Toast.fail("Không tìm thấy mã khuyến mãi", 1)
     }
   };
   const renderVoucher = (voucher, index) => {
@@ -54,7 +79,8 @@ const PromotionScreen = (props) => {
       <TouchableOpacity
         style={styles.voucher}
         key={index}
-        onPress={() => selectVoucher(voucher)}
+        activeOpacity={0.7}
+        onPress={() => handleSelectedVoucher(voucher)}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ marginLeft: 10 }}>
@@ -73,32 +99,79 @@ const PromotionScreen = (props) => {
         <Spacer />
         <RadioButton
           value={voucher}
-          status={selectedVoucher === voucher ? "checked" : "unchecked"}
+          status={
+            voucherCodeSelected && voucherCodeSelected.promotionCode === voucher.promotionCode
+              ? "checked"
+              : "unchecked"
+          }
+          onPress={() => handleSelectedVoucher(voucher)}
           color={THEME_COLOR}
         />
       </TouchableOpacity>
     );
   };
-
   return (
     <View style={styles.container}>
-      <TopBar
-        title="CHỌN KHUYẾN MÃI"
-        onPress={() => {
-          if (navigation.canGoBack()) {
-            navigation.goBack();
-          }
-        }}
-      />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ marginTop: 12 }}
-      >
-        {listPromotion.map((voucher, index) => renderVoucher(voucher, index))}
-      </ScrollView>
-      <TouchableOpacity style={styles.redeemButton} onPress={handleRedeem}>
-        <Text style={styles.redeemButtonText}>Sử dụng voucher</Text>
-      </TouchableOpacity>
+      {listPromotion.length > 0 ? (
+        <>
+          <TopBar
+            title="CHỌN KHUYẾN MÃI"
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              }
+            }}
+          />
+          <Flex flexDirection="row">
+            <View style={styles.textInputContainer}>
+              <Input
+                focusOutlineColor="red"
+                style={{ fontFamily: FONT.REGULAR }}
+                variant="rounded"
+                bgColor="transparent"
+                size="30px"
+                borderWidth={0}
+                h={36}
+                onChangeText={(text) => {
+                  setCodeInput(text);
+                }}
+                InputLeftElement={
+                  <SearchNormal1
+                    size="14"
+                    color={THEME_COLOR}
+                    variant="Outline"
+                  />
+                }
+                placeholder="Nhập mã khuyến mãi "
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.applyButton}
+              activeOpacity={0.7}
+              onPress={() => handleApplyCode(codeInput)}
+            >
+              <Text
+                style={{ fontSize: 16, fontFamily: FONT.SEMI, color: "white" }}
+              >
+                Áp dụng
+              </Text>
+            </TouchableOpacity>
+          </Flex>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ marginTop: 12 }}
+          >
+            {listPromotion.map((voucher, index) =>
+              renderVoucher(voucher, index)
+            )}
+          </ScrollView>
+          <TouchableOpacity style={styles.redeemButton} onPress={handleRedeem}>
+            <Text style={styles.redeemButtonText}>Dùng ngay</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <Text>Đang không có khuyến mãi</Text>
+      )}
     </View>
   );
 };
@@ -148,6 +221,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
     fontFamily: FONT.BOLD,
+  },
+  textInputContainer: {
+    paddingLeft: 16,
+    borderWidth: 0.5,
+    borderColor: "#AFACAC",
+    alignItems: "center",
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    width: "80%",
+    marginTop: 16,
+  },
+  applyButton: {
+    backgroundColor: THEME_COLOR,
+    paddingHorizontal: 11,
+    borderBottomRightRadius: 10,
+    borderTopRightRadius: 10,
+    justifyContent: "center",
+    marginTop: 16,
   },
 });
 export default PromotionScreen;
