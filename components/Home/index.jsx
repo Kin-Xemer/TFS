@@ -49,6 +49,7 @@ import { fetchFoods } from "../../redux/actions/foodAction";
 import { fetchCombos } from "../../redux/actions/comboAction";
 import CardCombo from "../CardFood/CardCombo";
 import { getAllPromotion } from "../../redux/actions/promotionAction";
+import { fetchEvents } from "../../redux/actions/eventAction";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -58,7 +59,7 @@ const Home = (props) => {
   const [fullName, setFullName] = useState("");
   const [size, setSize] = useState(15);
   const [page, setPage] = useState(0);
-  const [events, setEvents] = useState();
+  // const [events, setEvents] = useState();
   const [regions, setRegions] = useState();
   const [myLocation, setMyLocation] = useState("");
   const [query, setQuery] = useState("");
@@ -71,6 +72,7 @@ const Home = (props) => {
   );
   const foodNewTrending = useSelector((state) => state.food.foodTrend);
   const stringAddress = useSelector((state) => state.address.stringAddress);
+  const events = useSelector((state) => state.event.eventList);
   const foods = useSelector((state) => state.food.food);
   const { loading, combo, error } = useSelector((state) => state.combo);
   const initializeAppOnce = once((dispatch) => {
@@ -78,9 +80,10 @@ const Home = (props) => {
     getLocation();
     getRestaurant()(dispatch);
     getRegion();
-    getEvent();
+    // getEvent();
     getServices(dispatch);
     dispatch(getAllPromotion())
+    dispatch(fetchEvents())
   });
   const memoizedFoodList = useMemo(() => foodNewTrending, [foodNewTrending]);
   const memoizedFoodList2 = useMemo(() => foods.slice(16, 30), [foods]);
@@ -121,13 +124,13 @@ const Home = (props) => {
     };
   }, []);
 
-  const getEvent = useMemo(() => {
-    return () => {
-      axios.get(BASE_URL + "/events").then((response) => {
-        setEvents(response.data.filter((item)=>item.status === true));
-      });
-    };
-  }, []);
+  // const getEvent = useMemo(() => {
+  //   return () => {
+  //     axios.get(BASE_URL + "/events").then((response) => {
+  //       setEvents(response.data.filter((item)=>item.status === true));
+  //     });
+  //   };
+  // }, []);
 
   const checkLogin = async () => {
     try {

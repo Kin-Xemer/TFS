@@ -49,6 +49,7 @@ const ListCart = (props) => {
   const [openPicker, setOpenPicker] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [totalCart, setTotalCart] = useState(0);
+  const [finalTotalCart, setFinalTotalCart] = useState(0);
   const [list, setList] = useState([]);
   const [warning, setWarning] = useState("");
   const customerId = useSelector((state) => state.account.account.customerId);
@@ -127,6 +128,11 @@ const ListCart = (props) => {
       setDiscount(0);
     }
   }, [promotion]);
+  
+  useEffect(() => {
+    const newTotalCart = totalCart + deliveryFee - discount;
+    setFinalTotalCart(newTotalCart);
+  }, [promotion, deliveryFee, discount, totalCart])
 
   const listData = list.map((item, index) => ({
     id: `${index}`,
@@ -210,7 +216,7 @@ const ListCart = (props) => {
             const cartData = response.data;
             let order = {
               id: maxId + 1,
-              totalPrice: totalCart,
+              totalPrice: finalTotalCart,
               totalQuantity: cartData.numberCart,
               paymentMethod: paymentMethod === "cash" ? "cash" : "ZaloPay",
               serviceList: listSelectedService,
@@ -220,7 +226,7 @@ const ListCart = (props) => {
               restaurantId: specRes
                 ? specRes.restaurantId
                 : nearlyRestaurant.restaurantId,
-              status: totalCart > 999999 ? "pending" : "accept",
+              status: finalTotalCart > 999999 ? "pending" : "accept",
               note: note,
               deliveryDate: cartData.party ? deliveryDate : "",
               receiveTime: "",
@@ -309,6 +315,7 @@ const ListCart = (props) => {
                 service={service}
                 discount={discount}
                 totalCart={totalCart}
+                finalTotalCart={finalTotalCart}
                 deliveryFee={deliveryFee}
                 servicesFee={servicesFee}
                 toggleModal={toggleModal}

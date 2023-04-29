@@ -38,6 +38,7 @@ const FooterComponent = (props) => {
     listSelectedService,
     togglePicker,
     currentDate,
+    finalTotalCart
   } = props;
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -68,7 +69,7 @@ const FooterComponent = (props) => {
     },
   ];
   useEffect(() => {
-    if (totalCart > 9999999) {
+    if (finalTotalCart > 9999999) {
       // alert(
       //   `Đơn hàng quá lớn nên sẽ buộc phải cọc trước 10% đơn hàng là ${
       //     totalCart * 0.1
@@ -77,7 +78,7 @@ const FooterComponent = (props) => {
       setPaymentMethod("ZaloPay");
       setPayment("ZaloPay");
     }
-  }, [totalCart]);
+  }, [finalTotalCart]);
   useEffect(() => {
     if (time !== "" && datee !== "") {
       let hours = moment.utc(time).tz("Asia/Ho_Chi_Minh").format("HH");
@@ -380,12 +381,12 @@ const FooterComponent = (props) => {
                     setPaymentMethod(item.payment);
                   }}
                   disabled={
-                    totalCart > 9999999 && item.payment !== "ZaloPay"
+                    finalTotalCart > 9999999 && item.payment !== "ZaloPay"
                       ? true
                       : false
                   }
                   style={
-                    totalCart > 9999999 && item.payment !== "ZaloPay"
+                    finalTotalCart > 9999999 && item.payment !== "ZaloPay"
                       ? { opacity: 0.3 }
                       : { opacity: 1 }
                   }
@@ -434,7 +435,7 @@ const FooterComponent = (props) => {
         </Flex>
         <DetailTextStyle
           textName="Giá tiền"
-          price={totalCart > 9999999 ? totalCart * 0.1 : totalCart}
+          price={finalTotalCart > 9999999 ? finalTotalCart * 0.1 : finalTotalCart}
         />
         <DetailTextStyle textName="Phí giao hàng" price={deliveryFee} />
         <Flex direction="row" style={styles.textView}>
@@ -476,7 +477,7 @@ const FooterComponent = (props) => {
               fontSize: 16,
             }}
           >
-            {convertPrice(totalCart + deliveryFee - discount)} đ
+            {convertPrice(finalTotalCart)} đ
           </Text>
         </Flex>
         <Divider style={{ marginVertical: 8 }} thickness={2} bg="#e4e2e2" />

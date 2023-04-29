@@ -204,6 +204,7 @@ function todoProduct(state = initCart, action) {
         party: null,
         partyTotalPrice: 0,
         totalPrice: 0,
+        promotion:null,
         deliveryDate:
           new Date().getHours().toLocaleString() < 10 ||
           new Date().getHours().toLocaleString() > 17
