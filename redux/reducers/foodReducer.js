@@ -1,9 +1,10 @@
-import { FETCH_FOODS_TRENDING_SUCCESS, SET_FOOD_TREND } from "../../Utils/constant";
+import { FETCH_FOODS_TRENDING_SUCCESS, SET_FOOD_TREND, SET_LIST_CATEGORY } from "../../Utils/constant";
 import { GET_ALL_FOOD } from "../actions/productAction";
 const initState = {
   food: [],
   foodTrend:[],
-  foodTraditional: []
+  foodTraditional: [],
+  category: [],
 };
 
 function foodReducer(state = initState, action) {
@@ -22,6 +23,11 @@ function foodReducer(state = initState, action) {
       return {
         ...state,
         foodTrend: action.payload
+      };
+    case SET_LIST_CATEGORY:
+      return {
+        ...state,
+        category: action.payload
       };
     default:
       return state;

@@ -45,11 +45,12 @@ import ActionButton from "../ActionButton";
 import notifee, { AndroidColor } from "@notifee/react-native";
 import { GetFCMToken, requestNotiPermission } from "../../Helper/pushNoti";
 import { FONT } from "../../Utils/themeFont";
-import { fetchFoods } from "../../redux/actions/foodAction";
+import { fetchFoods, getCategories } from "../../redux/actions/foodAction";
 import { fetchCombos } from "../../redux/actions/comboAction";
 import CardCombo from "../CardFood/CardCombo";
 import { getAllPromotion } from "../../redux/actions/promotionAction";
 import { fetchEvents } from "../../redux/actions/eventAction";
+import { SET_MY_CITY } from "../../Utils/constant";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -80,16 +81,16 @@ const Home = (props) => {
     getLocation();
     getRestaurant()(dispatch);
     getRegion();
-    // getEvent();
     getServices(dispatch);
-    dispatch(getAllPromotion())
-    dispatch(fetchEvents())
+    dispatch(getAllPromotion());
+    dispatch(fetchEvents());
+    dispatch(fetchData());
+    dispatch(getCategories());
   });
   const memoizedFoodList = useMemo(() => foodNewTrending, [foodNewTrending]);
   const memoizedFoodList2 = useMemo(() => foods.slice(16, 30), [foods]);
   useEffect(() => {
     initializeAppOnce(dispatch);
-    fetchData()(dispatch);
   }, []);
   useEffect(() => {
     if (isFocused) {
@@ -117,8 +118,8 @@ const Home = (props) => {
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           if (error.response) {
             console.log(error.response.data.message);
-          }else{
-            console.log(error.message)
+          } else {
+            console.log(error.message);
           }
         });
     };
@@ -164,20 +165,33 @@ const Home = (props) => {
     }
     try {
       let location = await Location.getCurrentPositionAsync({});
+      console.log("find location done");
       dispatch({
         type: "SET_LOCAL",
         payload: location,
       });
-
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_MAPS_APIKEY}`
       );
 
       setIsFindDone(true);
+      let city = "";
+      response.data.results[0].address_components.forEach((component) => {
+        if (component.types.includes("administrative_area_level_1")) {
+          city = component.long_name;
+        }
+      });
+      console.log("convert to address done");
       dispatch({
         type: "SET_ADDRESS",
         payload: response.data.results[0],
       });
+
+      dispatch({
+        type: SET_MY_CITY,
+        payload: city,
+      });
+
       getNearlyRestaurant(response.data.results[0].formatted_address, dispatch);
     } catch (err) {
       console.log("Error getting location or address: ", err);
@@ -287,15 +301,15 @@ const Home = (props) => {
             paddingHorizontal: 16,
           }}
         >
-          <ImageTitle />
+          <ImageTitle foods={foods} events={events} regions={regions} />
         </View>
-     
+
         <Categories
           events={events}
           regions={regions}
           handlePressParty={handlePressParty}
         />
-           <Divider mt={4} py={1} backgroundColor="coolGray.100" />
+        <Divider mt={4} py={1} backgroundColor="coolGray.100" />
         <Title textTitle="Mâm tiệc" />
         <FlatList
           initialNumToRender={15}
@@ -361,7 +375,7 @@ const Home = (props) => {
         />
         <TouchableOpacity
           onPress={() => {
-            console.log("check");
+            isLogin ? handlePressParty() : navigation.navigate("LoginScreenn");
           }}
           activeOpacity={0.7}
         >
@@ -380,12 +394,15 @@ const Home = (props) => {
               <Spacer />
               <Text
                 style={{
-                  fontFamily: FONT.MEDIUM,
+                  fontFamily: FONT.BOLD,
                   color: "white",
                   marginBottom: 4,
+                  color:"white",
+                  fontSize: 15,
+                  textDecorationLine: 'underline'
                 }}
               >
-                xem theem
+                Xem thêm
               </Text>
               <Entypo name="chevron-right" color={"white"} size={20} />
             </Flex>

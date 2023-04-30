@@ -8,10 +8,18 @@ import {
   ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
 import { AddCircle, Setting4 } from "iconsax-react-native";
-import { Flex, Spacer, Text, Heading, Button, useToast } from "native-base";
+import {
+  Flex,
+  Spacer,
+  Text,
+  Heading,
+  Button,
+  useToast,
+  Badge,
+} from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
 import InformationView from "../components/InformationView";
 import FilterView from "../components/FilterView";
@@ -48,6 +56,14 @@ const FoodInformationScreen = (props) => {
       );
     }
   };
+  const countFilterAttributes = useCallback(() => {
+    let count = 0;
+    if (regionProps !== "") count++;
+    if (eventProps !== "") count++;
+    if (priceProps !== "") count++;
+    console.log("count filter", regionProps)
+    return count;
+  }, [regionProps, eventProps, priceProps]);
 
   const filterSelectedCategory = (array) => {
     if (filterSelected === "Tất cả") {
@@ -98,6 +114,9 @@ const FoodInformationScreen = (props) => {
       let result = food;
       result = filterSelectedCategory(result);
       setFilterFood(result);
+      setRegionProps(regions);
+      setEventProps(events);
+      setPriceProps(price);
     } else {
       setRegionProps(regions);
       setEventProps(events);
@@ -173,6 +192,30 @@ const FoodInformationScreen = (props) => {
                 refRBSheet.current.open();
               }}
             >
+              {countFilterAttributes() !== 0 ? (
+                <Badge // bg="red.400"
+                  colorScheme="danger"
+                  rounded="xl"
+                  mb={-3}
+                  zIndex={1}
+                  variant="solid"
+                  alignSelf="flex-end"
+                  style={{
+                    paddingRight: 5,
+                    paddingLeft: 5,
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                  }}
+                  _text={{
+                    fontFamily: "Quicksand-Bold",
+                    fontSize: 8,
+                  }}
+                >
+                  {countFilterAttributes()}
+                </Badge>
+              ) : (
+                <></>
+              )}
               <View style={{ marginHorizontal: 6 }}>
                 <Setting4 size="26" color="#000" />
               </View>
@@ -189,29 +232,6 @@ const FoodInformationScreen = (props) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ minHeight: screenHeight - 150 }}
         scrollEventThrottle={16}
-        // onScroll={Animated.event(
-        //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        //   {
-        //     useNativeDriver: true,
-        //     listener: (event) => {
-        //       setContentOffset(event.nativeEvent.contentOffset.y);
-        //       setIsScrollBottom(false);
-        //       // if (ifCloseToTop(event.nativeEvent)) {
-        //       //   console.log(event.nativeEvent.contentOffset.y)
-        //       //   //  setCurrentPos(event.nativeEvent.contentOffset.y);
-        //       //   // ScrollViewRef.current.scrollTo({
-        //       //   //   y:
-        //       //   //   140
-        //       //   // });
-        //       // }
-        //       // console.log(event.nativeEvent.contentOffset.y)
-        //       if (isCloseToBottom(event.nativeEvent)) {
-        //         setSliceFood(sliceFood + 10);
-        //         setIsScrollBottom(true);
-        //       }
-        //     },
-        //   }
-        // )}
         onScroll={handleScroll}
       >
         <InformationView

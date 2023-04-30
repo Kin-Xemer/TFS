@@ -30,30 +30,14 @@ const FilterView = (props) => {
   const ScrollViewRef = useRef();
   const [isVisiblePrice, setIsVisiblePrice] = useState(false);
   const [itemSelected, setItemSelected] = useState("");
+  const category = useSelector((state) => state.food.category);
   const [offset, setOffset] = useState();
-  const [arrayFilter, setArrayFilter] = useState(["Tất cả"]);
   const arrayOptions = ["Tăng dần", "Giảm dần"];
-  useEffect(() => {
-    getCategory();
-  }, []);
+  let arrayFilter = ["Tất cả"];
 
-  const getCategory = () => {
-    axios
-      .get(BASE_URL + "/categories")
-      .then((res) => {
-        res.data.map((data) => {
-          setArrayFilter((oldArray) => [...oldArray, data.categoryName]);
-        });
-      })
-      .catch((error) => {
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          if (error.response) {
-            console.log(error.response.data);
-          }else{
-            console.log(error.message)
-          }
-      });
-  };
+  category.map((category) => {
+    arrayFilter.push(category.categoryName);
+  });
   const toggleModalPrice = () => {
     setIsVisiblePrice(!isVisiblePrice);
   };

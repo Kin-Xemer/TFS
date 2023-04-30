@@ -47,4 +47,7 @@ export const SET_STRING_ADDRESS = "SET_STRING_ADDRESS";
 export const SET_ACCOUNT = "SET_ACCOUNT";
 export const SET_LOGIN_STATUS_LOGOUT = "SET_LOGIN_STATUS_LOGOUT";
 export const SET_EVENT_BY_ID = "SET_EVENT_BY_ID";
+export const SET_MY_CITY = "SET_MY_CITY";
+export const ACTIVE_CITY = "Thành phố Hồ Chí Minh";
+export const SET_LIST_CATEGORY = "SET_LIST_CATEGORY";
 

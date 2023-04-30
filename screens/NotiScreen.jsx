@@ -15,6 +15,8 @@ import { BASE_URL } from "../services/baseURL";
 import { convertDate } from "../Utils/convertDate";
 import TopBar from "../components/TopBar";
 import NotLoginScreen from "./NotLoginScreen";
+const START = 9; // Vị trí bắt đầu
+const END = 13;
 const NotiScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -42,26 +44,45 @@ const NotiScreen = () => {
     }
   }, [isFocused]);
 
-  const NotificationItem = ({ message, createdAt }) => {
+  const NotificationItem = ({ message, createdAt, checked, id }) => {
+    const orderId = message.slice(START, END);
+    let replacement = (
+      <Text style={{ fontFamily: FONT.BOLD, fontSize: 15 }}>{orderId}</Text>
+    );
     const handlePressNoti = async () => {
-      let order = await getOrderById(message);
+      let order = await getOrderById(orderId);
+      checkNoti(id)
       navigation.navigate("MyOrderDetailScreen", {
         orders: order,
       });
     };
-    const getOrderById = useCallback(async () => {
-      try {
-        const orderId = message.slice(9, 13);
-        const response = await axios.get(`${BASE_URL}/orders/${orderId}`);
-        return response.data;
-      } catch (error) {
-        console.error(error.response.data);
-        alert("Đã có lỗi xảy ra");
-      }
-    }, [message]);
+    const checkNoti = useCallback(
+      async (id) => {
+        try {
+          const response = await axios.put(`${BASE_URL}/notifications/checked/${id}`);
+          return response.data;
+        } catch (error) {
+          console.error(error.response.data);
+          alert("Đã có lỗi xảy ra");
+        }
+      },
+      [id]
+    );
+    const getOrderById = useCallback(
+      async (orderId, id) => {
+        try {
+          const response = await axios.get(`${BASE_URL}/orders/${orderId}`);
+          return response.data;
+        } catch (error) {
+          console.error(error.response.data);
+          alert("Đã có lỗi xảy ra");
+        }
+      },
+      [message]
+    );
     return (
       <TouchableOpacity
-        style={[styles.workerLabel, { backgroundColor: "#e8fafa" }]}
+        style={[styles.workerLabel, { backgroundColor: checked ? "white" : "#e8fafa" }]}
         activeOpacity={0.7}
         onPress={() => {
           handlePressNoti(message);
@@ -80,7 +101,9 @@ const NotiScreen = () => {
         </View>
         <View style={{ marginLeft: 8, flex: 1, justifyContent: "center" }}>
           <Text style={{ fontFamily: FONT.BOLD }}>Thông báo</Text>
-          <Text style={{ fontFamily: FONT.REGULAR }}>{message}</Text>
+          <Text style={{ fontFamily: FONT.REGULAR }}>
+            {message.slice(0, START)} {replacement} {message.slice(END)}
+          </Text>
           <Text
             style={{
               fontFamily: "OpenSans-Regular",
@@ -100,28 +123,35 @@ const NotiScreen = () => {
     <View style={styles.container}>
       {isLogin ? (
         <View>
-         <View style={{paddingLeft:10}}>
-         <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            paddingBottom: 20
-          }}
-        >
-          <Text style={[styles.title, { fontSize: 20, color: THEME_COLOR, paddingTop: 4}]}>
-            THÔNG BÁO
-          </Text>
-        </View>
-         </View>
+          <View style={{ paddingLeft: 10 }}>
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                paddingBottom: 20,
+              }}
+            >
+              <Text
+                style={[
+                  styles.title,
+                  { fontSize: 20, color: THEME_COLOR, paddingTop: 4 },
+                ]}
+              >
+                THÔNG BÁO
+              </Text>
+            </View>
+          </View>
           <FlatList
-          style={{marginBottom: 50}}
+            style={{ marginBottom: 50 }}
             showsVerticalScrollIndicator={false}
             data={listNoti}
             renderItem={({ item }) => (
               <MemoizedNotificationItem
                 message={item.message}
                 createdAt={item.createdAt}
+                checked={item.checked}
+                id={item.id}
               />
             )}
           />
@@ -136,7 +166,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
-    paddingTop: 40
+    paddingTop: 40,
   },
   workerLabel: {
     padding: 16,
