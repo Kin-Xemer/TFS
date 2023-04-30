@@ -288,6 +288,7 @@ const FoodInformationScreen = (props) => {
               </Text>
 
               {listFeedBack.length > 0 ? (
+                <>
                 <Flex p={2} direction="row" style={styles.ratingContainer}>
                   <View style={styles.ratingPointField}>
                     <Flex justifyContent={"center"} alignItems="center">
@@ -340,15 +341,8 @@ const FoodInformationScreen = (props) => {
                     </Flex>
                   </View>
                 </Flex>
-              ) : (
-                <Flex p={2} direction="row" style={styles.ratingContainer}>
-                  <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 18 }}>
-                    Hiện chưa có đánh giá
-                  </Text>
-                </Flex>
-              )}
-              <Divider my={3} />
-              <TouchableOpacity
+                <Divider my={3} />
+                <TouchableOpacity
                 activeOpacity={0.7}
                 style={{ flexDirection: "row", alignItems: "center" }}
                 onPress={() => {
@@ -371,6 +365,16 @@ const FoodInformationScreen = (props) => {
                 <Entypo name="chevron-right" size={36} />
               </TouchableOpacity>
               <Divider my={3} />
+              </>
+              ) : (
+                <Flex p={2} style={styles.ratingContainer}>
+                  <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 18 }}>
+                    Hiện chưa có đánh giá
+                  </Text>
+                </Flex>
+              )}
+     
+              
             </View>
           </Animated.ScrollView>
           <View
