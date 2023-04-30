@@ -435,7 +435,7 @@ const FooterComponent = (props) => {
         </Flex>
         <DetailTextStyle
           textName="Giá tiền"
-          price={finalTotalCart > 9999999 ? finalTotalCart * 0.1 : finalTotalCart}
+          price={totalCart}
         />
         <DetailTextStyle textName="Phí giao hàng" price={deliveryFee} />
         <Flex direction="row" style={styles.textView}>

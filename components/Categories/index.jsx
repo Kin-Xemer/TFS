@@ -26,8 +26,6 @@ const Categories = (props) => {
             food: foods,
             events: events,
             regions: regions,
-            banner:
-              "https://live.staticflickr.com/65535/52702504583_ff7ec0f38a_z.jpg",
           });
         }}
         activeOpacity={0.8}
