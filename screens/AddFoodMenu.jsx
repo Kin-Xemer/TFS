@@ -57,7 +57,6 @@ const AddFoodMenu = (props) => {
     if (regionProps !== "") count++;
     if (eventProps !== "") count++;
     if (priceProps !== "") count++;
-    console.log("count filter", regionProps)
     return count;
   }, [regionProps, eventProps, priceProps]);
 
