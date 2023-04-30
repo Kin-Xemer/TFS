@@ -27,6 +27,7 @@ import { Button, Flex, Image, Spacer } from "native-base";
 import { convertLatLng } from "../Utils/convertLatLng";
 import { getNearlyRestaurant } from "../Utils/api/getNearlyRestaurant";
 import { FONT } from "../Utils/themeFont";
+import { SET_MY_CITY } from "../Utils/constant";
 
 const { width, height } = Dimensions.get("window");
 const MapScreen = (props) => {
@@ -45,6 +46,7 @@ const MapScreen = (props) => {
   const [resultAddress, setResultAddress] = useState();
   const [myLocation, setMyLocation] = useState(route.params.locateCoord);
   const [isDone, setIsDone] = useState(true);
+  const [city, setCity] = useState("true");
   const [placeFocus, setPlaceFocus] = useState(false);
   const [selectedCoord, setSeletedCoord] = useState(null);
   const snapPoints = useMemo(() => ["18%", "65%"], []);
@@ -111,6 +113,13 @@ const MapScreen = (props) => {
       .then((response) => {
         setIsDone(true);
         setResultAddress(response.data.results[0]);
+        let city =""
+        response.data.results[0].address_components.forEach((component) => {
+          if (component.types.includes("administrative_area_level_1")) {
+            city = component.long_name;
+          }
+        });
+        setCity(city)
         setStringAddress(response.data.results[0].formatted_address);
         placeRef.current?.setAddressText(
           response.data.results[0].formatted_address
@@ -127,7 +136,10 @@ const MapScreen = (props) => {
     const lng = resultAddress.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
-    console.log("Mapscrressn ", stringAddress);
+    dispatch({
+      type: SET_MY_CITY,
+      payload: city,
+    });
     getNearlyRestaurant(stringAddress, dispatch);
     placeRef.current?.setAddressText(stringAddress);
     placeRef.current?.blur();

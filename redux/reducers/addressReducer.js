@@ -1,4 +1,4 @@
-import { SET_STRING_ADDRESS } from "../../Utils/constant";
+import { SET_MY_CITY, SET_STRING_ADDRESS } from "../../Utils/constant";
 import {
       SET_ADDRESS,
   } from "../actions/productAction";
@@ -6,7 +6,8 @@ import {
 const initState = {
   address: "",
   location: null,
-  stringAddress:""
+  stringAddress:"",
+  myCity: "",
 };
 
 function addressReducer(state = initState, action) {
@@ -21,6 +22,12 @@ function addressReducer(state = initState, action) {
         return {
           ...state,
           stringAddress: action.payload
+        }
+      case SET_MY_CITY:
+        console.log("My city", action.payload)
+        return {
+          ...state,
+          myCity: action.payload
         }
     default:
       return state;

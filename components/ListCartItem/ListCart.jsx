@@ -28,6 +28,8 @@ import { FONT } from "../../Utils/themeFont";
 import { Toast } from "@ant-design/react-native";
 import { getNearlyRestaurant } from "../../Utils/api/getNearlyRestaurant";
 import { calculateShippingFee } from "../../Utils/shipCost";
+import { ACTIVE_CITY } from "../../Utils/constant";
+import AlertPopup from "../AlertPopup";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const ListCart = (props) => {
@@ -52,11 +54,13 @@ const ListCart = (props) => {
   const [finalTotalCart, setFinalTotalCart] = useState(0);
   const [list, setList] = useState([]);
   const [warning, setWarning] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const customerId = useSelector((state) => state.account.account.customerId);
   const items = useSelector((state) => state.cart);
   const deliveryDate = useSelector((state) => state.cart.deliveryDate);
   const promotion = useSelector((state) => state.cart.promotion);
   const stringAddress = useSelector((state) => state.address.stringAddress);
+  const myCity = useSelector((state) => state.address.myCity);
   const listService = useSelector((state) => state.services.services);
   const selectedService = useSelector((state) => state.cart.serviceList);
   const specRes = useSelector((state) => state.restaurant.specRes);
@@ -231,12 +235,14 @@ const ListCart = (props) => {
               deliveryDate: cartData.party ? deliveryDate : "",
               receiveTime: "",
               reason: "",
+              shippingFee:deliveryFee,
+              discountPrice:discount,
               // staffId:  88,
               deliveryMethod: deliveryMethod,
               party: cartData.party,
             };
             createOrder(order);
-            console.log(order);
+            // console.log(order);
           })
           .catch((error) => {
             setIsDone(true);
@@ -394,17 +400,27 @@ const ListCart = (props) => {
           </View>
           <View style={{ paddingHorizontal: 16, backgroundColor: "white" }}>
             {isDone ? (
-              <ActionButton
-                onPress={() => {
-                  handleCheckout();
-                }}
-                disabled={nearlyRestaurant.restaurantId ? false : true}
-                buttonText={
-                  nearlyRestaurant.restaurantId
-                    ? "Thanh toán"
-                    : "Đang tìm vị trí"
-                }
-              />
+              myCity === ACTIVE_CITY ? <ActionButton
+              onPress={() => {
+                handleCheckout();
+              }}
+              disabled={nearlyRestaurant.restaurantId ? false : true}
+              buttonText={
+                nearlyRestaurant.restaurantId
+                  ? "Thanh toán"
+                  : "Đang tìm vị trí"
+              }
+            /> : <ActionButton
+            onPress={() => {
+              setIsOpen(true)
+            }}
+            disabled={nearlyRestaurant.restaurantId ? false : true}
+            buttonText={
+              nearlyRestaurant.restaurantId
+                ? "Thanh toán"
+                : "Đang tìm vị trí"
+            }
+          />
             ) : (
               <TouchableOpacity
                 style={styles.buttonStyleLoading}
@@ -519,6 +535,16 @@ const ListCart = (props) => {
         toggleModal={toggleModal}
         setIsvisible={setIsVisible}
         listService={listService}
+      />
+       <AlertPopup
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title={<Text style={{ fontFamily: FONT.BOLD, fontSize: 20 }}>Thông báo</Text>}
+        content={<Text>
+          Vị trí của bạn nằm ngoài khu vực{" "}
+          <Text style={{ fontFamily: FONT.BOLD }}>Thành phố Hồ Chí Minh </Text>
+        </Text>}
+        content2="Vui lòng chọn vị trí khác"
       />
       <TouchableOpacity
         style={{ position: "absolute" }}
