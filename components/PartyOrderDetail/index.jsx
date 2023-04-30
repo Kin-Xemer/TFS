@@ -6,11 +6,25 @@ import { THEME_COLOR } from "../../Utils/themeColor";
 import { FONT } from "../../Utils/themeFont";
 import { useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
+import { useCallback, useState } from "react";
+import AlertShowFood from "../AlertPopup/AlertShowFood";
 
 const PartyOrderDetail = (props) => {
-    const {party} = props
+
+  const { party } = props;
+  const [isOpen, setIsOpen] = useState(false)
+  const handleShowFood = useCallback(() => {
+    setIsOpen(true);
+  }, [setIsOpen]);
   return (
-    <View style={{ backgroundColor: "white" }}>
+    <>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={{ backgroundColor: "white" }}
+      onPress={() => {
+        handleShowFood();
+      }}
+    >
       <Flex flexDirection="row">
         <Flex flexDirection="row">
           <Image
@@ -33,30 +47,31 @@ const PartyOrderDetail = (props) => {
             </Text>
             <Text
               style={{
-                fontFamily: FONT.SEMI, fontSize: 13, color: "#8c8c8c"
+                fontFamily: FONT.SEMI,
+                fontSize: 13,
+                color: "#8c8c8c",
               }}
-          
             >
-             {convertPrice(party.totalPrice / party.quantity)} /bàn
-            </Text> 
+              {convertPrice(party.totalPrice / party.quantity)} /bàn
+            </Text>
           </Stack>
         </Flex>
         <Spacer />
-        <Flex style={{alignItems:"flex-end"}}>
-
-        <Spacer/>
-        <Text
-              style={{
-                fontFamily: FONT.BOLD,
-                fontSize: 17,
-             
-              }}
-            >
-              {convertPrice(party.totalPrice)} đ{" "}
-            </Text>
+        <Flex style={{ alignItems: "flex-end" }}>
+          <Spacer />
+          <Text
+            style={{
+              fontFamily: FONT.BOLD,
+              fontSize: 17,
+            }}
+          >
+            {convertPrice(party.totalPrice)} đ{" "}
+          </Text>
         </Flex>
       </Flex>
-    </View>
+    </TouchableOpacity>
+    <AlertShowFood isOpen={isOpen} setIsOpen={setIsOpen} listFood={party.itemList} quantity={party.quantity}/>
+    </>
   );
 };
 

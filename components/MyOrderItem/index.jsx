@@ -42,7 +42,7 @@ const MyOrderItem = (props) => {
 
       {order.serviceList.length > 0 ? (
         <View>
-          <Box mb={2} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
+          <Box mb={2} mt={3} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />
           <Text fontFamily={FONT.BOLD} fontSize={18} mb={2} color={"#8c8c8c"}>
             DỊCH VỤ
           </Text>
@@ -80,7 +80,7 @@ const MyOrderItem = (props) => {
         </Text>
         <Spacer />
         <Text fontFamily={FONT.BOLD} fontSize={17}>
-          {convertPrice(order.totalPrice)} đ
+          {convertPrice(order.totalPrice + order.discountPrice - order.shippingFee)} đ
         </Text>
       </Flex>
       <Flex flexDirection="row">
@@ -89,7 +89,16 @@ const MyOrderItem = (props) => {
         </Text>
         <Spacer />
         <Text fontFamily={FONT.BOLD} fontSize={17}>
-          {convertPrice(fee)}đ
+          {convertPrice(order.shippingFee)}đ
+        </Text>
+      </Flex>
+      <Flex flexDirection="row">
+        <Text fontFamily={FONT.MEDIUM} fontSize={17}>
+          Giảm giá:{" "}
+        </Text>
+        <Spacer />
+        <Text fontFamily={FONT.BOLD} style={{    textDecorationLine: "line-through",}} fontSize={17}>
+          {convertPrice(order.discountPrice)}đ
         </Text>
       </Flex>
       <Flex flexDirection="row">
@@ -98,7 +107,7 @@ const MyOrderItem = (props) => {
         </Text>
         <Spacer />
         <Text fontFamily={FONT.BOLD} fontSize={22} color={THEME_COLOR}>
-          {convertPrice(order.totalPrice + fee)} đ
+          {convertPrice(order.totalPrice)} đ
         </Text>
       </Flex>
       <Box mb={4} mt={15} borderBottomWidth={0.3} borderBottomColor="#8c8c8c" />

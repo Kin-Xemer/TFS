@@ -35,8 +35,10 @@ const MyOrderDetailScreen = (props) => {
   const [isDone, setIsDone] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
+
   const [selectedReason, setSelectedReason] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const customer = useSelector((state) => state.account.account);
   const restaurantList = useSelector((state) => state.restaurant.restaurant);
   const order = route.params.orders;
