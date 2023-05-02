@@ -28,7 +28,7 @@ import { SafeAreaView } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { FONT } from "../Utils/themeFont";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Lock, Mobile, User } from "iconsax-react-native";
+import { Lock, Mobile, ProfileCircle, User } from "iconsax-react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { BASE_URL } from "../services/baseURL";
 import { validatePhone } from "../Utils/regexPhoneNum";
@@ -41,6 +41,7 @@ const RegisterScreen = () => {
   const [show, setShow] = useState(false);
   const [username, setUserName] = useState("");
   const [name, setName] = useState("");
+  const [nameErr, setNameErr] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [phone, setPhone] = useState(0);
@@ -50,6 +51,7 @@ const RegisterScreen = () => {
   const [isDone, setIsDone] = useState(true);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const inputUserRef = useRef();
+  const inputNameRef = useRef();
   const passwordRef = useRef();
   const confirmRef = useRef();
   const navigation = useNavigation();
@@ -61,6 +63,12 @@ const RegisterScreen = () => {
   };
   const handleChangePassword = (e) => {
     setPassword(e);
+  };
+  const handelOnFocus = (e) => {
+    setError("");
+    setPasswordErr("");
+    setConfirmErr("");
+    setNameErr("");
   };
   const checkExistUser = (phoneInput) => {
     axios
@@ -80,6 +88,7 @@ const RegisterScreen = () => {
                 otp: response.data,
                 phone: phone,
                 password: password,
+                name: name,
               });
             })
             .catch((error) => {
@@ -113,14 +122,31 @@ const RegisterScreen = () => {
       return true;
     }
   };
+
+  const validateFullName = (name) => {
+    const nameRegex = /^[\p{L}\s]{2,30}(?:[\s]+[\p{L}\s]+)*$/u;
+    console.log("nameRegex.test(name)",nameRegex.test(name))
+    const nameArray = name.split(" ");
+    const check =
+      nameRegex.test(name) 
+    if (!check) {
+      setNameErr("Tên phải ít nhất 2 ký tự và không có ký tự đặc biệt ")
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleSubmit = () => {
     setIsDone(false);
     inputUserRef.current.blur();
     passwordRef.current.blur();
     confirmRef.current.blur();
+    inputNameRef.current.blur();
     let phoneInput = {
       phoneNumber: phone,
     };
+    validateFullName(name)
     validateConfirm();
     validatePassword(password) ? setPasswordErr("") : setIsDone(true);
     if (phone.length > 0) {
@@ -131,19 +157,25 @@ const RegisterScreen = () => {
     } else {
       setError("Số điện thoại không được để trống");
     }
-    validateConfirm() && validatePassword(password) && validatePhone(phone)
+    validateConfirm() &&
+    validatePassword(password) &&
+    validatePhone(phone) &&
+    validateFullName(name)
       ? checkExistUser(phoneInput)
       : null;
     // navigation.navigate("OTPScreen")
   };
   return (
     <View style={styles.container}>
-      <TopBar title="ĐĂNG KÝ" onPress={()=>{
-           if (navigation.canGoBack()) {
+      <TopBar
+        title="ĐĂNG KÝ"
+        onPress={() => {
+          if (navigation.canGoBack()) {
             navigation.goBack();
           }
-      }}/>
-      <Stack space={4} w="100%" alignItems="center" mt={ScreenWidth/2}>
+        }}
+      />
+      <Stack space={4} w="100%" alignItems="center" mt={ScreenWidth / 2}>
         {error ? (
           <View>
             <Text style={{ fontFamily: FONT.MEDIUM, color: "red" }}>
@@ -154,7 +186,7 @@ const RegisterScreen = () => {
           <></>
         )}
         <Input
-          keyboardType="numeric"
+          keyboardType="phone-pad"
           maxLength={10}
           fontFamily={FONT.MEDIUM}
           fontSize={15}
@@ -170,11 +202,37 @@ const RegisterScreen = () => {
             handleChangePhone(e);
           }}
           onFocus={() => {
-            setError("");
-            setPasswordErr("");
-            setConfirmErr("");
+            handelOnFocus(  )
           }}
         />
+        {nameErr ? (
+          <View>
+            <Text style={{ fontFamily: FONT.MEDIUM, color: "red" }}>
+              {nameErr}
+            </Text>
+          </View>
+        ) : (
+          <></>
+        )}
+        <Input
+          fontFamily={FONT.MEDIUM}
+          fontSize={15}
+          ref={inputNameRef}
+          backgroundColor={"#ffff"}
+          focusOutlineColor={COLOR}
+          borderRadius={BORDER_RADIUS}
+          borderWidth="1.5"
+          h={HEIGHT}
+          InputLeftElement={<Icon as={<ProfileCircle size="24" />} ml="4" />}
+          placeholder="Họ và tên"
+          onChangeText={(e) => {
+            setName(e);
+          }}
+          onFocus={() => {
+            handelOnFocus(  )
+          }}
+        />
+        {/* pasword error */}
         {passwordErr ? (
           <View>
             <Text style={{ fontFamily: FONT.MEDIUM, color: "red" }}>
@@ -195,9 +253,7 @@ const RegisterScreen = () => {
           h={HEIGHT}
           type={show ? "text" : "password"}
           onFocus={() => {
-            setError("");
-            setPasswordErr("");
-            setConfirmErr("");
+            handelOnFocus(  )
           }}
           InputRightElement={
             <Pressable onPress={() => setShow(!show)}>
@@ -239,9 +295,7 @@ const RegisterScreen = () => {
           h={HEIGHT}
           type={show ? "text" : "password"}
           onFocus={() => {
-            setError("");
-            setPasswordErr("");
-            setConfirmErr("");
+            handelOnFocus(  )
           }}
           InputRightElement={
             <Pressable onPress={() => setShow(!show)}>

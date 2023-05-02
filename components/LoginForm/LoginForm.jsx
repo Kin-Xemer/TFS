@@ -31,6 +31,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Lock, Mobile, User } from "iconsax-react-native";
 import { BASE_URL } from "../../services/baseURL";
 import { THEME_COLOR } from "../../Utils/themeColor";
+import AlertPopup from "../AlertPopup";
 const { width: ScreenWidth, height: ScreenHeight } = Dimensions.get("window");
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
@@ -39,6 +40,7 @@ const LoginForm = () => {
   const [show, setShow] = useState(false);
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const [userFocus, setuserFocus] = useState(true);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const inputUserRef = useRef();
@@ -59,9 +61,10 @@ const LoginForm = () => {
   };
 
   const handleLogin = () => {
-    let url = BASE_URL + "/user/login";
+    let url = `${BASE_URL}/accountsByPhone/${username}&${password}`;
+    console.log(url)
     axios
-      .post(url, { username: username, password: password })
+      .get(url, { username: username, password: password })
       .then(function (response) {
         const saveData = async () => {
           try {
@@ -77,8 +80,12 @@ const LoginForm = () => {
             console.log("Save storage", e);
           }
         };
+       if(response.data.theAccount.status){
         navigation.navigate("Home");
         saveData();
+       }else{
+       setIsOpen(true)
+       }
       })
       .catch(function (error) {
         console.log(error);
@@ -93,7 +100,14 @@ const LoginForm = () => {
         <Text style={{ fontFamily: FONT.BOLD, fontSize: 28 }}>Đăng Nhập</Text>
       </View>
       <View style={{ marginTop: 16 }}>
-        <Text style={{ fontFamily: FONT.SEMI, fontSize: 18, color: "gray", marginBottom: 60 }}>
+        <Text
+          style={{
+            fontFamily: FONT.SEMI,
+            fontSize: 18,
+            color: "gray",
+            marginBottom: 60,
+          }}
+        >
           Đăng nhập để tiếp tục!{" "}
         </Text>
       </View>
@@ -110,8 +124,8 @@ const LoginForm = () => {
       </Flex> */}
       <Stack space={4} w="100%" alignItems="center">
         <Input
-          // keyboardType="numeric"
-          type=""
+          keyboardType="phone-pad"
+          type="text"
           fontFamily={FONT.MEDIUM}
           fontSize={15}
           ref={inputUserRef}
@@ -189,6 +203,13 @@ const LoginForm = () => {
           </View>
         </TouchableOpacity>
       </Stack>
+      <AlertPopup
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      content="Tài khoản này đã bị vô hiệu hoá"
+      content2="Xin vui lòng thử lại sau !"
+      title={<Text style={{fontFamily: FONT.BOLD, fontSize:17}}>Thông báo</Text>}
+      />
     </View>
   );
 };

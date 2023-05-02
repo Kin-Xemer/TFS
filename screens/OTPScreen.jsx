@@ -8,8 +8,9 @@ import OTPTextInput from "react-native-otp-textinput";
 import AlertPopup from "../components/AlertPopup";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
-import { BASE_URL } from '../services/baseURL';
+import { BASE_URL } from "../services/baseURL";
 import { Toast } from "@ant-design/react-native";
+import TopBar from "../components/TopBar";
 const BORDER_RADIUS = 30;
 const HEIGHT = 58;
 const COLOR = "#FFDB89";
@@ -19,7 +20,7 @@ const OTPScreen = () => {
   const [textOTP, setTextOTP] = useState("");
   const [error, setError] = useState("");
   const [isOpen, setIsOpen] = useState("");
-  const { otp, phone,password } = route.params;
+  const { otp, phone, password, name } = route.params;
   const inputRef = useRef(null);
   const setText = (value) => {
     setTextOTP(value);
@@ -30,12 +31,12 @@ const OTPScreen = () => {
   }, []);
   const handleCheckOtp = () => {
     inputRef.current.clear();
-    console.log(textOTP.toString())
+    console.log(textOTP.toString());
     if (otp.otp === textOTP.toString()) {
       const cus = {
         address: "",
         avatarURL: "",
-        customerName: "",
+        customerName: name,
         email: "",
         theAccount: {
           accountId: phone,
@@ -44,17 +45,18 @@ const OTPScreen = () => {
           roleId: 5,
           status: true,
         },
-      }
-      console.log(cus)
-      axios.post(`${BASE_URL}/customers`, cus).then((response) => {
-        Toast.success("Đăng ký tài khoản thành công", 1)
-        navigation.navigate("LoginScreenn")
-      
-      }).catch((err)=>{
-        console.log("Đã có lỗi xảy ra, vui lòng thử lại sau")
-        console.log(err.response.data)
-      })
-      
+      };
+      console.log(cus);
+      axios
+        .post(`${BASE_URL}/customers`, cus)
+        .then((response) => {
+          Toast.success("Đăng ký tài khoản thành công", 1);
+          navigation.navigate("LoginScreenn");
+        })
+        .catch((err) => {
+          console.log("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          console.log(err.response.data);
+        });
     } else {
       setIsOpen(true);
     }
@@ -62,6 +64,14 @@ const OTPScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TopBar
+        title="XÁC THỰC"
+        onPress={() => {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+        }}
+      />
       <View>
         <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 16 }}>
           Mã xác thực đã gửi qua số điện thoại của bạn
