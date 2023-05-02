@@ -80,7 +80,7 @@ const ImageTitle = (props) => {
         onSnapToItem={(index) => {
           setActiveSlide(index);
         }}
-        //autoplay={true}
+        autoplay={true}
         autoplayDelay={500}
         autoplayInterval={4500}
       />
