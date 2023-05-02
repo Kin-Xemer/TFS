@@ -1,4 +1,10 @@
-import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+} from "react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,8 +21,10 @@ import { BASE_URL } from "../services/baseURL";
 import { convertDate } from "../Utils/convertDate";
 import TopBar from "../components/TopBar";
 import NotLoginScreen from "./NotLoginScreen";
+import { EMPTY_IMAGE } from "../Utils/constant";
 const START = 9; // Vị trí bắt đầu
 const END = 13;
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const NotiScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -51,7 +59,9 @@ const NotiScreen = () => {
     );
     const handlePressNoti = async () => {
       let order = await getOrderById(orderId);
-      checkNoti(id)
+      if (!checked) {
+        checkNoti(id);
+      }
       navigation.navigate("MyOrderDetailScreen", {
         orders: order,
       });
@@ -59,7 +69,9 @@ const NotiScreen = () => {
     const checkNoti = useCallback(
       async (id) => {
         try {
-          const response = await axios.put(`${BASE_URL}/notifications/checked/${id}`);
+          const response = await axios.put(
+            `${BASE_URL}/notifications/checked/${id}`
+          );
           return response.data;
         } catch (error) {
           console.error(error.response.data);
@@ -82,7 +94,10 @@ const NotiScreen = () => {
     );
     return (
       <TouchableOpacity
-        style={[styles.workerLabel, { backgroundColor: checked ? "white" : "#e8fafa" }]}
+        style={[
+          styles.workerLabel,
+          { backgroundColor: checked ? "white" : "#e8fafa" },
+        ]}
         activeOpacity={0.7}
         onPress={() => {
           handlePressNoti(message);
@@ -142,19 +157,34 @@ const NotiScreen = () => {
               </Text>
             </View>
           </View>
-          <FlatList
-            style={{ marginBottom: 50 }}
-            showsVerticalScrollIndicator={false}
-            data={listNoti}
-            renderItem={({ item }) => (
-              <MemoizedNotificationItem
-                message={item.message}
-                createdAt={item.createdAt}
-                checked={item.checked}
-                id={item.id}
+          {listNoti.length > 0 ? (
+            <FlatList
+              style={{ marginBottom: 50 }}
+              showsVerticalScrollIndicator={false}
+              data={listNoti}
+              renderItem={({ item }) => (
+                <MemoizedNotificationItem
+                  message={item.message}
+                  createdAt={item.createdAt}
+                  checked={item.checked}
+                  id={item.id}
+                />
+              )}
+            />
+          ) : (
+            <View style={[{ alignItems: "center", paddingTop: 200 }]}>
+              <Image
+                source={{
+                  uri: EMPTY_IMAGE,
+                }}
+                size={200}
+                alt="empty"
               />
-            )}
-          />
+              <Text style={{ fontFamily: FONT.SEMI, color: "#8c8c8c" }}>
+                Chưa có thông báo nào
+              </Text>
+            </View>
+          )}
         </View>
       ) : (
         <NotLoginScreen />

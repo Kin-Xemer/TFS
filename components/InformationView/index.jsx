@@ -3,9 +3,12 @@ import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-import { Text, useToast, Spinner } from "native-base";
+import { Text, useToast, Spinner, Image } from "native-base";
 
 import CardFood from "../CardFood";
+import { FONT } from "../../Utils/themeFont";
+import { coolGray, THEME_COLOR } from "../../Utils/themeColor";
+import { EMPTY_IMAGE } from "../../Utils/constant";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -57,7 +60,23 @@ const InformationView = (props) => {
           })}
         </View>
       ) : filterFood.length === 0 ? (
-        <Text>không có</Text>
+        <View
+          style={[
+            styles.container,
+            { height: screenHeight, alignItems: "center", paddingTop: 100 },
+          ]}
+        >
+          <Image
+            source={{
+              uri: EMPTY_IMAGE,
+            }}
+            size={200}
+            alt="empty"
+          />
+          <Text style={{fontFamily: FONT.SEMI, color:"#8c8c8c"}}>
+            Hiện không có món ăn nào
+          </Text>
+        </View>
       ) : (
         <View style={{ marginTop: 20, alignItems: "center" }}>
           <Spinner size={"sm"} />

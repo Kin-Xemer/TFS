@@ -7,19 +7,27 @@ import {
   import { useState, useMemo, useEffect } from "react";
   import Home from "../components/Home/index.jsx";
   import { Box, Button, Text } from "native-base";
+import { FONT } from "../Utils/themeFont.js";
+import ActionButton from "../components/ActionButton/index.jsx";
 const NotLoginScreen = () => {
+  const navigation = useNavigation()
     return (
-      <View>
-        <Text>Đăng nhập để tiếp tục nha mn</Text>
+      <View style={styles.container}>
+        <Text style={{fontFamily:FONT.BOLD, marginBottom: 20, fontSize: 20}}>Đăng nhập để tiếp tục</Text>
+        <ActionButton
+        buttonText="Đăng nhập"
+        onPress={()=>{
+          navigation.navigate("LoginScreenn")
+        }}
+        />
       </View>  
     );
 }
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: "red",
-      alignItems:"center",
-      justifyContent: "center",
-      height:"100%",
+      flex:1,
+      paddingTop: 200,
+      backgroundColor:"white"
     },
   });
 export default NotLoginScreen;

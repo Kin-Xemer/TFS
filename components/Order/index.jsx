@@ -14,6 +14,8 @@ import { convertPrice } from "../../Utils/convertPrice";
 import { convertDate } from "../../Utils/convertDate";
 import { useCallback, memo } from "react";
 import OrderItem from "./OrderItem";
+import { EMPTY_IMAGE } from "../../Utils/constant";
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Order = (props) => {
   const { orders, isFocused, isDone } = props;
   const navigation = useNavigation();
@@ -79,15 +81,39 @@ const Order = (props) => {
   );
   return (
     <View>
-      <FlatList
-        data={orders}
-        style={{ marginTop: 16, marginBottom: 150 }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <OrderItem key={item.id} item={item} handleOnpress={handleOnpress} />
-        )}
-        keyExtractor={(item) => item.id}
-      />
+      {orders.length > 0 ? (
+        <FlatList
+          data={orders}
+          style={{ marginTop: 16, marginBottom: 150 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <OrderItem
+              key={item.id}
+              item={item}
+              handleOnpress={handleOnpress}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      ) : (
+        <View
+          style={[
+            styles.container,
+            { height: screenHeight, alignItems: "center", paddingTop: 100 },
+          ]}
+        >
+          <Image
+            source={{
+              uri: EMPTY_IMAGE,
+            }}
+            size={200}
+            alt="empty"
+          />
+          <Text style={{fontFamily: FONT.SEMI, color:"#8c8c8c"}}>
+            Chưa có đơn hàng nào
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

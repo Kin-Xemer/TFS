@@ -50,4 +50,5 @@ export const SET_EVENT_BY_ID = "SET_EVENT_BY_ID";
 export const SET_MY_CITY = "SET_MY_CITY";
 export const ACTIVE_CITY = "Thành phố Hồ Chí Minh";
 export const SET_LIST_CATEGORY = "SET_LIST_CATEGORY";
+export const EMPTY_IMAGE = "https://live.staticflickr.com/65535/52864786866_595613ea8b_n.jpg";
 

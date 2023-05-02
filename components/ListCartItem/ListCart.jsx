@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { Flex, TextArea, Spacer } from "native-base";
+import { Flex, TextArea, Spacer, Image } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import { convertPrice } from "../../Utils/convertPrice";
 import { BASE_URL } from "../../services/baseURL";
@@ -438,10 +438,36 @@ const ListCart = (props) => {
         <View
           style={[
             styles.container,
-            { flex: 1, justifyContent: "center", alignItems: "center" },
+            { flex: 1, justifyContent: "center", alignItems: "center", marginTop:200 },
           ]}
         >
-          <Text>khong co gi het mua di</Text>
+         
+         
+          <Image
+          alt={"empty"}
+          size={100}
+          source={{uri:"https://live.staticflickr.com/65535/52864176969_f97fdde8fc_n.jpg"}}
+          />
+           <Text style={{fontFamily:FONT.SEMI, color:"#8c8c8c"}}>Giỏ hàng của bạn hiện đang rỗng</Text>
+          <TouchableOpacity
+          style={{
+            padding: 8,
+            borderWidth: 0.5,
+            borderRadius: 10,
+            borderColor:"#8c8c8c",
+            marginTop: 16
+          }}
+          activeOpacity={0.7}
+          onPress={() => {
+            if(navigation.canGoBack){
+              navigation.goBack();
+            }
+          }}
+          >
+            <Text style={{fontFamily:FONT.SEMI, color:"#8c8c8c"}}>
+            Trang chủ
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
