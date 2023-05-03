@@ -38,6 +38,7 @@ const FilterView = (props) => {
   category.map((category) => {
     arrayFilter.push(category.categoryName);
   });
+  arrayFilter.push("Mâm tiệc")
   const toggleModalPrice = () => {
     setIsVisiblePrice(!isVisiblePrice);
   };
