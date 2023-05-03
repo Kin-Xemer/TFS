@@ -101,6 +101,7 @@ const ProfileScreens = () => {
   }, []);
 
   useEffect(() => {
+ 
     setCur(list.length);
     if (prev !== cur) {
       if (prev !== 0 || cur === 1) {
@@ -117,45 +118,38 @@ const ProfileScreens = () => {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
+   
   }, [count]);
   useEffect(() => {
-    !isLogin ? navigation.navigate("LoginScreenn") : "";
+    // !isLogin ? navigation.navigate("LoginScreenn") : "";
     if (isFocused) {
       setCount(90);
       console.log("start");
     }
   }, [isFocused]);
-  // const actions = [
-  //   {
-  //     id: 'default',
-  //     title: 'View',
-  //   },
-  //   {
-  //     id: 'navigateToHome',
-  //     title: 'Go to Home',
-  //   },
-  // ];
   const pushNotifications = async (noti) => {
     const channelId = await notifee.createChannel({
       id: "default",
       name: "Default Channel",
     });
     // Display a notification
-    await notifee.displayNotification({
-      title: "Thông báo",
-      subtitle: "&#129395;",
-      body: noti.message,
-      android: {
-        channelId,
-
-        timestamp: Date.now(),
-        // pressAction is needed if you want the notification to open the app when pressed
-        pressAction: {
-          id: noti.message.slice(9, 13),
+    if (noti){
+      await notifee.displayNotification({
+        title: "Thông báo",
+        subtitle: "&#129395;",
+        body: noti.message,
+        android: {
+          channelId,
+  
+          timestamp: Date.now(),
+          // pressAction is needed if you want the notification to open the app when pressed
+          pressAction: {
+            id: noti.message.slice(9, 13),
+          },
+          showTimestamp: true,
         },
-        showTimestamp: true,
-      },
-    });
+      });
+    }
   };
 
   const fetchData = () => {
@@ -223,16 +217,8 @@ const ProfileScreens = () => {
                 marginRight: 8,
               }}
             >
-              {customer.theAccount.accountId}
+              {customer.customerName}
             </Text>
-            <TouchableOpacity
-              onPress={() => {
-                console.log("check");
-              }}
-              activeOpacity={0.7}
-            >
-              <Edit2 color="black" variant="Bold" size={16} />
-            </TouchableOpacity>
           </Flex>
           <View style={{ marginTop: 100, width: "100%" }}>
             <TouchableOpacity

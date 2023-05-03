@@ -40,7 +40,6 @@ const PromotionScreen = (props) => {
     setVoucherCodeSelected(promotionApplied)
    }
   }, []);
-  // const [selectedVoucher, setSelectedVoucher] = useState(null);
 
   const handleSelectedVoucher = 
     (voucher) => {
@@ -85,16 +84,13 @@ const PromotionScreen = (props) => {
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ marginLeft: 10 }}>
             <Text style={styles.voucherTitle}>{voucher.promotionName}</Text>
-            <Text style={styles.voucherDescription}>
-              {voucher.promotionCode}
+            <Text style={styles.voucherDescription} numberOfLines={2} >
+              Nhập mã "{voucher.promotionCode}" đển giảm {voucher.discountPercent}% tổng giá trị đơn hàng
             </Text>
             {/* <Text style={styles.voucherExpiry}>
               Hạn sử dụng: {voucher.expiryDate}
             </Text> */}
           </View>
-        </View>
-        <View style={{ marginLeft: 36 }}>
-          {/* <Image source={voucher.image} style={styles.voucherImage} /> */}
         </View>
         <Spacer />
         <RadioButton
@@ -205,6 +201,7 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 8,
     fontFamily: FONT.MEDIUM,
+    maxWidth:"90%",
   },
   voucherExpiry: {
     fontSize: 12,

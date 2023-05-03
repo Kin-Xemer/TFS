@@ -68,7 +68,6 @@ const ProfileEditScreen = () => {
       email: email,
       customerName: name,
     };
-    console.log(newCustomer)
     axios
       .put(BASE_URL + "/customers", newCustomer)
       .then((res) => {
