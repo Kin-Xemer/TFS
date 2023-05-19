@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import {
   createStackNavigator,
   TransitionPresets,
@@ -46,11 +46,12 @@ import { Provider } from "@ant-design/react-native";
 import { GOOGLE_MAPS_APIKEY } from "./Utils/getGoogleAPI";
 import { useNavigation } from "@react-navigation/native";
 import { FONT } from "./Utils/themeFont";
+import { Badge } from "native-base";
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const AppNavigator = () => {
   const navigation = useNavigation();
-
+  const numberNoti = useSelector((state) => state.noti.numberNoti);
   return (
     <Provider>
       <Stack.Navigator
@@ -127,6 +128,7 @@ const HomeScreen = () => {
 };
 
 const TabNavigator = () => {
+  const numberNoti = useSelector((state) => state.noti.numberNoti);
   return (
     <Tab.Navigator
       labled={true}
@@ -175,7 +177,34 @@ const TabNavigator = () => {
             </Text>
           ),
           tabBarIcon: ({ color }) => (
-            <NotificationBing size={26} color={color} />
+            <View>
+              {numberNoti !== 0 ? (
+                <Badge // bg="red.400"
+                  colorScheme="danger"
+                  rounded="xl"
+                  mb={-3}
+                  mr={-1}
+                  zIndex={1}
+                  variant="solid"
+                  alignSelf="flex-end"
+                  style={{
+                    paddingRight: 5,
+                    paddingLeft: 5,
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                  }}
+                  _text={{
+                    fontFamily: "Quicksand-Bold",
+                    fontSize: 8,
+                  }}
+                >
+                  {numberNoti}
+                </Badge>
+              ) : (
+                <></>
+              )}
+              <NotificationBing size={26} color={color} />
+            </View>
           ),
         }}
       />

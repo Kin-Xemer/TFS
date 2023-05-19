@@ -9,20 +9,14 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
-  FlatList,
 } from "react-native";
 import { Shop } from "iconsax-react-native";
 import { useSelector, useDispatch } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
 import { useState, useMemo, useRef, useCallback } from "react";
-import axios from "axios";
-import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { THEME_COLOR } from "../Utils/themeColor";
-import { GOOGLE_MAPS_APIKEY } from "../Utils/getGoogleAPI";
 import { useEffect } from "react";
 import { Button, Flex, Image, Spacer } from "native-base";
 import { convertLatLng } from "../Utils/convertLatLng";
@@ -129,8 +123,8 @@ const SelectStore = (props) => {
               coordinate={coord}
               icon={
                 item.restaurantLocation === selectedStore.restaurantLocation
-                  ? require("../assets/icons/store_2.png")
-                  : require("../assets/icons/store_1.png")
+                  ? require("../assets/icons/store_2_30px.png")
+                  : require("../assets/icons/store_1_30px.png")
               }
             />
           );

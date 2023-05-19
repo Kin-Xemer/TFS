@@ -73,7 +73,7 @@ const OTPScreen = () => {
         }}
       />
       <View>
-        <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 16 }}>
+        <Text style={{ fontFamily: FONT.MEDIUM, fontSize: 16,    paddingTop: "80%", }}>
           Mã xác thực đã gửi qua số điện thoại của bạn
         </Text>
       </View>
@@ -121,11 +121,9 @@ const OTPScreen = () => {
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
 
-    alignItems: "center",
+    
     paddingHorizontal: 16,
-    paddingTop: "80%",
     backgroundColor: "white",
   },
 });

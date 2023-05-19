@@ -49,8 +49,9 @@ import { fetchFoods, getCategories } from "../../redux/actions/foodAction";
 import { fetchCombos } from "../../redux/actions/comboAction";
 import CardCombo from "../CardFood/CardCombo";
 import { getAllPromotion } from "../../redux/actions/promotionAction";
-import { fetchEvents } from "../../redux/actions/eventAction";
+import { fetchEvents, fetchFullEvent } from "../../redux/actions/eventAction";
 import { SET_MY_CITY } from "../../Utils/constant";
+import { useCallback } from "react";
 // import { getLocation } from "../../Utils/api/getLocationAPI";
 const Home = (props) => {
   const { isFocused } = props;
@@ -74,6 +75,7 @@ const Home = (props) => {
   const foodNewTrending = useSelector((state) => state.food.foodTrend);
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const events = useSelector((state) => state.event.eventList);
+  const eventListFitered = useSelector((state) => state.event.eventListFitered);
   const foods = useSelector((state) => state.food.food);
   const { loading, combo, error } = useSelector((state) => state.combo);
   const initializeAppOnce = once((dispatch) => {
@@ -84,6 +86,7 @@ const Home = (props) => {
     getServices(dispatch);
     dispatch(getAllPromotion());
     dispatch(fetchEvents());
+    dispatch(fetchFullEvent());
     dispatch(fetchData());
     dispatch(getCategories());
   });
@@ -106,7 +109,15 @@ const Home = (props) => {
     dispatch(fetchFoods(page, size));
     dispatch(fetchCombos());
   }, [dispatch, page, size]);
-
+  const handlePressMore = () => {
+    navigation.navigate("MoreScreen", {
+      food: foods,
+      events: events,
+      regions: regions,
+      init: "Tất cả",
+      isFromHome: false,
+    });
+  };
   const getRegion = useMemo(() => {
     return () => {
       axios
@@ -186,7 +197,7 @@ const Home = (props) => {
         type: "SET_ADDRESS",
         payload: response.data.results[0],
       });
-
+      console.log("mycity", city);
       dispatch({
         type: SET_MY_CITY,
         payload: city,
@@ -287,9 +298,21 @@ const Home = (props) => {
           </TouchableOpacity>
         </View>
       </Flex>
-      <View style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}>
-        <SearchBar setQuery={setQuery} />
-      </View>
+      <TouchableOpacity
+        style={{ marginBottom: 6, paddingHorizontal: 16, marginTop: 4 }}
+        onPress={() => {
+          navigation.navigate("MoreScreen", {
+            food: foods,
+            events: events,
+            regions: regions,
+            init: "Tất cả",
+            isFromHome: true,
+          });
+        }}
+        activeOpacity={0.7}
+      >
+        <SearchBar setQuery={setQuery} isHome={true} />
+      </TouchableOpacity>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -301,7 +324,7 @@ const Home = (props) => {
             paddingHorizontal: 16,
           }}
         >
-          <ImageTitle foods={foods} events={events} regions={regions} />
+          <ImageTitle foods={foods} events={eventListFitered} regions={regions} />
         </View>
 
         <Categories
@@ -310,7 +333,9 @@ const Home = (props) => {
           handlePressParty={handlePressParty}
         />
         <Divider mt={4} py={1} backgroundColor="coolGray.100" />
-        <Title textTitle="Mâm tiệc" />
+        <Title textTitle="Mâm tiệc" onPress={() => {
+            handlePressMore();
+          }}/>
         <FlatList
           initialNumToRender={15}
           windowSize={5}
@@ -342,7 +367,12 @@ const Home = (props) => {
           keyExtractor={(item) => item.id}
         />
         <Divider mt={4} py={1} backgroundColor="coolGray.100" />
-        <Title textTitle="Món ngon nổi bật" />
+        <Title
+          textTitle="Món ngon nổi bật"
+          onPress={()=>{
+            handlePressMore()
+          }}
+        />
         <FlatList
           initialNumToRender={15}
           windowSize={5}
@@ -397,9 +427,9 @@ const Home = (props) => {
                   fontFamily: FONT.BOLD,
                   color: "white",
                   marginBottom: 4,
-                  color:"white",
+                  color: "white",
                   fontSize: 15,
-                  textDecorationLine: 'underline'
+                  textDecorationLine: "underline",
                 }}
               >
                 Xem thêm
@@ -409,7 +439,12 @@ const Home = (props) => {
           </ImageBackground>
         </TouchableOpacity>
         <Divider mt={4} py={1} backgroundColor="coolGray.100" />
-        <Title textTitle="Ẩm thực cổ truyền" />
+        <Title
+          textTitle="Ẩm thực cổ truyền"
+          onPress={() => {
+            handlePressMore();
+          }}
+        />
         <FlatList
           initialNumToRender={15}
           windowSize={5}

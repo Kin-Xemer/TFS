@@ -1,20 +1,32 @@
 import { Flex, Spacer } from "native-base";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { ArrowRight2 } from "iconsax-react-native";
-import Icon from 'react-native-vector-icons/Entypo';
-import { THEME_COLOR } from '../../Utils/themeColor';
+import Icon from "react-native-vector-icons/Entypo";
+import { THEME_COLOR } from "../../Utils/themeColor";
 import { useRoute, useNavigation } from "@react-navigation/native";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const Title = (props) => {
-  const { textTitle } = props;
+  const { textTitle, onPress } = props;
   return (
     <Flex direction="row" style={styles.container}>
       <Text style={styles.textStyle}>{textTitle}</Text>
       <Spacer />
-      <Flex direction="row">
-        {/* <Text style={[styles.textStyle, styles.moreText]}>Xem thêm</Text>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={{ flexDirection: "row" }}
+        onPress={() => {  
+          onPress();
+        }}
+      >
+        <Text style={[styles.textStyle, styles.moreText]}>Xem thêm</Text>
         <View
           style={{
             justifyContent: "center",
@@ -23,8 +35,8 @@ const Title = (props) => {
           }}
         >
           <Icon name="chevron-right" size={16} color={THEME_COLOR} />
-        </View> */}
-      </Flex>
+        </View>
+      </TouchableOpacity>
     </Flex>
   );
 };
@@ -43,7 +55,7 @@ const styles = StyleSheet.create({
   moreText: {
     fontSize: 12,
     color: THEME_COLOR,
-    textDecorationLine:"underline"
+    textDecorationLine: "underline",
   },
 });
 export default Title;

@@ -1,20 +1,31 @@
 import { Flex, Spacer } from "native-base";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions ,Keyboard} from "react-native";
 import { SearchNormal1 } from "iconsax-react-native";
 import { Input } from "native-base";
 import { THEME_COLOR } from "../../Utils/themeColor";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SearchBar = (props) => {
-  const { foodList, setFilterFood, setQuery } = props;
+  const { foodList, setFilterFood, setQuery, isFromHome ,isHome} = props;
+  const inputRef = useRef()
+  const [autoFocus,setAutoFocus] = useState(false)
   const handleSearch = (text) => {
     setQuery(text);
   };
+  useEffect(()=>{
+if(isFromHome){
+  setAutoFocus(true)
+
+}
+  },[])
   return (
     <Flex direction="row" style={styles.container}>
       <View style={styles.textInputContainer}>
         <Input
+        autoFocus={autoFocus}
+        isReadOnly={isHome ? true: false}
+        ref={inputRef}
           focusOutlineColor="red"
           style={{ fontFamily: "Quicksand-Regular" }}
           variant="rounded"

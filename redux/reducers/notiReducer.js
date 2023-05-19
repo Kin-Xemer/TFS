@@ -1,5 +1,6 @@
 const initState = {
-listNoti:[]
+listNoti:[],
+numberNoti:0,
 };
 
 function notiReducer(state = initState, action) {
@@ -8,6 +9,11 @@ function notiReducer(state = initState, action) {
       return {
         ...state,
         listNoti: action.payload,
+      };
+    case "SET_NUMBER_NOTI":
+      return {
+        ...state,
+        numberNoti: action.payload,
       };
 
     default:

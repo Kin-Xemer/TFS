@@ -3,9 +3,8 @@ import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-import { Text, useToast, Spinner, Image } from "native-base";
+import { Text,  Spinner, Image } from "native-base";
 
-import CardFood from "../CardFood";
 import CardFoodMenu from '../CardFoodMenu/index';
 import { EMPTY_IMAGE } from "../../Utils/constant";
 import { FONT } from "../../Utils/themeFont";

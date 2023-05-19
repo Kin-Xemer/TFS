@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../../services/baseURL";
+import moment from 'moment';
 import {
   ADD_PROMOTION,
   FETCH_PROMOTION_BY_ID,
@@ -12,8 +13,18 @@ export const getAllPromotion = () => {
   return (dispatch) => {
     dispatch(fetchPromotionRequest());
     axios
-      .get(`${BASE_URL}/promotions`)
-      .then((response) => dispatch(fetchPromotionSucess(response.data)))
+      .get(`${BASE_URL}/promotions/detail`)
+      .then((response) => {
+        const today = moment();
+        const twoWeeksAgo = today.clone().subtract(3, 'weeks');
+        const twoWeeksLater = today.clone().add(3, 'weeks');
+        const filteredVouchers = response.data.filter(voucher => {
+          const toDate = moment(voucher.endDate);
+          return toDate.isBetween(twoWeeksAgo, twoWeeksLater, null, '[]');
+        });
+        const filterStatusVoucher = filteredVouchers.filter(voucher => voucher.status === true)
+        return dispatch(fetchPromotionSucess(filterStatusVoucher))
+      })
       .catch((error) => dispatch(fetchPromotionFailure(error.message)));
   };
 };

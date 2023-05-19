@@ -6,27 +6,17 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, useRef } from "react";
-import { AntDesign, Feather, Entypo } from "@expo/vector-icons";
+import { useSelector,} from "react-redux";
+import { useState,  useRef } from "react";
 import {
   Flex,
-  Spacer,
   Text,
-  Heading,
-  Button,
-  useToast,
-  Box,
 } from "native-base";
-import { Setting4 } from "iconsax-react-native";
 import { THEME_COLOR } from "../../Utils/themeColor";
 import ModalPicker from "../ModalPicker/index";
 import { FONT } from "../../Utils/themeFont";
-import axios from "axios";
-import { BASE_URL } from "../../services/baseURL";
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const FilterView = (props) => {
-  const { listFood, filterSelected, setFilterSelected } = props;
+  const { isParty, filterSelected, setFilterSelected } = props;
   const ScrollViewRef = useRef();
   const [isVisiblePrice, setIsVisiblePrice] = useState(false);
   const [itemSelected, setItemSelected] = useState("");
@@ -34,11 +24,13 @@ const FilterView = (props) => {
   const [offset, setOffset] = useState();
   const arrayOptions = ["Tăng dần", "Giảm dần"];
   let arrayFilter = ["Tất cả"];
-
+ 
   category.map((category) => {
     arrayFilter.push(category.categoryName);
   });
-  arrayFilter.push("Mâm tiệc")
+  if(!isParty){
+    arrayFilter.push("Mâm tiệc")
+  }
   const toggleModalPrice = () => {
     setIsVisiblePrice(!isVisiblePrice);
   };

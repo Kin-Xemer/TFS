@@ -30,9 +30,7 @@ const AddFoodMenu = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [query, setQuery] = useState("");
-  const [food, setFood] = useState(route.params.food);
-  const [events, setEvents] = useState(route.params.events);
-  const [regions, setRegions] = useState(route.params.regions);
+  const {food, events, regions, isParty,isFromHome} = route.params;
   const [sliceFood, setSliceFood] = useState(10);
   const [filterFood, setFilterFood] = useState([]);
   const [regionProps, setRegionProps] = useState("");
@@ -158,7 +156,7 @@ const AddFoodMenu = (props) => {
             <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
           </TouchableOpacity>
           <View style={{ width: "80%" }}>
-          <SearchBar setQuery={setQuery} />
+          <SearchBar setQuery={setQuery} isFromHome={isFromHome} isHome={false}/>
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -199,6 +197,7 @@ const AddFoodMenu = (props) => {
         setFilterSelected={setFilterSelected}
         filterSelected={filterSelected}
         listFood={food}
+        isParty={isParty}
       />
       <ScrollView
         ref={ScrollViewRef}

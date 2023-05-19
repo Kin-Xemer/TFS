@@ -1,15 +1,12 @@
-import { Box, Image, Text, Flex, Spacer, useToast } from "native-base";
+import { Box, Image, Text, Flex, Spacer } from "native-base";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Toast } from "@ant-design/react-native";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import {  Feather } from "@expo/vector-icons";
 import { AddCircle } from "iconsax-react-native";
-import { connect, useSelector, useDispatch } from "react-redux";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import { convertPrice } from "../../Utils/convertPrice";
-import axios from "axios";
-import { useEffect } from "react";
 import { THEME_COLOR } from "../../Utils/themeColor";
-import { getCartById } from "../../Utils/api/getCart";
 import { FONT } from "../../Utils/themeFont";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -87,16 +84,16 @@ const CardFoodMenu = (props) => {
           </Text>
         </Flex>
         <Flex>
-          <Flex direction="row" style={{ alignItems: "center" }}>
+          {/* <Flex direction="row" style={{ alignItems: "center" }}>
             <AntDesign name="star" size={15} color="gold" />
             <Text pl={1} style={styles.textFoodContent}>
               {food.rating}(120 đánh giá)
             </Text>
-          </Flex>
+          </Flex> */}
           <Flex direction="row" style={{ alignItems: "center" }}>
             <Feather name="shopping-cart" size={15} color="#6E798C" />
             <Text pl={1} style={styles.textFoodContent}>
-              {food.orderedAmount} lượt đặt
+              {food.purchaseNum} lượt đặt
             </Text>
           </Flex>
           <Flex direction="row" style={{ alignItems: "center" }}>

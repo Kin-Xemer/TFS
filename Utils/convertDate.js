@@ -27,3 +27,6 @@ export const convertTimeToString = (date) => {
 export const formatVNTime = (date) => {
   return moment.utc(date).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY  HH:mm");
 };
+export const formatVNDate = (date) => {
+  return moment.utc(date).tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY");
+};

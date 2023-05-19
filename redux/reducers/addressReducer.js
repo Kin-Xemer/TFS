@@ -24,7 +24,6 @@ function addressReducer(state = initState, action) {
           stringAddress: action.payload
         }
       case SET_MY_CITY:
-        console.log("My city", action.payload)
         return {
           ...state,
           myCity: action.payload

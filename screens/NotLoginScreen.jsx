@@ -13,7 +13,7 @@ const NotLoginScreen = () => {
   const navigation = useNavigation()
     return (
       <View style={styles.container}>
-        <Text style={{fontFamily:FONT.BOLD, marginBottom: 20, fontSize: 20}}>Đăng nhập để tiếp tục</Text>
+        <Text style={{fontFamily:FONT.BOLD, marginBottom: 20, fontSize: 20, alignSelf:"center"}}>Đăng nhập để tiếp tục</Text>
         <ActionButton
         buttonText="Đăng nhập"
         onPress={()=>{
@@ -27,7 +27,9 @@ const styles = StyleSheet.create({
     container: {
       flex:1,
       paddingTop: 200,
-      backgroundColor:"white"
+      backgroundColor:"white",
+
+      paddingHorizontal:16
     },
   });
 export default NotLoginScreen;

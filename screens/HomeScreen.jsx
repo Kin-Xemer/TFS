@@ -1,12 +1,8 @@
 import {
-  useRoute,
-  useNavigation,
   useIsFocused,
 } from "@react-navigation/native";
-import { View, StyleSheet, TouchableOpacity,Linking } from "react-native";
-import { useState, useMemo, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import Home from "../components/Home/index.jsx";
-import { Box, Button, Text } from "native-base";
 
 const HomeScreen = (props) => {
   const isFocused = useIsFocused()

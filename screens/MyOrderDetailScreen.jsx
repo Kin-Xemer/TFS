@@ -249,7 +249,8 @@ const MyOrderDetailScreen = (props) => {
             bgColor={"#d9d9d9"}
             buttonText={"Xác nhận huỷ"}
             buttonHandler={() => {
-              toggleModal();
+              // toggleModal();
+              console.log("date", order.deliveryDate)
             }}
           />
         )}

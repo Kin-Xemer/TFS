@@ -49,6 +49,10 @@ export const SET_LOGIN_STATUS_LOGOUT = "SET_LOGIN_STATUS_LOGOUT";
 export const SET_EVENT_BY_ID = "SET_EVENT_BY_ID";
 export const SET_MY_CITY = "SET_MY_CITY";
 export const ACTIVE_CITY = "Thành phố Hồ Chí Minh";
+export const ACTIVE_CITY_ENG = "Ho Chi Minh City";
 export const SET_LIST_CATEGORY = "SET_LIST_CATEGORY";
-export const EMPTY_IMAGE = "https://live.staticflickr.com/65535/52864786866_595613ea8b_n.jpg";
-
+export const SET_EVENT_FULL = "SET_EVENT_FULL";
+export const SET_EVENT_FILTER = "SET_EVENT_FILTER";
+export const EMPTY_IMAGE =
+  "https://live.staticflickr.com/65535/52864786866_595613ea8b_n.jpg";
+export const SIZE_ICON = 10;

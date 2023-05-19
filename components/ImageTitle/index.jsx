@@ -40,6 +40,8 @@ const ImageTitle = (props) => {
                   food: foods,
                   events: events,
                   regions: regions,
+                  init:"Mâm tiệc",
+                  isFromHome:false
                 });
               }}
             >

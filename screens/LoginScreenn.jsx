@@ -56,7 +56,7 @@ const LoginScreenn = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 40,
+    paddingTop: 30,
     flex: 1,
     backgroundColor: THEME_COLOR,
   },

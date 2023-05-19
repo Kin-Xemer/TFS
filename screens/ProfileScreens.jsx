@@ -1,52 +1,34 @@
 import {
   View,
   StyleSheet,
-  ScrollView,
-  ImageBackground,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Animated,
-  SafeAreaView,
   TouchableOpacity,
-  Linking,
 } from "react-native";
 import { THEME_COLOR } from "../Utils/themeColor";
 import { FONT } from "../Utils/themeFont";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, useRef } from "react";
-import { Flex, Spacer, Text, Heading, Button, Box, Avatar } from "native-base";
-import CardFeedBack from "../components/FeedbackScreen/CardFeedBack";
+import { useState, useEffect, } from "react";
+import { Flex, Spacer, Text, Avatar } from "native-base";
 import {
   useIsFocused,
   useNavigation,
   useRoute,
   createNavigationContainerRef,
 } from "@react-navigation/native";
-import ActionButton from "../components/ActionButton";
 import axios from "axios";
 import { BASE_URL } from "../services/baseURL";
-import { Toast } from "@ant-design/react-native";
 import {
   Camera,
-  Edit2,
-  InfoCircle,
   Logout,
   Message,
   ProfileCircle,
-  Setting2,
 } from "iconsax-react-native";
 import { Entypo } from "@expo/vector-icons";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import notifee, { EventType } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NotLoginScreen from "./NotLoginScreen";
 const ProfileScreens = () => {
-  const route = useRoute();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [listFeedBack, setListFeedback] = useState([]);
-  const [isDone, setIsDone] = useState(true);
-  const [loading, setLoading] = useState(false);
   const customer = useSelector((state) => state.account.account);
 
   // const handleUpload = async ({ file }) => {
@@ -75,10 +57,8 @@ const ProfileScreens = () => {
   const [prev, setPrev] = useState(0);
   const [cur, setCur] = useState(0);
   const isLogin = useSelector((state) => state.account.isLogin);
-  const navigationRef = createNavigationContainerRef();
 
   useEffect(() => {
-    
     const unsubscribe = notifee.onBackgroundEvent(async ({ type, detail }) => {
       const { notification, pressAction } = detail;
 
@@ -101,7 +81,6 @@ const ProfileScreens = () => {
   }, []);
 
   useEffect(() => {
- 
     setCur(list.length);
     if (prev !== cur) {
       if (prev !== 0 || cur === 1) {
@@ -118,7 +97,6 @@ const ProfileScreens = () => {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-   
   }, [count]);
   useEffect(() => {
     // !isLogin ? navigation.navigate("LoginScreenn") : "";
@@ -133,14 +111,14 @@ const ProfileScreens = () => {
       name: "Default Channel",
     });
     // Display a notification
-    if (noti){
+    if (noti) {
       await notifee.displayNotification({
         title: "Thông báo",
         subtitle: "&#129395;",
         body: noti.message,
         android: {
           channelId,
-  
+
           timestamp: Date.now(),
           // pressAction is needed if you want the notification to open the app when pressed
           pressAction: {
@@ -159,6 +137,10 @@ const ProfileScreens = () => {
       )
       .then((res) => {
         setList(res.data);
+        const numberNotiChecked = res.data.filter(
+          (noti) => noti.checked === false
+        ).length;
+        dispatch({ type: "SET_NUMBER_NOTI", payload: numberNotiChecked });
       })
       .catch((err) => {
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
@@ -179,8 +161,8 @@ const ProfileScreens = () => {
 
   return (
     <View style={styles.container}>
-      {isLogin?
-          <>
+      {isLogin ? (
+        <>
           <View>
             <Avatar
               size={"xl"}
@@ -207,7 +189,11 @@ const ProfileScreens = () => {
             </Avatar>
           </View>
           <Flex
-            style={{ marginTop: 20, flexDirection: "row", alignItems: "center" }}
+            style={{
+              marginTop: 20,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
           >
             <Text
               style={{
@@ -249,7 +235,7 @@ const ProfileScreens = () => {
               <Spacer />
               <Entypo name="chevron-right" size={28} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 backgroundColor: "#eeeeee",
                 padding: 16,
@@ -276,7 +262,7 @@ const ProfileScreens = () => {
               </Text>
               <Spacer />
               <Entypo name="chevron-right" size={28} color="black" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={{
                 backgroundColor: "#eeeeee",
@@ -336,7 +322,10 @@ const ProfileScreens = () => {
               <Entypo name="chevron-right" size={28} color="black" />
             </TouchableOpacity>
           </View>
-        </>:<NotLoginScreen/>}
+        </>
+      ) : (
+        <NotLoginScreen />
+      )}
     </View>
   );
 };

@@ -327,6 +327,7 @@ const PartyScreen = () => {
                 food: foods,
                 events: events,
                 regions: regions,
+                isParty:true
               });
             }}
           >

@@ -400,7 +400,7 @@ const ListCart = (props) => {
           </View>
           <View style={{ paddingHorizontal: 16, backgroundColor: "white" }}>
             {isDone ? (
-              myCity === ACTIVE_CITY ? <ActionButton
+              myCity === ACTIVE_CITY || myCity ===ACTIVE_CITY_ENG? <ActionButton
               onPress={() => {
                 handleCheckout();
               }}

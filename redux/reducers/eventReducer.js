@@ -3,10 +3,12 @@ import {
   FETCH_EVENT_REQUEST,
   FETCH_EVENT_SUCCESS,
   SET_EVENT_BY_ID,
+  SET_EVENT_FILTER,
 } from "../../Utils/constant";
 
 const initState = {
   eventList: [],
+  eventListFitered: [],
   loading: false,
   error: "",
   event: {},
@@ -36,6 +38,12 @@ function eventReducer(state = initState, action) {
         ...state,
         loading: false,
         event: action.payload,
+      };
+    case SET_EVENT_FILTER:
+      return {
+        ...state,
+        loading: false,
+        eventListFitered: action.payload,
       };
     default:
       return state;

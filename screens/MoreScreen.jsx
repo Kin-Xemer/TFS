@@ -36,6 +36,8 @@ const FoodInformationScreen = (props) => {
   const refRBSheet = useRef();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const iniFilter = route.params.init
+  const isFromHome = route.params.isFromHome
   const [food, setFood] = useState(route.params.food);
   const [events, setEvents] = useState(route.params.events);
   const [regions, setRegions] = useState(route.params.regions);
@@ -45,7 +47,8 @@ const FoodInformationScreen = (props) => {
   const [eventProps, setEventProps] = useState("");
   const [priceProps, setPriceProps] = useState("");
   const [query, setQuery] = useState("");
-  const [filterSelected, setFilterSelected] = useState("Tất cả");
+  const combo = useSelector((state) => state.combo.combo);
+  const [filterSelected, setFilterSelected] = useState(iniFilter);
   const filterSelectedRegions = (array) => {
     if (regionProps === "") {
       return array;
@@ -65,7 +68,10 @@ const FoodInformationScreen = (props) => {
   }, [regionProps, eventProps, priceProps]);
 
   const filterSelectedCategory = (array) => {
-    if (filterSelected === "Tất cả") {
+
+    if (filterSelected === "Mâm tiệc") {
+      return combo
+    } else if (filterSelected === "Tất cả") {
       return array;
     } else {
       return array.filter(
@@ -184,7 +190,7 @@ const FoodInformationScreen = (props) => {
               <Entypo name="chevron-left" size={38} color={THEME_COLOR} />
             </TouchableOpacity>
             <View style={{ width: "80%" }}>
-              <SearchBar setQuery={setQuery} />
+              <SearchBar setQuery={setQuery} isFromHome={isFromHome} isHome={false} />
             </View>
             <TouchableOpacity
               onPress={() => {
@@ -226,6 +232,7 @@ const FoodInformationScreen = (props) => {
         setFilterSelected={setFilterSelected}
         filterSelected={filterSelected}
         listFood={food}
+        isParty={false}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}

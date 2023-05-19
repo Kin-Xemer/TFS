@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+
 import {
   View,
   StyleSheet,
@@ -19,18 +19,21 @@ import RadioForm, {
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-const BORDER_RADIUS = 15;
-const ITEM_MARGIN_BOTTOM = 10;
-const ITEM_MARGIN_HORIZONTAL = 16;
 const HeaderComponent = (props) => {
-  let {nearlyRestaurant, note, setVisible, locateCoord, deliveryMethod, setDeliveryMethod } =
-    props;
+  let {
+    nearlyRestaurant,
+    note,
+    setVisible,
+    locateCoord,
+    deliveryMethod,
+    setDeliveryMethod,
+  } = props;
   const navigation = useNavigation();
   const route = useRoute();
   const address = useSelector(
     (state) => state.address.address.formatted_address
   );
-  
+
   const stringAddress = useSelector((state) => state.address.stringAddress);
   const listDeliveryMethod = [
     { label: "Giao hàng", value: "delivery" },
@@ -54,88 +57,103 @@ const HeaderComponent = (props) => {
               {deliveryMethod === "delivery" ? (
                 <Text style={styles.textStyle}>Vị trí của bạn</Text>
               ) : (
-                <Text style={styles.textStyle}>
-                  Chi nhánh gần bạn nhất
-                </Text>
+                <Text style={styles.textStyle}>Chi nhánh gần bạn nhất</Text>
               )}
             </View>
             <Entypo name="chevron-down" size={14} color="black" />
           </Flex>
           {deliveryMethod === "takeaway" ? (
             <View>
-             <Text style={styles.textStyle}>Cửa hàng: <Text style={{fontFamily: FONT.BOLD, fontSize: 13}}>{nearlyRestaurant.restaurantName}</Text></Text>
-            <Flex
-            direction="row"
-            style={{ width: screenWidth * 0.58, alignItems: "center" }}
-          >
-            <Location size="14" color={THEME_COLOR} />
-            <View style={{ paddingLeft: 3 }}>
-              <Text
-                numberOfLines={1}
-                style={[styles.textStyle, styles.addressText]}
-              >
-                {address ? nearlyRestaurant.restaurantLocation : "Đang tìm vị trí của bạn..."}
+              <Text style={styles.textStyle}>
+                Cửa hàng:{" "}
+                <Text style={{ fontFamily: FONT.BOLD, fontSize: 13 }}>
+                  {nearlyRestaurant.restaurantName}
+                </Text>
               </Text>
+              <Flex
+                direction="row"
+                style={{ width: screenWidth * 0.58, alignItems: "center" }}
+              >
+                <Location size="14" color={THEME_COLOR} />
+                <View style={{ paddingLeft: 3 }}>
+                  <Text
+                    numberOfLines={1}
+                    style={[styles.textStyle, styles.addressText]}
+                  >
+                    {address
+                      ? nearlyRestaurant.restaurantLocation
+                      : "Đang tìm vị trí của bạn..."}
+                  </Text>
+                </View>
+              </Flex>
             </View>
-          </Flex>
-            </View>
-          ) :  <Flex
-          direction="row"
-          style={{ width: screenWidth * 0.58, alignItems: "center" }}
-        >
-          <Location size="14" color={THEME_COLOR} />
-          <View style={{ paddingLeft: 3 }}>
-            <Text
-              numberOfLines={1}
-              style={[styles.textStyle, styles.addressText]}
+          ) : (
+            <Flex
+              direction="row"
+              style={{ width: screenWidth * 0.58, alignItems: "center" }}
             >
-              {address ? stringAddress === "" ? address : stringAddress:"Đang tìm vị trí của bạn..."}
-            </Text>
-          </View>
-        </Flex>}
-         
+              <Location size="14" color={THEME_COLOR} />
+              <View style={{ paddingLeft: 3 }}>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.textStyle, styles.addressText]}
+                >
+                  {address
+                    ? stringAddress === ""
+                      ? address
+                      : stringAddress
+                    : "Đang tìm vị trí của bạn..."}
+                </Text>
+              </View>
+            </Flex>
+          )}
         </View>
         <Spacer />
-        {deliveryMethod === "delivery" ? <TouchableWithoutFeedback
-          onPress={() => {
-            navigation.navigate("MapScreen", {
-              addresses: address,
-              locateCoord: locateCoord,
-            });
-          }}
-        >
-          <View style={styles.changeButton}>
-            <Text
-              style={{
-                fontSize: 13,
-                color: THEME_COLOR,
-                fontFamily: "Quicksand-Bold",
-              }}
-            >
-              Thay đổi địa điểm
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>:<TouchableWithoutFeedback
-          onPress={() => {
-            navigation.navigate("SelectStore", {
-              addresses: address,
-              locateCoord: locateCoord,
-              nearlyRestaurant: nearlyRestaurant
-            });
-          }}
-        >
-          <View style={styles.changeButton}>
-            <Text
-              style={{
-                fontSize: 13,
-                color: THEME_COLOR,
-                fontFamily: "Quicksand-Bold",
-              }}
-            >
-              Thay đổi địa điểm
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>}
+        {deliveryMethod === "delivery" ? (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              navigation.navigate("MapScreen", {
+                addresses: address,
+                locateCoord: locateCoord,
+              });
+            }}
+          >
+            <View style={styles.changeButton}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: THEME_COLOR,
+                  fontFamily: "Quicksand-Bold",
+                }}
+              >
+                Thay đổi địa điểm
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+        ) : (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              navigation.navigate("SelectStore", {
+                addresses: address,
+                locateCoord: locateCoord,
+                nearlyRestaurant: nearlyRestaurant,
+              });
+            }}
+            disabled={ nearlyRestaurant.restaurantId ? false : true}
+          >
+            <View style={styles.changeButton}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: THEME_COLOR,
+                  fontFamily: "Quicksand-Bold",
+                }}
+              >
+                Thay đổi địa điểm
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+        )}
       </Flex>
       <Flex direction="row">
         <TouchableOpacity activeOpacity={1} onPress={setVisible}>

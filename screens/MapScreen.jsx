@@ -136,6 +136,7 @@ const MapScreen = (props) => {
     const lng = resultAddress.geometry.location.lng;
     const destination = convertLatLng(lat, lng);
     setSeletedCoord(destination);
+    console.log("mycity", city);
     dispatch({
       type: SET_MY_CITY,
       payload: city,
@@ -172,7 +173,7 @@ const MapScreen = (props) => {
         {selectedCoord ? (
           <Marker
             coordinate={selectedCoord}
-            image={require("../assets/icons/restaurant.png")}
+            image={require("../assets/icons/restaurant_30px.png")}
           />
         ) : (
           ""

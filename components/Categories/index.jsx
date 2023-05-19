@@ -5,14 +5,9 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { SearchNormal1, ArrowDown2 } from "iconsax-react-native";
-import { Entypo } from "@expo/vector-icons";
 import { Flex, Image, Spacer } from "native-base";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const Categories = (props) => {
   const navigation = useNavigation();
   const foods = useSelector((state) => state.food.food);
@@ -26,6 +21,8 @@ const Categories = (props) => {
             food: foods,
             events: events,
             regions: regions,
+            init:"Tất cả",
+            isFromHome:false
           });
         }}
         activeOpacity={0.8}
@@ -60,7 +57,17 @@ const Categories = (props) => {
         <Text style={[styles.textStyle, styles.titleText]}>Bàn tiệc</Text>
       </TouchableOpacity>
       <Spacer />
-      <Flex style={styles.iconCateContainer}>
+      <TouchableOpacity style={styles.iconCateContainer}
+        onPress={() => {
+          navigation.navigate("MoreScreen", {
+            food: foods,
+            events: events,
+            regions: regions,
+            init:"Mâm tiệc",
+            isFromHome:false
+          });
+        }}
+      >
         <Image
           source={require("../../assets/combo.png")}
           alt="Combo món"
@@ -68,8 +75,8 @@ const Categories = (props) => {
           height="100px"
           borderRadius={10}
         />
-        <Text style={[styles.textStyle, styles.titleText]}>Combo món</Text>
-      </Flex>
+        <Text style={[styles.textStyle, styles.titleText]}>Mâm tiệc</Text>
+      </TouchableOpacity>
     </Flex>
   );
 };

@@ -8,24 +8,20 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  FlatList,
   ScrollView,
 } from "react-native";
-import { Provider } from "@ant-design/react-native";
-import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { Box, Flex, Input, Spacer, Spinner } from "native-base";
+import { useState, useEffect } from "react";
+import {  Flex, Input, Spacer } from "native-base";
 import { THEME_COLOR } from "../Utils/themeColor";
-import { ArrowUp3, ArrowDown3, SearchNormal1 } from "iconsax-react-native";
+import { SearchNormal1 } from "iconsax-react-native";
 import { FONT } from "../Utils/themeFont.js";
 import { RadioButton } from "react-native-paper";
-import { BASE_URL } from "../services/baseURL.js";
 import React from "react";
 import { Toast } from "@ant-design/react-native";
 import TopBar from "../components/TopBar/index";
-import { addPromotion, fetchPromotionByid } from "../redux/actions/promotionAction";
+import { addPromotion, getAllPromotion,} from "../redux/actions/promotionAction";
+import { formatVNDate } from '../Utils/convertDate';
 const PromotionScreen = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -36,6 +32,7 @@ const PromotionScreen = (props) => {
   const [codeInput, setCodeInput] = useState("");
   const [voucherCodeSelected, setVoucherCodeSelected] = useState(null);
   useEffect(() => {
+    dispatch(getAllPromotion());
    if(promotionApplied){
     setVoucherCodeSelected(promotionApplied)
    }
@@ -47,7 +44,7 @@ const PromotionScreen = (props) => {
     console.log(voucher)
      if(voucherCodeSelected === voucher){
       setVoucherCodeSelected(null);
-     }else{
+     }else{ 
       setVoucherCodeSelected(voucher);
      }
     };
@@ -87,9 +84,9 @@ const PromotionScreen = (props) => {
             <Text style={styles.voucherDescription} numberOfLines={2} >
               Nhập mã "{voucher.promotionCode}" đển giảm {voucher.discountPercent}% tổng giá trị đơn hàng
             </Text>
-            {/* <Text style={styles.voucherExpiry}>
-              Hạn sử dụng: {voucher.expiryDate}
-            </Text> */}
+            <Text style={styles.voucherExpiry}>
+              Hạn sử dụng: {formatVNDate(voucher.endDate)}
+            </Text>
           </View>
         </View>
         <Spacer />
