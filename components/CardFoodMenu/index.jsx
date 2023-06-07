@@ -84,12 +84,6 @@ const CardFoodMenu = (props) => {
           </Text>
         </Flex>
         <Flex>
-          {/* <Flex direction="row" style={{ alignItems: "center" }}>
-            <AntDesign name="star" size={15} color="gold" />
-            <Text pl={1} style={styles.textFoodContent}>
-              {food.rating}(120 đánh giá)
-            </Text>
-          </Flex> */}
           <Flex direction="row" style={{ alignItems: "center" }}>
             <Feather name="shopping-cart" size={15} color="#6E798C" />
             <Text pl={1} style={styles.textFoodContent}>

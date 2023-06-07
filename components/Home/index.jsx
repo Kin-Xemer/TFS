@@ -136,14 +136,6 @@ const Home = (props) => {
     };
   }, []);
 
-  // const getEvent = useMemo(() => {
-  //   return () => {
-  //     axios.get(BASE_URL + "/events").then((response) => {
-  //       setEvents(response.data.filter((item)=>item.status === true));
-  //     });
-  //   };
-  // }, []);
-
   const checkLogin = async () => {
     try {
       const cus = await AsyncStorage.getItem("customer");
