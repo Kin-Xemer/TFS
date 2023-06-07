@@ -101,7 +101,6 @@ const OTPScreen = () => {
         disabled={textOTP.length === 6 ? false : true}
         onPress={() => {
           handleCheckOtp();
-          // console.log(username + "" + password);
         }}
         activeOpacity={0.7}
       >
